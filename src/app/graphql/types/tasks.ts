@@ -3,7 +3,13 @@ export interface Task {
   title: string;
   description?: string;
   question: string;
-  nAnswers: number;
+  answers: Answer[];
+}
+
+export interface Answer {
+  workerId: string;
+  answer: string;
+  stats: string;
 }
 
 export interface GetTasksResponse {
@@ -14,7 +20,7 @@ export interface CreateTaskInput {
   title: string;
   description?: string;
   question: string;
-  nAnswers: number;
+  answers: string[];
 }
 
 export interface DeleteTaskVariables {
