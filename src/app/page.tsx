@@ -17,7 +17,7 @@ export default function Home() {
     canvas.height = window.innerHeight;
 
     const particles: { x: number; y: number; radius: number; dx: number; dy: number }[] = [];
-    const numParticles = 100;
+    const numParticles = 800;
     const mouse = { x: 0, y: 0 };
 
     for (let i = 0; i < numParticles; i++) {
@@ -76,37 +76,55 @@ export default function Home() {
     };
   }, []);
 
-  return (
-    <div className="relative h-screen bg-gradient-to-r from-indigo-600 to-purple-500 text-white overflow-hidden">
-      <canvas ref={canvasRef} className="absolute inset-0"></canvas>
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-center z-10">
-        <motion.h1
-          className="text-5xl font-extrabold mb-4"
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
-        >
-          Welcome to Crowdsourcing UAT
-        </motion.h1>
+  return (<div className="relative h-screen bg-gradient-to-r from-primary to-secondary text-white overflow-hidden">
+    <canvas ref={canvasRef} className="absolute inset-0"></canvas>
+    <div className="absolute inset-0 flex flex-col items-center justify-center text-center z-10">
+      <motion.h1
+        className="text-6xl font-extrabold mb-6 leading-tight"
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+      >
+        <div>Test Your Apps</div>
+        <div className="bg-clip-text text-transparent bg-gradient-to-r from-tertiary to-tertiary-light">RIGHT NOW</div>
+      </motion.h1>
+      <motion.div
+        className="text-xl mb-8 space-y-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5, duration: 1 }}
+      >
         <motion.div
-          className="text-xl mb-8"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 1 }}
+          className="flex items-center space-x-4 justify-center"
+          whileHover={{ scale: 1.05 }}
         >
-          <motion.span className="block">Join us in innovation 🚀</motion.span>
-          <motion.span className="block">Earn rewards for testing 💰</motion.span>
-          <motion.span className="block">Help us build better software 🖥️</motion.span>
+          <span className="p-3 bg-white bg-opacity-20 rounded-full text-white">🚀</span>
+          <span className="font-medium">Join us in innovation</span>
         </motion.div>
-        <motion.a
-          href="/register"
-          className="px-6 py-3 bg-primary text-white font-semibold rounded-lg shadow-md hover:bg-secondary"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
+        <motion.div
+          className="flex items-center space-x-4 justify-center"
+          whileHover={{ scale: 1.05 }}
         >
-          Get Started
-        </motion.a>
-      </div>
+          <span className="p-3 bg-white bg-opacity-20 rounded-full text-white">💰</span>
+          <span className="font-medium">Earn rewards for testing</span>
+        </motion.div>
+        <motion.div
+          className="flex items-center space-x-4 justify-center"
+          whileHover={{ scale: 1.05 }}
+        >
+          <span className="p-3 bg-white bg-opacity-20 rounded-full text-white">🖥️</span>
+          <span className="font-medium">Help us build better software</span>
+        </motion.div>
+      </motion.div>
+      <motion.a
+        href="/register"
+        className="px-6 py-3 bg-gradient-to-r from-tertiary to-tertiary-light text-white font-semibold rounded-lg shadow-md hover:bg-secondary"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        Get Started
+      </motion.a>
     </div>
-  );
+  </div>
+);
 }

@@ -9,9 +9,14 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#4F46E5',
-        secondary: '#3B82F6',
-        background: '#F3F4F6',
+        primary: 'var(--primary-color)',
+        secondary: 'var(--secondary-color)',
+        glass: 'var(--glass-color)',
+        tertiary: 'var(--tertiary-color)',
+        'tertiary-light': 'var(--tertiary-color-light)',
+        background: 'var(--background-color)',
+        'background-light': 'var(--background-color-light)',
+        'background-dark': 'var(--background-color-dark)',
       },
     },
   },

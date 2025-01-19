@@ -53,7 +53,7 @@ export default function LoginForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="bg-gradient-to-br from-purple-500 to-blue-500 p-10 shadow-lg rounded-lg max-w-lg mx-auto"
+      className="bg-gradient-to-r from-white/10 to-white/20 p-16 shadow-lg rounded-lg max-w-lg mx-auto"
     >
       <h1 className="text-4xl font-bold mb-8 text-center text-white">Login</h1>
       <div className="mb-6">
