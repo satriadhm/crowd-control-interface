@@ -28,18 +28,14 @@ export default function LoginForm() {
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
 
-      // Redirect based on role
       if (role === "admin") {
         router.push("/admin");
       } else {
         router.push("/dashboard");
       }
+
     } catch (err) {
-      if (err instanceof Error) {
-        console.error("Login failed:", err.message);
-      } else {
-        console.error("Login failed:", err);
-      }
+      console.error("Login failed:", err);
       alert("Invalid credentials.");
     }
   };
@@ -66,7 +62,7 @@ export default function LoginForm() {
       <button
         type="submit"
         className={`px-4 py-2 rounded w-full text-white ${
-          loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-500"
+          loading ? "bg-gray-400" : "bg-primary hover:bg-secondary"
         }`}
         disabled={loading}
       >

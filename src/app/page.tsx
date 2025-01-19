@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
@@ -77,11 +77,11 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="relative h-screen bg-black text-white overflow-hidden">
+    <div className="relative h-screen bg-gradient-to-r from-indigo-600 to-purple-500 text-white overflow-hidden">
       <canvas ref={canvasRef} className="absolute inset-0"></canvas>
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center z-10">
         <motion.h1
-          className="text-5xl font-bold mb-4"
+          className="text-5xl font-extrabold mb-4"
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
@@ -89,7 +89,7 @@ export default function Home() {
           Welcome to Crowdsourcing UAT
         </motion.h1>
         <motion.div
-          className="text-2xl mb-8"
+          className="text-xl mb-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5, duration: 1 }}
@@ -100,7 +100,7 @@ export default function Home() {
         </motion.div>
         <motion.a
           href="/register"
-          className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-500"
+          className="px-6 py-3 bg-primary text-white font-semibold rounded-lg shadow-md hover:bg-secondary"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
         >
