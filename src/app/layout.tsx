@@ -1,6 +1,10 @@
-import { ApolloProvider } from '@apollo/client';
-import client from '../app/lib/apollo-client';
+import ApolloProviderWrapper from '../app/components/ApolloProviderWrapper';
 import './globals.css';
+
+export const metadata = {
+  title: 'Next.js with Apollo',
+  description: 'Next.js integrated with Apollo Client',
+};
 
 export default function RootLayout({
   children,
@@ -10,8 +14,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {/* Pastikan ApolloProvider dibungkus dengan client */}
-        <ApolloProvider client={client}>{children}</ApolloProvider>
+        <ApolloProviderWrapper>{children}</ApolloProviderWrapper>
       </body>
     </html>
   );

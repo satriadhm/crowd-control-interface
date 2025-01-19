@@ -1,31 +1,42 @@
 "use client";
 
+import { useMutation } from "@apollo/client";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { REGISTER } from "../../graphql/mutations/auth";
 
-// Definisikan tipe data untuk input form
 interface RegisterFormInputs {
   email: string;
+  firstName: string;
+  lastName: string;
+  userName: string;
   password: string;
-  confirmPassword: string;
+  passwordConfirmation: string;
+  role?: string;
 }
 
-// Validasi schema menggunakan Yup
 const schema = yup.object({
   email: yup.string().email("Invalid email").required("Email is required"),
+  firstName: yup.string().required("First Name is required"),
+  lastName: yup.string().required("Last Name is required"),
+  userName: yup.string().required("Username is required"),
   password: yup
     .string()
     .min(8, "Password must be at least 8 characters")
     .required("Password is required"),
-  confirmPassword: yup
+  passwordConfirmation: yup
     .string()
     .oneOf([yup.ref("password")], "Passwords must match")
     .required("Confirm Password is required"),
+  role: yup
+    .string()
+    .oneOf(["WORKER", "ADMIN", "COMPANY_REPRESENTATIVE"], "Invalid role"),
 });
 
 export default function RegisterForm() {
-  // Gunakan useForm dengan tipe data dan resolver Yup
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -33,18 +44,30 @@ export default function RegisterForm() {
   } = useForm<RegisterFormInputs>({
     resolver: yupResolver(schema),
   });
+  const [registerMutation, { loading, error }] = useMutation(REGISTER);
 
-  // Tipe data pada parameter `data` sekarang sesuai dengan RegisterFormInputs
-  const onSubmit = (data: RegisterFormInputs) => {
-    console.log(data); // Ganti dengan API call
+  const onSubmit = async (data: RegisterFormInputs) => {
+    try {
+      const response = await registerMutation({
+        variables: {
+          input: {
+            ...data,
+          },
+        },
+      });
+      console.log("Registration successful:", response.data.register);
+      router.push("/dashboard");
+    } catch (err) {
+      console.error("Registration error:", err);
+    }
   };
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="bg-white p-8 shadow-lg rounded"
+      className="bg-white p-8 shadow-lg rounded max-w-md mx-auto"
     >
-      <h1 className="text-2xl mb-4">Register</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">Register</h1>
 
       <input
         {...register("email")}
@@ -54,6 +77,26 @@ export default function RegisterForm() {
       <p className="text-red-500">{errors.email?.message}</p>
 
       <input
+        {...register("firstName")}
+        placeholder="First Name"
+        className="block w-full p-2 border rounded mb-2"
+      />
+      <p className="text-red-500">{errors.firstName?.message}</p>
+
+      <input
+        {...register("lastName")}
+        placeholder="Last Name"
+        className="block w-full p-2 border rounded mb-2"
+      />
+      <p className="text-red-500">{errors.lastName?.message}</p>
+
+      <input
+        {...register("userName")}
+        placeholder="User Name"
+        className="block w-full p-2 border rounded mb-2"
+      />
+      <p className="text-red-500">{errors.userName?.message}</p>
+      <input
         {...register("password")}
         type="password"
         placeholder="Password"
@@ -62,19 +105,33 @@ export default function RegisterForm() {
       <p className="text-red-500">{errors.password?.message}</p>
 
       <input
-        {...register("confirmPassword")}
+        {...register("passwordConfirmation")}
         type="password"
         placeholder="Confirm Password"
         className="block w-full p-2 border rounded mb-2"
       />
-      <p className="text-red-500">{errors.confirmPassword?.message}</p>
+      <p className="text-red-500">{errors.passwordConfirmation?.message}</p>
+
+      <select
+        {...register("role")}
+        className="block w-full p-2 border rounded mb-4"
+      >
+        <option value="">Select Role</option>
+        <option value="WORKER">Worker</option>
+        <option value="ADMIN">Admin</option>
+        <option value="COMPANY_REPRESENTATIVE">Company Representative</option>
+      </select>
+      <p className="text-red-500">{errors.role?.message}</p>
 
       <button
         type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded w-full"
+        className="bg-blue-600 text-white px-4 py-2 rounded w-full hover:bg-blue-500"
+        disabled={loading}
       >
-        Register
+        {loading ? "Registering..." : "Register"}
       </button>
+
+      {error && <p className="text-red-500 mt-4">{error.message}</p>}
     </form>
   );
 }
