@@ -1,55 +1,42 @@
-"use client";
+'use client';
 
-import { useMutation } from "@apollo/client";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { REGISTER } from "../../graphql/mutations/auth";
+import { useMutation } from '@apollo/client';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { LOGIN } from '../../graphql/mutations/auth';
 
-interface RegisterFormInputs {
+interface LoginFormInputs {
   email: string;
-  firstName: string;
-  lastName: string;
   password: string;
-  userName: string;
-  passwordConfirmation: string;
-  role: string;
 }
 
-const schema = yup.object({
-  email: yup.string().email("Invalid email").required("Email is required"),
-  firstName: yup.string().required("First Name is required"),
-  lastName: yup.string().required("Last Name is required"),
-  userName: yup.string().required("User Name is required"),
-  password: yup
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .required("Password is required"),
-  passwordConfirmation: yup
-    .string()
-    .oneOf([yup.ref("password")], "Passwords must match")
-    .required("Confirm Password is required"),
-  role: yup.string().required("Role is required"),
-});
-
-export default function RegisterForm() {
+export default function LoginForm() {
   const router = useRouter();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<RegisterFormInputs>({
-    resolver: yupResolver(schema),
-  });
-  const [registerMutation, { loading, error }] = useMutation(REGISTER);
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>();
+  const [loginMutation, { loading, error }] = useMutation(LOGIN);
 
-  const onSubmit = async (data: RegisterFormInputs) => {
+  const onSubmit = async (data: LoginFormInputs) => {
     try {
-      await registerMutation({ variables: { input: data } });
-      router.push("/dashboard");
+      const response = await loginMutation({ variables: { input: data } });
+      const { accessToken, refreshToken, role } = response.data.login;
+
+      // Save tokens
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+
+      // Redirect based on role
+      if (role === 'admin') {
+        router.push('/admin');
+      } else {
+        router.push('/dashboard');
+      }
     } catch (err) {
-      console.error("Registration error:", err);
+      if (err instanceof Error) {
+        console.error('Login failed:', err.message);
+      } else {
+        console.error('Login failed:', err);
+      }
+      alert('Invalid credentials.');
     }
   };
 
@@ -58,63 +45,26 @@ export default function RegisterForm() {
       onSubmit={handleSubmit(onSubmit)}
       className="bg-white p-8 shadow-lg rounded max-w-md mx-auto"
     >
-      <h1 className="text-3xl font-bold mb-6 text-center">Register</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">Login</h1>
       <input
-        {...register("email")}
+        {...register('email')}
         placeholder="Email"
         className="block w-full p-2 border rounded mb-2"
       />
       <p className="text-red-500">{errors.email?.message}</p>
       <input
-        {...register("firstName")}
-        placeholder="First Name"
-        className="block w-full p-2 border rounded mb-2"
-      />
-      <p className="text-red-500">{errors.firstName?.message}</p>
-      <input
-        {...register("lastName")}
-        placeholder="Last Name"
-        className="block w-full p-2 border rounded mb-2"
-      />
-      <p className="text-red-500">{errors.lastName?.message}</p>
-      <input
-        {...register("userName")}
-        placeholder="User Name"
-        className="block w-full p-2 border rounded mb-2"
-      />
-      <p className="text-red-500">{errors.userName?.message}</p>
-      <input
-        {...register("password")}
+        {...register('password')}
         type="password"
         placeholder="Password"
-        className="block w-full p-2 border rounded mb-2"
+        className="block w-full p-2 border rounded mb-4"
       />
       <p className="text-red-500">{errors.password?.message}</p>
-      <input
-        {...register("passwordConfirmation")}
-        type="password"
-        placeholder="Confirm Password"
-        className="block w-full p-2 border rounded mb-2"
-      />
-      <p className="text-red-500">{errors.passwordConfirmation?.message}</p>
-      <select
-        {...register("role")}
-        className="block w-full p-2 border rounded mb-4"
-      >
-        <option value="">Select Role</option>
-        <option value="WORKER">Worker</option>
-        <option value="ADMIN">Admin</option>
-        <option value="COMPANY_REPRESENTATIVE">Company Representative</option>
-      </select>
-      <p className="text-red-500">{errors.role?.message}</p>
       <button
         type="submit"
-        className={`px-4 py-2 rounded w-full text-white ${
-          loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-500"
-        }`}
+        className={`px-4 py-2 rounded w-full text-white ${loading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-500'}`}
         disabled={loading}
       >
-        {loading ? "Registering..." : "Register"}
+        {loading ? 'Logging in...' : 'Login'}
       </button>
       {error && <p className="text-red-500 mt-4">{error.message}</p>}
     </form>

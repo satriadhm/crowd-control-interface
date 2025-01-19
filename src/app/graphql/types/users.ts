@@ -3,7 +3,7 @@ export interface User {
     firstName: string;
     lastName: string;
     email: string;
-    role: string; // Add the role field as it's often part of user management
+    role: string;
   }
   
   export interface GetAllUsersResponse {
