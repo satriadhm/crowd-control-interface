@@ -1,9 +1,14 @@
 import { useForm } from 'react-hook-form';
 
-export default function LoginForm() {
-  const { register, handleSubmit } = useForm();
+interface LoginFormInputs {
+  email: string;
+  password: string;
+}
 
-  const onSubmit = (data: any) => {
+export default function LoginForm() {
+  const { register, handleSubmit } = useForm<LoginFormInputs>();
+
+  const onSubmit = (data: LoginFormInputs) => {
     console.log(data); // Replace with API call
   };
 
