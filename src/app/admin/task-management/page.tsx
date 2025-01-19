@@ -1,3 +1,5 @@
+"use client";
+
 import TaskManagement from '@/app/components/admin/TaskManagement';
 
 export default function TaskManagementPage() {

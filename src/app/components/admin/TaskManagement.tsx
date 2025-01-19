@@ -59,7 +59,7 @@ export default function TaskManagement() {
       refetch();
     } catch (err) {
       console.error("Error deleting task:", err);
-      alert("Failed to delete task.");
+      alert(`Failed to delete task: ${(err as Error).message}`);
     }
   };
 

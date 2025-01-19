@@ -2,19 +2,16 @@ import Link from 'next/link';
 
 export default function Navbar() {
   return (
-    <nav className="bg-gray-800 text-white p-4 flex justify-between items-center shadow-md">
-      <Link href="/" className="font-bold text-xl">
-        Crowdsourcing
+    <nav className="bg-white shadow p-4 flex justify-between items-center">
+      <Link href="/" className="font-bold text-lg">
+        Crowd Control
       </Link>
       <div className="flex gap-4">
-        <Link href="/features" className="hover:text-blue-400">
-          Features
+        <Link href="/admin/task-management" className="hover:text-primary">
+          Tasks
         </Link>
-        <Link href="/register" className="hover:text-blue-400">
-          Register
-        </Link>
-        <Link href="/login" className="hover:text-blue-400">
-          Login
+        <Link href="/admin/user-management" className="hover:text-primary">
+          Users
         </Link>
       </div>
     </nav>

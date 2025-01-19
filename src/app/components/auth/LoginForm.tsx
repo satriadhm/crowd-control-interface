@@ -16,12 +16,21 @@ export default function LoginForm() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormInputs>();
+  } = useForm<LoginFormInputs>({ mode: "onSubmit" }); // Ensure validation on submit
   const [loginMutation, { loading, error }] = useMutation(LOGIN);
 
   const onSubmit = async (data: LoginFormInputs) => {
+    if (!data.email || !data.password) {
+      alert("Email and password are required.");
+      return;
+    }
+
     try {
       const response = await loginMutation({ variables: { input: data } });
+      if (!response?.data?.login) {
+        throw new Error("Invalid API response");
+      }
+
       const { accessToken, refreshToken, role } = response.data.login;
 
       // Save tokens
@@ -29,46 +38,55 @@ export default function LoginForm() {
       localStorage.setItem("refreshToken", refreshToken);
 
       if (role === "admin") {
-        router.push("/admin");
+        router.push("/admin/task-management");
       } else {
         router.push("/dashboard");
       }
-
     } catch (err) {
       console.error("Login failed:", err);
-      alert("Invalid credentials.");
+      alert(
+        `Login failed: ${err instanceof Error ? err.message : "Unknown error"}`
+      );
     }
   };
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="bg-white p-8 shadow-lg rounded max-w-md mx-auto"
+      className="bg-gradient-to-br from-purple-500 to-blue-500 p-10 shadow-lg rounded-lg max-w-lg mx-auto"
     >
-      <h1 className="text-3xl font-bold mb-6 text-center">Login</h1>
-      <input
-        {...register("email")}
-        placeholder="Email"
-        className="block w-full p-2 border rounded mb-2"
-      />
-      <p className="text-red-500">{errors.email?.message}</p>
-      <input
-        {...register("password")}
-        type="password"
-        placeholder="Password"
-        className="block w-full p-2 border rounded mb-4"
-      />
-      <p className="text-red-500">{errors.password?.message}</p>
+      <h1 className="text-4xl font-bold mb-8 text-center text-white">Login</h1>
+      <div className="mb-6">
+        <input
+          {...register("email", { required: "Email is required" })}
+          placeholder="Email"
+          className="block w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300"
+        />
+        <p className="text-red-400 text-sm mt-2">{errors.email?.message}</p>
+      </div>
+      <div className="mb-6">
+        <input
+          {...register("password", { required: "Password is required" })}
+          type="password"
+          placeholder="Password"
+          className="block w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300"
+        />
+        <p className="text-red-400 text-sm mt-2">{errors.password?.message}</p>
+      </div>
       <button
         type="submit"
-        className={`px-4 py-2 rounded w-full text-white ${
-          loading ? "bg-gray-400" : "bg-primary hover:bg-secondary"
+        className={`w-full py-3 rounded-lg font-semibold text-white transition-all duration-300 shadow-lg ${
+          loading
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-indigo-600 hover:bg-indigo-700"
         }`}
         disabled={loading}
       >
         {loading ? "Logging in..." : "Login"}
       </button>
-      {error && <p className="text-red-500 mt-4">{error.message}</p>}
+      {error && (
+        <p className="text-red-400 text-center mt-6">{error.message}</p>
+      )}
     </form>
   );
 }
