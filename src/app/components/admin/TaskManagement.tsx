@@ -86,7 +86,6 @@ export default function TaskManagement() {
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-700">Task Management</h2>
         <button
           onClick={() => setIsModalOpen(true)}
           className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-500"
