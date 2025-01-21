@@ -7,7 +7,7 @@ export interface Task {
 }
 
 export interface Answer {
-  workerId: string;
+  workerId: string[];
   answer: string;
   stats: string;
 }
@@ -20,7 +20,11 @@ export interface CreateTaskInput {
   title: string;
   description?: string;
   question: string;
-  answers: string[];
+  answers: AnswerTaskInput[];
+}
+
+export interface AnswerTaskInput {
+  answer: string;
 }
 
 export interface DeleteTaskVariables {

@@ -24,7 +24,7 @@ export default function TaskManagement() {
     title: "",
     description: "",
     question: "",
-    answers: [""],
+    answers: [{ answer: "", stats: 0 }],
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -36,17 +36,17 @@ export default function TaskManagement() {
     try {
       await createTask({
         variables: {
-          input: {
-            title: newTask.title,
-            description: newTask.description,
-            question: newTask.question,
-            answers: newTask.answers,
-          },
+          input: newTask,
         },
       });
       alert("Task created successfully!");
       refetch();
-      setNewTask({ title: "", description: "", question: "", answers: [""] });
+      setNewTask({
+        title: "",
+        description: "",
+        question: "",
+        answers: [{ answer: "", stats: 0 }],
+      });
       setIsModalOpen(false);
     } catch (err) {
       console.error("Error creating task:", err);
@@ -65,14 +65,14 @@ export default function TaskManagement() {
     }
   };
 
-  const handleAnswerChange = (index: number, value: string) => {
+  const handleAnswerChange = (index: number, field: string, value: string | number) => {
     const updatedAnswers = [...newTask.answers];
-    updatedAnswers[index] = value;
+    updatedAnswers[index] = { ...updatedAnswers[index], [field]: value };
     setNewTask({ ...newTask, answers: updatedAnswers });
   };
 
   const addAnswerField = () => {
-    setNewTask({ ...newTask, answers: [...newTask.answers, ""] });
+    setNewTask({ ...newTask, answers: [...newTask.answers, { answer: "", stats: 0 }] });
   };
 
   const removeAnswerField = (index: number) => {
@@ -94,7 +94,6 @@ export default function TaskManagement() {
         </button>
       </div>
 
-      {/* Modal for Create Task */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded shadow-lg w-1/2">
@@ -129,9 +128,17 @@ export default function TaskManagement() {
               <div key={index} className="flex items-center mb-3">
                 <input
                   type="text"
-                  value={answer}
-                  onChange={(e) => handleAnswerChange(index, e.target.value)}
+                  placeholder="Answer"
+                  value={answer.answer}
+                  onChange={(e) => handleAnswerChange(index, "answer", e.target.value)}
                   className="block w-full p-3 border rounded focus:ring focus:ring-blue-300 mr-2"
+                />
+                <input
+                  type="number"
+                  placeholder="Stats"
+                  value={answer.stats}
+                  onChange={(e) => handleAnswerChange(index, "stats", Number(e.target.value))}
+                  className="block w-1/4 p-3 border rounded focus:ring focus:ring-blue-300"
                 />
                 <button
                   onClick={() => removeAnswerField(index)}
@@ -165,7 +172,6 @@ export default function TaskManagement() {
         </div>
       )}
 
-      {/* Task List */}
       <div className="bg-white p-6 rounded shadow">
         <h3 className="text-lg font-semibold mb-4 text-gray-700">Task List</h3>
         {data?.getTasks.map((task) => (
@@ -197,9 +203,7 @@ export default function TaskManagement() {
                         {answer?.answer || "No Answer Provided"}
                       </td>
                       <td className="border border-gray-300 p-2">
-                        {answer?.stats
-                          ? JSON.stringify(answer.stats)
-                          : "No Stats Available"}
+                        {answer?.stats || "No Stats Available"}
                       </td>
                     </tr>
                   ))

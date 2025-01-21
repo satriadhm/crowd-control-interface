@@ -9,9 +9,7 @@ export const CREATE_TASK = gql`
       question
       nAnswers
       answers {
-        workerId
         answer
-        stats
       }
     }
   }
