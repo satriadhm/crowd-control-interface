@@ -117,7 +117,7 @@ export default function Home() {
         </motion.div>
       </motion.div>
       <motion.a
-        href="/register"
+        href="/login"
         className="px-6 py-3 bg-gradient-to-r from-tertiary to-tertiary-light text-white font-semibold rounded-lg shadow-md hover:bg-secondary"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}

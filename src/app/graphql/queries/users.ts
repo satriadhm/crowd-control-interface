@@ -1,8 +1,10 @@
 import { gql } from '@apollo/client';
 
+
 export const GET_ALL_USERS = gql`
-  query GetAllUsers($skip: Int, $take: Int) {
-    getAllUsers(args: { skip: $skip, take: $take }) {
+  query GetAllUsers($skip: Float, $take: Float) {
+    getAllUsers(skip: $skip, take: $take) {
+      id
       firstName
       lastName
       email
@@ -10,6 +12,7 @@ export const GET_ALL_USERS = gql`
     }
   }
 `;
+
 
 export const GET_USER_BY_ID = gql`
   query GetUserById($id: String!) {
