@@ -19,11 +19,12 @@ const authLink = new ApolloLink((operation, forward) => {
   return forward(operation);
 });
 
+console.log("Token from localStorage:", localStorage.getItem("accessToken"));
+
 
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
-
 
 export default client;

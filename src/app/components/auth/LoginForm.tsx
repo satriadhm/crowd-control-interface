@@ -33,7 +33,6 @@ export default function LoginForm() {
 
       const { accessToken, refreshToken, role } = response.data.login;
 
-      // Save tokens
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
 
