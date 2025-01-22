@@ -10,7 +10,7 @@ const httpLink = new HttpLink({
 });
 
 const authLink = new ApolloLink((operation, forward) => {
-  const token = localStorage.getItem("accessToken"); // Get token from local storage
+  const token = localStorage.getItem("accessToken");
   operation.setContext({
     headers: {
       authorization: token ? `Bearer ${token}` : "",
@@ -19,7 +19,6 @@ const authLink = new ApolloLink((operation, forward) => {
   return forward(operation);
 });
 
-console.log("Token from localStorage:", localStorage.getItem("accessToken"));
 
 
 const client = new ApolloClient({
