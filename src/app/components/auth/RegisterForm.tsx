@@ -47,7 +47,7 @@ export default function RegisterForm() {
   const onSubmit = async (data: RegisterFormInputs) => {
     try {
       await registerMutation({ variables: { input: data } });
-      router.push("/dashboard");
+      router.push("/dashboard?isActive=true");
     } catch (err) {
       console.error("Registration error:", err);
     }

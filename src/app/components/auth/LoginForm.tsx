@@ -28,17 +28,18 @@ export default function LoginForm() {
       if (!response?.data?.login) {
         throw new Error("Invalid API response");
       }
-
+      console.log("Login response:", response.data.login);
       const { role } = response.data.login;
+      console.log("Role:", role);
 
      // Simpan token ke local storage
      localStorage.setItem("accessToken", response.data.login.accessToken);
      localStorage.setItem("refreshToken", response.data.login.refreshToken);  
 
       if (role === "admin") {
-        router.push("/admin/task-management");
+        router.push(`/admin/task-management?creds=${response.data.login.accessToken}`);
       } else {
-        router.push("/dashboard");
+        router.push(`/dashboard?creds=${response.data.login.accessToken}`);
       }
     } catch (err) {
       console.error("Login failed:", err);
