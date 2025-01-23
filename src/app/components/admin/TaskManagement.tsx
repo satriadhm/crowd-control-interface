@@ -14,6 +14,13 @@ type Task = {
   answers: { answer: string; stats: number }[];
 };
 
+type CreateTask = {
+  title: string;
+  description: string;
+  question: string;
+  answers: { answer: string }[];
+};
+
 export default function TaskManagement() {
   const { data, loading, error, refetch } = useQuery<{ getTasks: Task[] }>(
     GET_TASKS
@@ -26,12 +33,11 @@ export default function TaskManagement() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-  const [newTask, setNewTask] = useState<Task>({
-    id: "",
+  const [newTask, setNewTask] = useState<CreateTask>({
     title: "",
     description: "",
     question: "",
-    answers: [{ answer: "", stats: 0 }],
+    answers: [{ answer: "" }],
   });
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
@@ -41,11 +47,10 @@ export default function TaskManagement() {
       alert("Task created successfully!");
       refetch();
       setNewTask({
-        id: "",
         title: "",
         description: "",
         question: "",
-        answers: [{ answer: "", stats: 0 }],
+        answers: [{ answer: ""}],
       });
       setIsModalOpen(false);
     } catch (err) {
@@ -128,6 +133,44 @@ export default function TaskManagement() {
               }
               className="w-full p-3 mb-3 border rounded"
             />
+            {newTask.answers.map((answer, idx) => (
+              <div key={idx} className="mb-3">
+                <input
+                  type="text"
+                  placeholder="Answer"
+                  value={answer.answer}
+                  onChange={(e) => {
+                    const updatedAnswers = [...newTask.answers];
+                    updatedAnswers[idx].answer = e.target.value;
+                    setNewTask({ ...newTask, answers: updatedAnswers });
+                  }}
+                  className="w-full p-3 mb-3 border rounded"
+                />
+
+                <button
+                  onClick={() => {
+                    const updatedAnswers = newTask.answers.filter(
+                      (_, index) => index !== idx
+                    );
+                    setNewTask({ ...newTask, answers: updatedAnswers });
+                  }}
+                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-400"
+                >
+                  Remove Answer
+                </button>
+              </div>
+            ))}
+            <button
+              onClick={() =>
+                setNewTask({
+                  ...newTask,
+                  answers: [...newTask.answers, { answer: "" }],
+                })
+              }
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-400"
+            >
+              Add Answer
+            </button>
             <div className="flex justify-end space-x-4">
               <button
                 onClick={() => setIsModalOpen(false)}
