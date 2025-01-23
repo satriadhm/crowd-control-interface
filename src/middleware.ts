@@ -1,7 +1,4 @@
 import { NextResponse } from "next/server";
-import * as jwt from "jsonwebtoken";
-
-const SECRET_KEY = process.env.SECRET_KEY || "semogaTAselesaidenganbaik";
 
 export function middleware(request) {
   const pathname = request.nextUrl.pathname;
@@ -19,35 +16,21 @@ export function middleware(request) {
   }
 
   if (isProtectedPath) {
-    let token = request.cookies.get("accessToken")?.value;
+    const authHeader = request.headers.get("authorization");
+    let token;
 
-    if (!token) {
-      const authHeader = request.headers.get("authorization");
-      if (authHeader?.startsWith("Bearer ")) {
-        token = authHeader.split(" ")[1];
-      }
+    if (authHeader?.startsWith("Bearer ")) {
+      token = authHeader.split(" ")[1];
     }
 
     if (!token) {
+      console.warn("No token found in Authorization header");
       return NextResponse.redirect(new URL("/login", request.url));
     }
 
-    try {
-      const decoded = jwt.verify(token, SECRET_KEY);
+    request.headers.set("access-token", token);
 
-      if (pathname.startsWith("/admin") && decoded.role !== "admin") {
-        return NextResponse.redirect(new URL("/", request.url));
-      }
-
-      return NextResponse.next();
-    } catch (err) {
-      if (err instanceof Error) {
-        console.error("Invalid token:", err.message);
-      } else {
-        console.error("Invalid token:", err);
-      }
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
+    return NextResponse.next();
   }
 
   return NextResponse.next();

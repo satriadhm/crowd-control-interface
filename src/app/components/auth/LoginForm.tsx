@@ -31,6 +31,10 @@ export default function LoginForm() {
 
       const { role } = response.data.login;
 
+     // Simpan token ke local storage
+     localStorage.setItem("accessToken", response.data.login.accessToken);
+     localStorage.setItem("refreshToken", response.data.login.refreshToken);  
+
       if (role === "admin") {
         router.push("/admin/task-management");
       } else {
