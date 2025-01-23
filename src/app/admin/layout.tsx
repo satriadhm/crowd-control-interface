@@ -1,5 +1,5 @@
 // src/app/admin/layout.tsx
-import Sidebar from '@/app/components/admin/Sidebar';
+import Sidebar from '@/app/components/admin/AdminSidebar';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (

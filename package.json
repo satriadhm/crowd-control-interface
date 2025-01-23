@@ -17,6 +17,7 @@
     "axios": "^1.7.9",
     "framer-motion": "^11.18.1",
     "graphql": "^16.10.0",
+    "jsonwebtoken": "^9.0.2",
     "next": "15.1.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -25,6 +26,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^20",
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",

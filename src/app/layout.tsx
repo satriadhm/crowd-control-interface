@@ -2,7 +2,7 @@ import ApolloProviderWrapper from '../app/components/ApolloProviderWrapper';
 import './globals.css';
 
 export const metadata = {
-  title: 'Next.js with Apollo',
+  title: 'Worker Quality Control',
   description: 'Next.js integrated with Apollo Client',
 };
 

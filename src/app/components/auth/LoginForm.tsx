@@ -16,25 +16,20 @@ export default function LoginForm() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormInputs>({ mode: "onSubmit" }); // Ensure validation on submit
-  const [loginMutation, { loading, error }] = useMutation(LOGIN);
+  } = useForm<LoginFormInputs>({ mode: "onSubmit" });
+  const [loginMutation, { loading, error }] = useMutation(LOGIN, {
+    fetchPolicy: "no-cache", // Ensures fresh login data
+  });
 
   const onSubmit = async (data: LoginFormInputs) => {
-    if (!data.email || !data.password) {
-      alert("Email and password are required.");
-      return;
-    }
-
     try {
       const response = await loginMutation({ variables: { input: data } });
+
       if (!response?.data?.login) {
         throw new Error("Invalid API response");
       }
 
-      const { accessToken, refreshToken, role } = response.data.login;
-
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
+      const { role } = response.data.login;
 
       if (role === "admin") {
         router.push("/admin/task-management");
@@ -43,9 +38,7 @@ export default function LoginForm() {
       }
     } catch (err) {
       console.error("Login failed:", err);
-      alert(
-        `Login failed: ${err instanceof Error ? err.message : "Unknown error"}`
-      );
+      alert(`Login failed: ${err instanceof Error ? err.message : "Unknown error"}`);
     }
   };
 
