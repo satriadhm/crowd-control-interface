@@ -15,8 +15,12 @@ type Task = {
 };
 
 export default function TaskManagement() {
-  const { data, loading, error, refetch } = useQuery<{ getTasks: Task[] }>(GET_TASKS);
-  const [getTaskById, { data: taskDetailData }] = useLazyQuery<{ getTaskById: Task }>(GET_TASK_BY_ID);
+  const { data, loading, error, refetch } = useQuery<{ getTasks: Task[] }>(
+    GET_TASKS
+  );
+  const [getTaskById, { data: taskDetailData }] = useLazyQuery<{
+    getTaskById: Task;
+  }>(GET_TASK_BY_ID);
   const [createTask] = useMutation(CREATE_TASK);
   const [deleteTask] = useMutation(DELETE_TASK);
 
@@ -45,7 +49,10 @@ export default function TaskManagement() {
       });
       setIsModalOpen(false);
     } catch (err) {
-      alert("Error creating task: " + (err instanceof Error ? err.message : "Unknown error"));
+      alert(
+        "Error creating task: " +
+          (err instanceof Error ? err.message : "Unknown error")
+      );
     }
   };
 
@@ -55,7 +62,10 @@ export default function TaskManagement() {
       alert("Task deleted successfully!");
       refetch();
     } catch (err) {
-      alert("Error deleting task: " + (err instanceof Error ? err.message : "Unknown error"));
+      alert(
+        "Error deleting task: " +
+          (err instanceof Error ? err.message : "Unknown error")
+      );
     }
   };
 
@@ -67,7 +77,10 @@ export default function TaskManagement() {
         setIsDetailModalOpen(true);
       }
     } catch (err) {
-      alert("Error fetching task details: " + (err instanceof Error ? err.message : "Unknown error"));
+      alert(
+        "Error fetching task details: " +
+          (err instanceof Error ? err.message : "Unknown error")
+      );
     }
   };
 
@@ -94,19 +107,25 @@ export default function TaskManagement() {
               type="text"
               placeholder="Title"
               value={newTask.title}
-              onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+              onChange={(e) =>
+                setNewTask({ ...newTask, title: e.target.value })
+              }
               className="w-full p-3 mb-3 border rounded"
             />
             <textarea
               placeholder="Description"
               value={newTask.description}
-              onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+              onChange={(e) =>
+                setNewTask({ ...newTask, description: e.target.value })
+              }
               className="w-full p-3 mb-3 border rounded"
             />
             <textarea
               placeholder="Question"
               value={newTask.question}
-              onChange={(e) => setNewTask({ ...newTask, question: e.target.value })}
+              onChange={(e) =>
+                setNewTask({ ...newTask, question: e.target.value })
+              }
               className="w-full p-3 mb-3 border rounded"
             />
             <div className="flex justify-end space-x-4">
@@ -131,9 +150,28 @@ export default function TaskManagement() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded shadow-lg w-1/2">
             <h2 className="text-xl font-bold mb-4">Task Details</h2>
-            <p><strong>Title:</strong> {selectedTask.title}</p>
-            <p><strong>Description:</strong> {selectedTask.description}</p>
-            <p><strong>Question:</strong> {selectedTask.question}</p>
+            <p>
+              <strong>Title:</strong> {selectedTask.title}
+            </p>
+            <p>
+              <strong>Description:</strong> {selectedTask.description}
+            </p>
+            <p>
+              <strong>Question:</strong> {selectedTask.question}
+            </p>
+            {/* make a section for creating the answer too */}
+            <ul>
+              {selectedTask.answers.map((answer, idx) => (
+                <li key={idx}>
+                  <p>
+                    <strong>Answer:</strong> {answer.answer}
+                  </p>
+                  <p>
+                    <strong>Stats:</strong> {answer.stats}
+                  </p>
+                </li>
+              ))}
+            </ul>
             <button
               onClick={() => setIsDetailModalOpen(false)}
               className="px-4 py-2 bg-gray-300 rounded mt-4"
@@ -148,7 +186,10 @@ export default function TaskManagement() {
         <h2 className="text-xl font-semibold mb-4">Task List</h2>
         <ul className="space-y-4">
           {data?.getTasks.map((task) => (
-            <li key={task.id} className="p-4 border rounded flex justify-between items-center">
+            <li
+              key={task.id}
+              className="p-4 border rounded flex justify-between items-center"
+            >
               <div>
                 <p className="font-bold">{task.title}</p>
                 <p className="text-sm text-gray-500">{task.description}</p>
