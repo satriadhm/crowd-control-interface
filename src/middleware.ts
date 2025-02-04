@@ -1,27 +1,32 @@
-// File: src/middleware.ts
-
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import type { NextRequest } from "next/server";
 
-export function middleware(request) {
-  const pathname = request.nextUrl.pathname;
+export async function middleware(request: NextRequest) {
+  const pathname: string = request.nextUrl.pathname;
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken");
+  const refreshToken = cookieStore.get("refreshToken");
 
-  const publicPaths = ["/login", "/register"];
-  const protectedPaths = ["/dashboard", "/admin"];
+  const publicPaths: string[] = ["/login", "/register"];
+  const protectedPaths: string[] = [
+    "/dashboard",
+    "/task-management",
+    "/user-management",
+  ];
 
-  const isPublicPath = publicPaths.some((path) => pathname.startsWith(path));
-  const isProtectedPath = protectedPaths.some((path) =>
+  const isPublicPath: boolean = publicPaths.some((path) =>
     pathname.startsWith(path)
   );
-
-  const isActive = request.nextUrl.searchParams.has("creds");
+  const isProtectedPath: boolean = protectedPaths.some((path) =>
+    pathname.startsWith(path)
+  );
 
   if (isPublicPath) {
     return NextResponse.next();
   }
 
-  if (isProtectedPath && !isActive) {
-    // munculkan pesan error jika user belum login
-    console.error("User is not authenticated");
+  if (isProtectedPath && !accessToken && !refreshToken) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 

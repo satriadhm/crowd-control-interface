@@ -1,16 +1,16 @@
-import ApolloProviderWrapper from '../app/components/ApolloProviderWrapper';
-import './globals.css';
+import ApolloProviderWrapper from "../layout/apollo-provider";
+import "./globals.css";
 
 export const metadata = {
-  title: 'Worker Quality Control',
-  description: 'Next.js integrated with Apollo Client',
+  title: "Worker Quality Control",
+  description: "Next.js integrated with Apollo Client",
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="en">
       <body>
