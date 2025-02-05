@@ -13,7 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="antialiased bg-white no-scrollbar">
         <ApolloProviderWrapper>{children}</ApolloProviderWrapper>
       </body>
     </html>

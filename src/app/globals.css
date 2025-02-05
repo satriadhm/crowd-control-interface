@@ -10,12 +10,11 @@
   --background_color-light: #8c60de;
   --background_color-dark: #7d65a7;
 
-  --background-color: #F3F4F6;
+  --background-color: #f3f4f6;
 }
 
 body {
-  background: var(--background-color);
-  font-family: 'Inter', sans-serif;
+  background-color: #f0f1f5;
 }
 
 @layer base {
