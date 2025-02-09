@@ -79,8 +79,7 @@ export default function RegisterForm() {
         <div className="col-span-1 flex flex-col px-4 justify-center py-12 w-full">
           <div className="text-left mb-8 w-full">
             <h1 className="text-2xl items-center gap-2">
-              Hi, Welcome <br /> to{" "}
-              <span className="text-primary font-semibold">Evaluate</span>
+              <span className="text-primary font-semibold">Registration</span>
             </h1>
             <p className="text-gray-500 text-sm mt-2">
               Registering is quick and easy! Just fill out the form below, and
@@ -89,60 +88,76 @@ export default function RegisterForm() {
             </p>
           </div>
           <form onSubmit={handleSubmit(onSubmit)} className="flex-1">
-            <Input
-              {...register("email")}
-              placeholder="Email"
-              className="block w-full p-3 border border-gray-300 rounded-lg mb-3 bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
-            />
-            <p className="text-red-400 text-sm">{errors.email?.message}</p>
-            <Input
-              {...register("firstName")}
-              placeholder="First Name"
-              className="block w-full p-3 border border-gray-300 rounded-lg mb-3 bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
-            />
-            <p className="text-red-400 text-sm">{errors.firstName?.message}</p>
-            <Input
-              {...register("lastName")}
-              placeholder="Last Name"
-              className="block w-full p-3 border border-gray-300 rounded-lg mb-3 bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
-            />
-            <p className="text-red-400 text-sm">{errors.lastName?.message}</p>
-            <Input
-              {...register("userName")}
-              placeholder="User Name"
-              className="block w-full p-3 border border-gray-300 rounded-lg mb-3 bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
-            />
-            <p className="text-red-400 text-sm">{errors.userName?.message}</p>
-            <Input
-              {...register("password")}
-              type="password"
-              placeholder="Password"
-              className="block w-full p-3 border border-gray-300 rounded-lg mb-3 bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
-            />
-            <p className="text-red-400 text-sm">{errors.password?.message}</p>
-            <Input
-              {...register("passwordConfirmation")}
-              type="password"
-              placeholder="Confirm Password"
-              className="block w-full p-3 border border-gray-300 rounded-lg mb-3 bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
-            />
-            <p className="text-red-400 text-sm">
-              {errors.passwordConfirmation?.message}
-            </p>
-            <Select {...register("role")}>
-              <SelectTrigger className="mb-6">
-                <SelectValue placeholder="Select Role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="WORKER">Worker</SelectItem>
-                <SelectItem value="ADMIN">Admin</SelectItem>
-                <SelectItem value="COMPANY_REPRESENTATIVE">
-                  Company Representative
-                </SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="mb-3">
+              <Input
+                {...register("email")}
+                placeholder="Email"
+                className="block w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
+              />
+              <p className="text-red-400 text-xs">{errors.email?.message}</p>
+            </div>
+            <div className="mb-3">
+              <Input
+                {...register("firstName")}
+                placeholder="First Name"
+                className="block w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
+              />
+              <p className="text-red-400 text-xs">
+                {errors.firstName?.message}
+              </p>
+            </div>
+            <div className="mb-3">
+              <Input
+                {...register("lastName")}
+                placeholder="Last Name"
+                className="block w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
+              />
+              <p className="text-red-400 text-xs">{errors.lastName?.message}</p>
+            </div>
+            <div className="mb-3">
+              <Input
+                {...register("userName")}
+                placeholder="User Name"
+                className="block w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
+              />
+              <p className="text-red-400 text-xs">{errors.userName?.message}</p>
+            </div>
+            <div className="mb-3">
+              <Input
+                {...register("password")}
+                type="password"
+                placeholder="Password"
+                className="block w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
+              />
+              <p className="text-red-400 text-xs">{errors.password?.message}</p>
+            </div>
+            <div className="mb-3">
+              <Input
+                {...register("passwordConfirmation")}
+                type="password"
+                placeholder="Confirm Password"
+                className="block w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
+              />
+              <p className="text-red-400 text-xs">
+                {errors.passwordConfirmation?.message}
+              </p>
+            </div>
+            <div className="mb-6">
+              <Select {...register("role")}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="WORKER">Worker</SelectItem>
+                  <SelectItem value="ADMIN">Admin</SelectItem>
+                  <SelectItem value="COMPANY_REPRESENTATIVE">
+                    Company Representative
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-red-400 text-xs">{errors.role?.message}</p>
+            </div>
 
-            <p className="text-red-400 text-sm">{errors.role?.message}</p>
             <Button
               type="submit"
               className={`${
