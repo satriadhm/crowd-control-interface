@@ -6,8 +6,10 @@ export default function LayoutAuth({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="container mx-auto bg-white flex items-center justify-center no-scrollbar h-screen w-full">
-      {children}
-    </div>
+    <main className="bg-[#001333]">
+      <div className="container mx-auto flex items-center justify-center no-scrollbar h-screen w-full">
+        {children}
+      </div>
+    </main>
   );
 }
