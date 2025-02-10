@@ -4,6 +4,16 @@ import { GET_TASKS, GET_TASK_BY_ID } from "@/graphql/queries/tasks";
 import { CREATE_TASK, DELETE_TASK } from "@/graphql/mutations/tasks";
 import { useQuery, useLazyQuery, useMutation } from "@apollo/client";
 import { useState } from "react";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/table";
+import { ClipboardList, Trash2 } from "lucide-react";
 
 type Task = {
   id: string;
@@ -21,15 +31,14 @@ type CreateTask = {
 };
 
 export default function TaskManagement() {
-  const { data, loading, error, refetch } = useQuery<{ getTasks: Task[] }>(
-    GET_TASKS
-  );
+  const { data, refetch } = useQuery<{ getTasks: Task[] }>(GET_TASKS);
   const [getTaskById, { data: taskDetailData }] = useLazyQuery<{
     getTaskById: Task;
   }>(GET_TASK_BY_ID);
   const [createTask] = useMutation(CREATE_TASK);
   const [deleteTask] = useMutation(DELETE_TASK);
 
+  console.log({ data });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [newTask, setNewTask] = useState<CreateTask>({
@@ -89,14 +98,13 @@ export default function TaskManagement() {
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Task Management</h1>
+    <div className="p-6 bg-gray-50">
+      <div className="flex justify-end items-center mb-6">
         <button
-          className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-500"
+          className="px-4 flex items-center gap-2 py-2 bg-[#001333] text-white rounded shadow"
           onClick={() => setIsModalOpen(true)}
         >
-          Create Task
+          <ClipboardList size={16} /> Create Task
         </button>
       </div>
 
@@ -221,35 +229,45 @@ export default function TaskManagement() {
         </div>
       )}
 
-      <div className="bg-white p-6 rounded shadow">
-        <h2 className="text-xl font-semibold mb-4">Task List</h2>
-        <ul className="space-y-4">
-          {data?.getTasks.map((task) => (
-            <li
-              key={task.id}
-              className="p-4 border rounded flex justify-between items-center"
-            >
-              <div>
-                <p className="font-bold">{task.title}</p>
-                <p className="text-sm text-gray-500">{task.description}</p>
-              </div>
-              <div className="space-x-2">
-                <button
-                  onClick={() => handleGetTaskById(task.id)}
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-400"
-                >
-                  View
-                </button>
-                <button
-                  onClick={() => handleDeleteTask(task.id)}
-                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-400"
-                >
-                  Delete
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
+      <div className="bg-white p-6 border rounded shadow">
+        <Table>
+          <TableCaption>A list of task.</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="font-semibold text-primary">
+                Title
+              </TableHead>
+              <TableHead className="font-semibold text-primary">
+                Description
+              </TableHead>
+              <TableHead className="text-right">Action</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data?.getTasks.map((task) => (
+              <TableRow key={task.id}>
+                <TableCell>{task.title}</TableCell>
+                <TableCell>
+                  <span>{task.description}</span>
+                </TableCell>
+                <TableCell className="text-right space-x-2">
+                  <button
+                    onClick={() => handleGetTaskById(task.id)}
+                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-400"
+                  >
+                    View
+                  </button>
+                  <button
+                    onClick={() => handleDeleteTask(task.id)}
+                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-400"
+                  >
+                    Delete
+                  </button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

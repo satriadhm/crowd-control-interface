@@ -1,23 +1,19 @@
-import {
-  ApolloClient,
-  InMemoryCache,
-  HttpLink,
-  ApolloLink,
-} from "@apollo/client";
+import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
 import { getCookie } from "cookies-next/client";
 
-const httpLink = new HttpLink({
+const httpLink = createHttpLink({
   uri: process.env.NEXT_PUBLIC_GRAPHQL_URI || "http://localhost:5000/graphql",
 });
 
-const authLink = new ApolloLink((operation, forward) => {
-  const token = getCookie("accessToken");
-  operation.setContext({
+const authLink = setContext((_, { headers }) => {
+  const token = getCookie("accessToken") ?? "";
+  return {
     headers: {
+      ...headers,
       authorization: token ? `Bearer ${token}` : "",
     },
-  });
-  return forward(operation);
+  };
 });
 
 const client = new ApolloClient({

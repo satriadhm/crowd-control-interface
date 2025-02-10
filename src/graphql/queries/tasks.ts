@@ -1,22 +1,20 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const GET_TASKS = gql`
-  query GetTasks {
-    getTasks {
+  query GetAllTasks($question: String, $skip: Float, $take: Float) {
+    getTasks(question: $question, skip: $skip, take: $take) {
       id
       title
-      description
       question
+      description
       nAnswers
       answers {
-        workerId
         answer
         stats
       }
     }
   }
 `;
-
 
 export const GET_TASK_BY_ID = gql`
   query GetTaskById($id: String!) {

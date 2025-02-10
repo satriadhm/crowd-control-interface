@@ -6,9 +6,9 @@ export default function AdminLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex">
+    <div className="grid grid-cols-12">
       <Sidebar />
-      <main className="flex-1 bg-background p-6">{children}</main>
+      <main className="col-span-10 bg-background p-6">{children}</main>
     </div>
   );
 }

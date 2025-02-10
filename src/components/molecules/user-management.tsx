@@ -4,6 +4,16 @@ import { useQuery, useMutation } from "@apollo/client";
 import { GET_ALL_USERS } from "@/graphql/queries/users";
 import { CREATE_USER, DELETE_USER } from "@/graphql/mutations/users";
 import { useState } from "react";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/table";
+import { Trash2, UserPlus } from "lucide-react";
 
 export default function UserManagement() {
   const { data, refetch } = useQuery(GET_ALL_USERS);
@@ -50,14 +60,13 @@ export default function UserManagement() {
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">User Management</h1>
+    <div className="p-6 bg-gray-50">
+      <div className="flex justify-end items-center mb-6">
         <button
-          className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-500"
+          className="px-4 py-2 flex items-center gap-2 bg-[#001333] text-white rounded shadow"
           onClick={() => setIsModalOpen(true)}
         >
-          Create User
+          <UserPlus size={16} /> Create User
         </button>
       </div>
 
@@ -121,30 +130,51 @@ export default function UserManagement() {
         </div>
       )}
 
-      <div className="bg-white p-6 rounded shadow">
-        <h2 className="text-xl font-semibold mb-4">User List</h2>
-        <ul className="space-y-4">
-          {data?.getAllUsers.map((user) => (
-            <li
-              key={user.id}
-              className="p-4 border rounded flex justify-between items-center"
-            >
-              <div>
-                <p className="font-bold">
+      <div className="bg-white p-6 border rounded shadow">
+        <Table>
+          <TableCaption>A list of users.</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="font-semibold text-primary">Name</TableHead>
+              <TableHead className="font-semibold text-primary">
+                Email
+              </TableHead>
+              <TableHead className="font-semibold text-primary">Role</TableHead>
+              <TableHead className="font-semibold text-right text-primary">
+                Action
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data?.getAllUsers.map((user) => (
+              <TableRow key={user.id}>
+                <TableCell className="font-medium">
                   {user.firstName} {user.lastName}
-                </p>
-                <p className="text-sm text-gray-500">{user.email}</p>
-                <p className="text-sm text-gray-500">Role: {user.role}</p>
-              </div>
-              <button
-                onClick={() => handleDeleteUser(user.id)}
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-400"
-              >
-                Delete
-              </button>
-            </li>
-          ))}
-        </ul>
+                </TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>
+                  <span
+                    className={`text-white px-4 py-1 rounded-lg ${
+                      user.role.includes("worker")
+                        ? "bg-purple-400"
+                        : "bg-red-500"
+                    }`}
+                  >
+                    {user.role}
+                  </span>
+                </TableCell>
+                <TableCell className="text-right">
+                  <button
+                    onClick={() => handleDeleteUser(user.id)}
+                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-400"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

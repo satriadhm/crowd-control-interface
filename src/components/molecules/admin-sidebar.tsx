@@ -31,9 +31,9 @@ export default function Sidebar() {
   console.log(pathname);
 
   return (
-    <aside className="bg-[#001333] text-white w-64 min-h-screen flex flex-col justify-between shadow-xl">
+    <aside className="bg-[#001333] h-screen text-white col-span-2 flex flex-col justify-between shadow-xl overflow-hidden">
       <div>
-        <h2 className="text-2xl font-bold mb-6 text-gray-200 p-4 mt-4">
+        <h2 className="text-2xl text-center font-bold mb-6 text-gray-200 p-4 mt-4">
           Admin Panel
         </h2>
         <nav className="p-2">
@@ -78,7 +78,7 @@ export default function Sidebar() {
           className={`w-full py-3 flex items-center justify-center gap-2 text-lg font-semibold rounded-lg shadow-md transition-all duration-300 ${
             loading
               ? "bg-gray-700 text-gray-400 cursor-not-allowed"
-              : "bg-gray-800 hover:bg-gray-700 text-white"
+              : "bg-[#0a1e5e] hover:bg-[#0a1e5e]/25 text-white"
           }`}
           disabled={loading}
         >
