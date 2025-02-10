@@ -49,7 +49,7 @@ export default function RegisterForm() {
   const {
     register,
     handleSubmit,
-    control,
+    setValue,
     formState: { errors },
   } = useForm<RegisterFormInputs>({
     resolver: yupResolver(schema),
@@ -89,15 +89,15 @@ export default function RegisterForm() {
             </p>
           </div>
           <form onSubmit={handleSubmit(onSubmit)} className="flex-1">
+            <div className="mb-3">
+              <Input
+                {...register("email")}
+                placeholder="Email"
+                className="block w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
+              />
+              <p className="text-red-400 text-xs">{errors.email?.message}</p>
+            </div>
             <div className="grid grid-cols-2 space-x-4">
-              <div className="mb-3">
-                <Input
-                  {...register("email")}
-                  placeholder="Email"
-                  className="block w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
-                />
-                <p className="text-red-400 text-xs">{errors.email?.message}</p>
-              </div>
               <div className="mb-3">
                 <Input
                   {...register("firstName")}
@@ -108,8 +108,6 @@ export default function RegisterForm() {
                   {errors.firstName?.message}
                 </p>
               </div>
-            </div>
-            <div className="grid grid-cols-2 space-x-4">
               <div className="mb-3">
                 <Input
                   {...register("lastName")}
@@ -120,17 +118,16 @@ export default function RegisterForm() {
                   {errors.lastName?.message}
                 </p>
               </div>
-              <div className="mb-3">
-                <Input
-                  {...register("userName")}
-                  placeholder="User Name"
-                  className="block w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
-                />
-                <p className="text-red-400 text-xs">
-                  {errors.userName?.message}
-                </p>
-              </div>
             </div>
+            <div className="mb-3">
+              <Input
+                {...register("userName")}
+                placeholder="User Name"
+                className="block w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
+              />
+              <p className="text-red-400 text-xs">{errors.userName?.message}</p>
+            </div>
+
             <div className="mb-3">
               <Input
                 {...register("password")}
@@ -152,27 +149,18 @@ export default function RegisterForm() {
               </p>
             </div>
             <div className="mb-6">
-              <Controller
-                name="role"
-                control={control}
-                render={({ field }) => (
-                  <Select {...field}>
-                    <SelectTrigger className="bg-white">
-                      <SelectValue
-                        className="bg-white"
-                        placeholder="Select Role"
-                      />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white">
-                      <SelectItem value="WORKER">Worker</SelectItem>
-                      <SelectItem value="ADMIN">Admin</SelectItem>
-                      <SelectItem value="COMPANY_REPRESENTATIVE">
-                        Company Representative
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
+              <Select onValueChange={(value) => setValue("role", value)}>
+                <SelectTrigger className="bg-white">
+                  <SelectValue className="bg-white" placeholder="Select Role" />
+                </SelectTrigger>
+                <SelectContent className="bg-white">
+                  <SelectItem value="WORKER">Worker</SelectItem>
+                  <SelectItem value="ADMIN">Admin</SelectItem>
+                  <SelectItem value="COMPANY_REPRESENTATIVE">
+                    Company Representative
+                  </SelectItem>
+                </SelectContent>
+              </Select>
               <p className="text-red-400 text-xs">{errors.role?.message}</p>
             </div>
             <Button

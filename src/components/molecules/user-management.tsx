@@ -6,7 +6,7 @@ import { CREATE_USER, DELETE_USER } from "@/graphql/mutations/users";
 import { useState } from "react";
 
 export default function UserManagement() {
-  const { data, loading, error, refetch } = useQuery(GET_ALL_USERS);
+  const { data, refetch } = useQuery(GET_ALL_USERS);
   const [createUser] = useMutation(CREATE_USER);
   const [deleteUser] = useMutation(DELETE_USER);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,7 +35,7 @@ export default function UserManagement() {
     }
   };
 
-  const handleDeleteUser = async (id) => {
+  const handleDeleteUser = async (id: string) => {
     try {
       await deleteUser({ variables: { id } });
       alert("User deleted successfully!");
@@ -48,9 +48,6 @@ export default function UserManagement() {
       }
     }
   };
-
-  if (loading) return <p>Loading users...</p>;
-  if (error) return <p>Error loading users: {error.message}</p>;
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">

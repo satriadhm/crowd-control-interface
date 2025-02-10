@@ -5,7 +5,6 @@ import { CREATE_TASK, DELETE_TASK } from "@/graphql/mutations/tasks";
 import { useQuery, useLazyQuery, useMutation } from "@apollo/client";
 import { useState } from "react";
 
-// Define types for tasks
 type Task = {
   id: string;
   title: string;
@@ -88,9 +87,6 @@ export default function TaskManagement() {
       );
     }
   };
-
-  if (loading) return <p>Loading tasks...</p>;
-  if (error) return <p>Error loading tasks: {error.message}</p>;
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">

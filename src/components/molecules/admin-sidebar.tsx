@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useMutation } from "@apollo/client";
 import { LOGOUT } from "@/graphql/mutations/auth";
 import { Users, ListChecks, LogOut } from "lucide-react";
@@ -10,6 +10,7 @@ export default function Sidebar() {
   const router = useRouter();
   const [logoutMutation, { loading }] = useMutation(LOGOUT);
 
+  const pathname = usePathname();
   const navigateTo = (path: string) => {
     router.push(path);
   };
@@ -25,13 +26,25 @@ export default function Sidebar() {
     }
   };
 
+  const isActive = (path: string) => path.includes(pathname);
+
+  console.log(pathname);
+
   return (
-    <aside className="bg-gradient-to-r from-[#5b0ba1] to-transparent text-white w-64 min-h-screen p-6 flex flex-col justify-between shadow-xl">
+    <aside className="bg-[#001333] text-white w-64 min-h-screen flex flex-col justify-between shadow-xl">
       <div>
-        <h2 className="text-2xl font-bold mb-6 text-gray-200">Admin Panel</h2>
-        <nav>
-          <ul className="space-y-4">
-            <li>
+        <h2 className="text-2xl font-bold mb-6 text-gray-200 p-4 mt-4">
+          Admin Panel
+        </h2>
+        <nav className="p-2">
+          <ul className="space-y-2">
+            <li
+              className={` text-sm bg-gradient-to-r p-4 rounded-lg ${
+                isActive("/user-management")
+                  ? "border  bg-[#5460ff] to-[#032054] "
+                  : ""
+              }`}
+            >
               <button
                 onClick={() => navigateTo("/user-management")}
                 className="flex items-center gap-3 w-full text-gray-300 hover:text-white transition-all"
@@ -40,7 +53,13 @@ export default function Sidebar() {
                 <span>User Management</span>
               </button>
             </li>
-            <li>
+            <li
+              className={` text-sm bg-gradient-to-r p-4 rounded-lg ${
+                isActive("/task-management")
+                  ? "border bg-[#5460ff] to-[#032054] "
+                  : ""
+              }`}
+            >
               <button
                 onClick={() => navigateTo("/task-management")}
                 className="flex items-center gap-3 w-full text-gray-300 hover:text-white transition-all"
@@ -53,8 +72,7 @@ export default function Sidebar() {
         </nav>
       </div>
 
-      {/* Logout Button */}
-      <div className="mt-10">
+      <div className="pb-4 px-2">
         <button
           onClick={handleLogout}
           className={`w-full py-3 flex items-center justify-center gap-2 text-lg font-semibold rounded-lg shadow-md transition-all duration-300 ${
