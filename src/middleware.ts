@@ -1,19 +1,19 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
   const pathname: string = request.nextUrl.pathname;
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("accessToken");
-  const refreshToken = cookieStore.get("refreshToken");
+  const accessToken = request.cookies.get("accessToken")?.value ?? "";
+  const refreshToken = request.cookies.get("refreshToken")?.value ?? "";
 
-  const publicPaths: string[] = ["/login", "/register"];
+  const publicPaths: string[] = ["/login/", "/register"];
   const protectedPaths: string[] = [
     "/dashboard",
     "/task-management",
     "/user-management",
   ];
+
+  console.log(pathname);
 
   const isPublicPath: boolean = publicPaths.some((path) =>
     pathname.startsWith(path)

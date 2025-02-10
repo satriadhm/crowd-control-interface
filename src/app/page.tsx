@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -10,13 +10,19 @@ export default function Home() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const particles: { x: number; y: number; radius: number; dx: number; dy: number }[] = [];
+    const particles: {
+      x: number;
+      y: number;
+      radius: number;
+      dx: number;
+      dy: number;
+    }[] = [];
     const numParticles = 800;
     const mouse = { x: 0, y: 0 };
 
@@ -44,7 +50,7 @@ export default function Home() {
 
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
-        ctx.fillStyle = '#fff';
+        ctx.fillStyle = "#fff";
         ctx.fill();
         particle.x += particle.dx;
         particle.y += particle.dy;
@@ -65,66 +71,75 @@ export default function Home() {
     };
 
     animate();
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('resize', () => {
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("resize", () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     });
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
 
-  return (<div className="relative h-screen bg-gradient-to-r from-primary to-secondary text-white overflow-hidden">
-    <canvas ref={canvasRef} className="absolute inset-0"></canvas>
-    <div className="absolute inset-0 flex flex-col items-center justify-center text-center z-10">
-      <motion.h1
-        className="text-6xl font-extrabold mb-6 leading-tight"
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
-      >
-        <div>Test Your Apps</div>
-        <div className="bg-clip-text text-transparent bg-gradient-to-r from-tertiary to-tertiary-light">RIGHT NOW</div>
-      </motion.h1>
-      <motion.div
-        className="text-xl mb-8 space-y-4"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5, duration: 1 }}
-      >
-        <motion.div
-          className="flex items-center space-x-4 justify-center"
-          whileHover={{ scale: 1.05 }}
+  return (
+    <div className="relative h-screen bg-gradient-to-r from-primary to-cyan-600 text-white overflow-hidden">
+      <canvas ref={canvasRef} className="absolute inset-0"></canvas>
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-center z-10">
+        <motion.h1
+          className="text-6xl font-extrabold mb-6 leading-tight"
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
         >
-          <span className="p-3 bg-white bg-opacity-20 rounded-full text-white">🚀</span>
-          <span className="font-medium">Join us in innovation</span>
-        </motion.div>
+          <div>Test Your Apps</div>
+          <div className="bg-clip-text text-transparent bg-gradient-to-r from-tertiary to-tertiary-light">
+            RIGHT NOW
+          </div>
+        </motion.h1>
         <motion.div
-          className="flex items-center space-x-4 justify-center"
-          whileHover={{ scale: 1.05 }}
+          className="text-xl mb-8 space-y-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 1 }}
         >
-          <span className="p-3 bg-white bg-opacity-20 rounded-full text-white">💰</span>
-          <span className="font-medium">Earn rewards for testing</span>
+          <motion.div
+            className="flex items-center space-x-4 justify-center"
+            whileHover={{ scale: 1.05 }}
+          >
+            <span className="p-3 bg-white bg-opacity-20 rounded-full text-white">
+              🚀
+            </span>
+            <span className="font-medium">Join us in innovation</span>
+          </motion.div>
+          <motion.div
+            className="flex items-center space-x-4 justify-center"
+            whileHover={{ scale: 1.05 }}
+          >
+            <span className="p-3 bg-white bg-opacity-20 rounded-full text-white">
+              💰
+            </span>
+            <span className="font-medium">Earn rewards for testing</span>
+          </motion.div>
+          <motion.div
+            className="flex items-center space-x-4 justify-center"
+            whileHover={{ scale: 1.05 }}
+          >
+            <span className="p-3 bg-white bg-opacity-20 rounded-full text-white">
+              🖥️
+            </span>
+            <span className="font-medium">Help us build better software</span>
+          </motion.div>
         </motion.div>
-        <motion.div
-          className="flex items-center space-x-4 justify-center"
-          whileHover={{ scale: 1.05 }}
+        <motion.a
+          href="/login"
+          className="px-6 py-3 bg-gradient-to-r from-tertiary to-tertiary-light text-white font-semibold rounded-lg shadow-md hover:bg-secondary"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
         >
-          <span className="p-3 bg-white bg-opacity-20 rounded-full text-white">🖥️</span>
-          <span className="font-medium">Help us build better software</span>
-        </motion.div>
-      </motion.div>
-      <motion.a
-        href="/login"
-        className="px-6 py-3 bg-gradient-to-r from-tertiary to-tertiary-light text-white font-semibold rounded-lg shadow-md hover:bg-secondary"
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        Get Started
-      </motion.a>
+          Get Started
+        </motion.a>
+      </div>
     </div>
-  </div>
-);
+  );
 }

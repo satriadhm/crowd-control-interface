@@ -62,9 +62,6 @@ export default function LoginForm() {
               Hi, Welcome <br /> to{" "}
               <span className="text-primary font-semibold">Evaluate</span>
             </h1>
-            <span className="text-gray-500 text-sm">
-              Please login first to save your workplace
-            </span>
           </div>
           <div className="w-full">
             {error && (

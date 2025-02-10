@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useMutation } from "@apollo/client";
 import { LOGOUT } from "@/graphql/mutations/auth";
+import { Users, ListChecks, LogOut } from "lucide-react";
 import { deleteCookie } from "cookies-next/client";
 
 export default function Sidebar() {
@@ -18,7 +19,6 @@ export default function Sidebar() {
       await logoutMutation();
       deleteCookie("accessToken");
       deleteCookie("refreshToken");
-
       router.push("/login");
     } catch (err) {
       console.error("Error during logout:", err);
@@ -26,44 +26,51 @@ export default function Sidebar() {
   };
 
   return (
-    <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white w-64 min-h-screen p-6 shadow-lg flex flex-col justify-between">
+    <aside className="bg-gray-900 text-white w-64 min-h-screen p-6 flex flex-col justify-between shadow-xl">
+      {/* Logo / Title */}
       <div>
-        <h2 className="text-2xl font-bold mb-6">Admin Panel</h2>
+        <h2 className="text-2xl font-bold mb-6 text-gray-200">Admin Panel</h2>
+
+        {/* Navigation Links */}
         <nav>
           <ul className="space-y-4">
             <li>
               <button
-                onClick={() => navigateTo("/admin/user-management")}
-                className="hover:text-blue-300"
+                onClick={() => navigateTo("/user-management")}
+                className="flex items-center gap-3 w-full text-gray-300 hover:text-white transition-all"
               >
-                User Management
+                <Users size={20} />
+                <span>User Management</span>
               </button>
             </li>
             <li>
               <button
-                onClick={() => navigateTo("/admin/task-management")}
-                className="hover:text-blue-300"
+                onClick={() => navigateTo("/task-management")}
+                className="flex items-center gap-3 w-full text-gray-300 hover:text-white transition-all"
               >
-                Task Management
+                <ListChecks size={20} />
+                <span>Task Management</span>
               </button>
             </li>
           </ul>
         </nav>
       </div>
 
+      {/* Logout Button */}
       <div className="mt-10">
         <button
           onClick={handleLogout}
-          className={`w-full py-3 mt-auto text-lg font-semibold rounded-full shadow-md transition-all duration-300 ${
+          className={`w-full py-3 flex items-center justify-center gap-2 text-lg font-semibold rounded-lg shadow-md transition-all duration-300 ${
             loading
-              ? "bg-gradient-to-r from-gray-400 to-gray-500 cursor-not-allowed"
-              : "bg-gradient-to-r from-cyan-500 to-indigo-500 hover:from-cyan-600 hover:to-indigo-600"
+              ? "bg-gray-700 text-gray-400 cursor-not-allowed"
+              : "bg-gray-800 hover:bg-gray-700 text-white"
           }`}
           disabled={loading}
         >
+          <LogOut size={20} />
           {loading ? "Logging out..." : "Logout"}
         </button>
       </div>
-    </div>
+    </aside>
   );
 }
