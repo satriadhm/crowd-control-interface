@@ -2,7 +2,7 @@
 
 import { useMutation } from "@apollo/client";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { REGISTER } from "@/graphql/mutations/auth";
@@ -48,6 +48,7 @@ export default function RegisterForm() {
   const router = useRouter();
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm<RegisterFormInputs>({
@@ -58,6 +59,8 @@ export default function RegisterForm() {
   const onSubmit = async (data: RegisterFormInputs) => {
     try {
       await registerMutation({ variables: { input: data } });
+      // print the result of the mutation
+      console.log("Registration successful:", data);
       router.push("/dashboard?isActive=true");
     } catch (err) {
       console.error("Registration error:", err);
@@ -95,24 +98,28 @@ export default function RegisterForm() {
               className="block w-full p-3 border border-gray-300 rounded-lg mb-3 bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
             />
             <p className="text-red-400 text-sm">{errors.email?.message}</p>
+
             <Input
               {...register("firstName")}
               placeholder="First Name"
               className="block w-full p-3 border border-gray-300 rounded-lg mb-3 bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
             />
             <p className="text-red-400 text-sm">{errors.firstName?.message}</p>
+
             <Input
               {...register("lastName")}
               placeholder="Last Name"
               className="block w-full p-3 border border-gray-300 rounded-lg mb-3 bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
             />
             <p className="text-red-400 text-sm">{errors.lastName?.message}</p>
+
             <Input
               {...register("userName")}
               placeholder="User Name"
               className="block w-full p-3 border border-gray-300 rounded-lg mb-3 bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
             />
             <p className="text-red-400 text-sm">{errors.userName?.message}</p>
+
             <Input
               {...register("password")}
               type="password"
@@ -120,6 +127,7 @@ export default function RegisterForm() {
               className="block w-full p-3 border border-gray-300 rounded-lg mb-3 bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
             />
             <p className="text-red-400 text-sm">{errors.password?.message}</p>
+
             <Input
               {...register("passwordConfirmation")}
               type="password"
@@ -129,20 +137,27 @@ export default function RegisterForm() {
             <p className="text-red-400 text-sm">
               {errors.passwordConfirmation?.message}
             </p>
-            <Select {...register("role")}>
-              <SelectTrigger className="mb-6">
-                <SelectValue placeholder="Select Role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="WORKER">Worker</SelectItem>
-                <SelectItem value="ADMIN">Admin</SelectItem>
-                <SelectItem value="COMPANY_REPRESENTATIVE">
-                  Company Representative
-                </SelectItem>
-              </SelectContent>
-            </Select>
 
+            <Controller
+              name="role"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <Select onValueChange={onChange} value={value}>
+                  <SelectTrigger className="mb-6">
+                    <SelectValue placeholder="Select Role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="WORKER">Worker</SelectItem>
+                    <SelectItem value="ADMIN">Admin</SelectItem>
+                    <SelectItem value="COMPANY_REPRESENTATIVE">
+                      Company Representative
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
             <p className="text-red-400 text-sm">{errors.role?.message}</p>
+
             <Button
               type="submit"
               className={`${
