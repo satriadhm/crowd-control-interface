@@ -46,7 +46,7 @@ export default function LoginForm() {
   };
 
   return (
-    <section className="border rounded-lg shadow-lg lg:max-w-[60rem] w-full mx-2">
+    <section className="rounded-3xl p-px border border-[#5b0ba1] bg-gradient-to-r from-[#5b0ba1] to-transparent">
       <div className="lg:grid grid-cols-2">
         <div className="col-span-1 lg:flex hidden items-center justify-center">
           <Image
@@ -56,11 +56,11 @@ export default function LoginForm() {
             alt="image-illustration"
           />
         </div>
-        <div className="col-span-1 flex flex-col px-4 justify-center py-12 items-center w-full">
+        <div className="col-span-1 text-white flex flex-col px-4 justify-center py-12 items-center w-full">
           <div className="text-left mb-8 w-full">
             <h1 className="text-2xl items-center gap-2">
               Hi, Welcome <br /> to{" "}
-              <span className="text-primary font-semibold">Evaluate</span>
+              <span className="text-white font-semibold">Evaluate</span>
             </h1>
           </div>
           <div className="w-full">
@@ -97,14 +97,18 @@ export default function LoginForm() {
                   </p>
                 )}
               </div>
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button
+                type="submit"
+                className="w-full bg-[#4c0e8f] border border-[#001333]"
+                disabled={loading}
+              >
                 {loading ? "Logging in..." : "Login"}
               </Button>
             </form>
           </div>
-          <span className="text-center w-full my-4 text-sm text-primary">
+          <span className="text-center text-white w-full my-4 text-sm">
             {`Don't`} have account ?{" "}
-            <Link href="/register" className="font-semibold text-primary">
+            <Link href="/register" className="font-semibold">
               Register
             </Link>
           </span>

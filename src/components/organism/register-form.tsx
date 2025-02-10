@@ -65,7 +65,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <section className="border rounded-lg shadow-lg lg:max-w-[60rem] w-full mx-2">
+    <section className="rounded-3xl p-px border border-[#5b0ba1] bg-gradient-to-r from-[#5b0ba1] to-transparent">
       <div className="lg:grid grid-cols-2">
         <div className="col-span-1 hidden lg:flex items-center justify-center">
           <Image
@@ -79,48 +79,56 @@ export default function RegisterForm() {
         <div className="col-span-1 flex flex-col px-4 justify-center py-12 w-full">
           <div className="text-left mb-8 w-full">
             <h1 className="text-2xl items-center gap-2">
-              <span className="text-primary font-semibold">Registration</span>
+              <span className="text-white font-semibold">Registration</span>
             </h1>
-            <p className="text-gray-500 text-sm mt-2">
-              Registering is quick and easy! Just fill out the form below, and
+            <p className="text-white text-sm mt-2">
+              Registering is quick and easy! Just fill out the form below, and{" "}
               {`you'll`} be on your way to enjoying everything{" "}
               <strong>Evaluate</strong> has to offer
             </p>
           </div>
           <form onSubmit={handleSubmit(onSubmit)} className="flex-1">
-            <div className="mb-3">
-              <Input
-                {...register("email")}
-                placeholder="Email"
-                className="block w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
-              />
-              <p className="text-red-400 text-xs">{errors.email?.message}</p>
+            <div className="grid grid-cols-2 space-x-4">
+              <div className="mb-3">
+                <Input
+                  {...register("email")}
+                  placeholder="Email"
+                  className="block w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
+                />
+                <p className="text-red-400 text-xs">{errors.email?.message}</p>
+              </div>
+              <div className="mb-3">
+                <Input
+                  {...register("firstName")}
+                  placeholder="First Name"
+                  className="block w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
+                />
+                <p className="text-red-400 text-xs">
+                  {errors.firstName?.message}
+                </p>
+              </div>
             </div>
-            <div className="mb-3">
-              <Input
-                {...register("firstName")}
-                placeholder="First Name"
-                className="block w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
-              />
-              <p className="text-red-400 text-xs">
-                {errors.firstName?.message}
-              </p>
-            </div>
-            <div className="mb-3">
-              <Input
-                {...register("lastName")}
-                placeholder="Last Name"
-                className="block w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
-              />
-              <p className="text-red-400 text-xs">{errors.lastName?.message}</p>
-            </div>
-            <div className="mb-3">
-              <Input
-                {...register("userName")}
-                placeholder="User Name"
-                className="block w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
-              />
-              <p className="text-red-400 text-xs">{errors.userName?.message}</p>
+            <div className="grid grid-cols-2 space-x-4">
+              <div className="mb-3">
+                <Input
+                  {...register("lastName")}
+                  placeholder="Last Name"
+                  className="block w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
+                />
+                <p className="text-red-400 text-xs">
+                  {errors.lastName?.message}
+                </p>
+              </div>
+              <div className="mb-3">
+                <Input
+                  {...register("userName")}
+                  placeholder="User Name"
+                  className="block w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
+                />
+                <p className="text-red-400 text-xs">
+                  {errors.userName?.message}
+                </p>
+              </div>
             </div>
             <div className="mb-3">
               <Input
@@ -144,10 +152,10 @@ export default function RegisterForm() {
             </div>
             <div className="mb-6">
               <Select {...register("role")}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Role" />
+                <SelectTrigger className="bg-white">
+                  <SelectValue className="bg-white" placeholder="Select Role" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white">
                   <SelectItem value="WORKER">Worker</SelectItem>
                   <SelectItem value="ADMIN">Admin</SelectItem>
                   <SelectItem value="COMPANY_REPRESENTATIVE">
@@ -160,9 +168,7 @@ export default function RegisterForm() {
 
             <Button
               type="submit"
-              className={`${
-                loading ? "cursor-not-allowed opacity-50" : ""
-              } w-full`}
+              className="w-full bg-[#4c0e8f] border border-[#001333]"
               disabled={loading}
             >
               {loading ? (
@@ -195,9 +201,9 @@ export default function RegisterForm() {
             </Button>
             {error && <p className="text-red-400 mt-4">{error.message}</p>}
           </form>
-          <span className="text-center w-full my-4 text-sm text-primary">
+          <span className="text-center w-full my-4 text-sm text-white">
             I have account ?{" "}
-            <Link href="/login" className="font-semibold text-primary">
+            <Link href="/login" className="font-semibold text-white">
               Login
             </Link>
           </span>

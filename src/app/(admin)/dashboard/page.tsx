@@ -6,7 +6,7 @@ export default function Dashboard() {
       <h1 className="text-4xl font-bold mb-8">Dashboard</h1>
       <Link
         href="/eval"
-        className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+        className="px-6 py-3 text-white rounded-md bg-gradient-to-r from-[#5b0ba1] to-transparent transition"
       >
         Go to Test Page
       </Link>

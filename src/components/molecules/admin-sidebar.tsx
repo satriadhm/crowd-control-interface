@@ -26,12 +26,9 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="bg-gray-900 text-white w-64 min-h-screen p-6 flex flex-col justify-between shadow-xl">
-      {/* Logo / Title */}
+    <aside className="bg-gradient-to-r from-[#5b0ba1] to-transparent text-white w-64 min-h-screen p-6 flex flex-col justify-between shadow-xl">
       <div>
         <h2 className="text-2xl font-bold mb-6 text-gray-200">Admin Panel</h2>
-
-        {/* Navigation Links */}
         <nav>
           <ul className="space-y-4">
             <li>
