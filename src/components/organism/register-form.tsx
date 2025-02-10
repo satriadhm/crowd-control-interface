@@ -2,7 +2,7 @@
 
 import { useMutation } from "@apollo/client";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { REGISTER } from "@/graphql/mutations/auth";
@@ -49,6 +49,7 @@ export default function RegisterForm() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<RegisterFormInputs>({
     resolver: yupResolver(schema),
@@ -151,21 +152,29 @@ export default function RegisterForm() {
               </p>
             </div>
             <div className="mb-6">
-              <Select {...register("role")}>
-                <SelectTrigger className="bg-white">
-                  <SelectValue className="bg-white" placeholder="Select Role" />
-                </SelectTrigger>
-                <SelectContent className="bg-white">
-                  <SelectItem value="WORKER">Worker</SelectItem>
-                  <SelectItem value="ADMIN">Admin</SelectItem>
-                  <SelectItem value="COMPANY_REPRESENTATIVE">
-                    Company Representative
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+              <Controller
+                name="role"
+                control={control}
+                render={({ field }) => (
+                  <Select {...field}>
+                    <SelectTrigger className="bg-white">
+                      <SelectValue
+                        className="bg-white"
+                        placeholder="Select Role"
+                      />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white">
+                      <SelectItem value="WORKER">Worker</SelectItem>
+                      <SelectItem value="ADMIN">Admin</SelectItem>
+                      <SelectItem value="COMPANY_REPRESENTATIVE">
+                        Company Representative
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
               <p className="text-red-400 text-xs">{errors.role?.message}</p>
             </div>
-
             <Button
               type="submit"
               className="w-full bg-[#4c0e8f] border border-[#001333]"
