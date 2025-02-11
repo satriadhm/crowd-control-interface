@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import { ClipboardList, Trash2 } from "lucide-react";
+import { ClipboardList } from "lucide-react";
 
 type Task = {
   id: string;

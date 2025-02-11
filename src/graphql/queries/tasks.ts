@@ -19,10 +19,12 @@ export const GET_TASKS = gql`
 export const GET_TASK_BY_ID = gql`
   query GetTaskById($id: String!) {
     getTaskById(id: $id) {
+      id
       title
       question
+      description
+      nAnswers
       answers {
-        workerId
         answer
         stats
       }

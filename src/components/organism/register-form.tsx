@@ -2,7 +2,7 @@
 
 import { useMutation } from "@apollo/client";
 import { useRouter } from "next/navigation";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { REGISTER } from "@/graphql/mutations/auth";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useMutation } from "@apollo/client";
-import { GET_ALL_USERS } from "@/graphql/queries/users";
+import { GET_ALL_USERS, GET_USER_BY_ID } from "@/graphql/queries/users";
 import { CREATE_USER, DELETE_USER } from "@/graphql/mutations/users";
 import { useState } from "react";
 import {
@@ -25,6 +25,11 @@ export default function UserManagement() {
     lastName: "",
     email: "",
     role: "WORKER",
+  });
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const { data: userData } = useQuery(GET_USER_BY_ID, {
+    variables: { id: selectedUserId },
+    skip: !selectedUserId,
   });
 
   const handleCreateUser = async () => {
@@ -59,8 +64,12 @@ export default function UserManagement() {
     }
   };
 
+  const handleViewUserDetails = (id: string) => {
+    setSelectedUserId(id);
+  };
+
   return (
-    <div className="p-6 bg-gray-50">
+    <div className={`p-6 bg-gray-50 ${selectedUserId ? 'blur-sm' : ''}`}>
       <div className="flex justify-end items-center mb-6">
         <button
           className="px-4 py-2 flex items-center gap-2 bg-[#001333] text-white rounded shadow"
@@ -130,15 +139,31 @@ export default function UserManagement() {
         </div>
       )}
 
+      {selectedUserId && userData && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded shadow-lg w-1/2">
+            <h2 className="text-xl font-bold mb-4">User Details</h2>
+            <p><strong>First Name:</strong> {userData.getUserById.firstName}</p>
+            <p><strong>Last Name:</strong> {userData.getUserById.lastName}</p>
+            <p><strong>Email:</strong> {userData.getUserById.email}</p>
+            <p><strong>Role:</strong> {userData.getUserById.role}</p>
+            <button
+              onClick={() => setSelectedUserId(null)}
+              className="mt-4 px-4 py-2 bg-gray-300 rounded"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="bg-white p-6 border rounded shadow">
         <Table>
           <TableCaption>A list of users.</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="font-semibold text-primary">Name</TableHead>
-              <TableHead className="font-semibold text-primary">
-                Email
-              </TableHead>
+              <TableHead className="font-semibold text-primary">Email</TableHead>
               <TableHead className="font-semibold text-primary">Role</TableHead>
               <TableHead className="font-semibold text-right text-primary">
                 Action
@@ -164,6 +189,12 @@ export default function UserManagement() {
                   </span>
                 </TableCell>
                 <TableCell className="text-right">
+                  <button
+                    onClick={() => handleViewUserDetails(user.id)}
+                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-400 mr-2"
+                  >
+                    View
+                  </button>
                   <button
                     onClick={() => handleDeleteUser(user.id)}
                     className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-400"
