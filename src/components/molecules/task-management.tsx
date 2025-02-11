@@ -13,7 +13,11 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import { ClipboardList } from "lucide-react";
+import { ClipboardList, ClipboardPlus, Trash2 } from "lucide-react";
+import { Button } from "../ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
 
 type Task = {
   id: string;
@@ -100,134 +104,139 @@ export default function TaskManagement() {
   return (
     <div className="p-6 bg-gray-50">
       <div className="flex justify-end items-center mb-6">
-        <button
-          className="px-4 flex items-center gap-2 py-2 bg-[#001333] text-white rounded shadow"
-          onClick={() => setIsModalOpen(true)}
-        >
+        <Button className="bg-[#001333]" onClick={() => setIsModalOpen(true)}>
           <ClipboardList size={16} /> Create Task
-        </button>
+        </Button>
       </div>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded shadow-lg w-1/2">
-            <h2 className="text-xl font-bold mb-4">Create New Task</h2>
-            <input
+      <Dialog
+        open={isModalOpen}
+        onOpenChange={() => setIsModalOpen(!isModalOpen)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create New User</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4 mt-6">
+            <Input
               type="text"
               placeholder="Title"
               value={newTask.title}
               onChange={(e) =>
                 setNewTask({ ...newTask, title: e.target.value })
               }
-              className="w-full p-3 mb-3 border rounded"
             />
-            <textarea
+            <Textarea
               placeholder="Description"
               value={newTask.description}
               onChange={(e) =>
                 setNewTask({ ...newTask, description: e.target.value })
               }
-              className="w-full p-3 mb-3 border rounded"
             />
-            <textarea
+            <Textarea
               placeholder="Question"
               value={newTask.question}
               onChange={(e) =>
                 setNewTask({ ...newTask, question: e.target.value })
               }
-              className="w-full p-3 mb-3 border rounded"
             />
             {newTask.answers.map((answer, idx) => (
-              <div key={idx} className="mb-3">
-                <input
+              <div key={idx} className="mb-3 gap-2 flex items-center">
+                <Input
                   type="text"
-                  placeholder="Answer"
+                  placeholder={`Answer - ${idx + 1}`}
                   value={answer.answer}
                   onChange={(e) => {
                     const updatedAnswers = [...newTask.answers];
                     updatedAnswers[idx].answer = e.target.value;
                     setNewTask({ ...newTask, answers: updatedAnswers });
                   }}
-                  className="w-full p-3 mb-3 border rounded"
                 />
 
-                <button
+                <Button
+                  variant="destructive"
                   onClick={() => {
                     const updatedAnswers = newTask.answers.filter(
                       (_, index) => index !== idx
                     );
                     setNewTask({ ...newTask, answers: updatedAnswers });
                   }}
-                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-400"
                 >
-                  Remove Answer
-                </button>
+                  <Trash2 />
+                </Button>
               </div>
             ))}
-            <button
+            <Button
               onClick={() =>
                 setNewTask({
                   ...newTask,
                   answers: [...newTask.answers, { answer: "" }],
                 })
               }
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-400"
             >
-              Add Answer
-            </button>
+              <ClipboardPlus size={16} /> Add Answer
+            </Button>
             <div className="flex justify-end space-x-4">
-              <button
+              <Button
                 onClick={() => setIsModalOpen(false)}
                 className="px-4 py-2 bg-gray-300 rounded"
               >
                 Cancel
-              </button>
-              <button
-                onClick={handleCreateTask}
-                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-400"
-              >
-                Create
-              </button>
+              </Button>
+              <Button onClick={handleCreateTask}>Create</Button>
             </div>
           </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
 
-      {isDetailModalOpen && selectedTask && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded shadow-lg w-1/2">
-            <h2 className="text-xl font-bold mb-4">Task Details</h2>
-            <p>
-              <strong>Title:</strong> {selectedTask.title}
+      <Dialog
+        open={isDetailModalOpen}
+        onOpenChange={() => setIsDetailModalOpen(!isDetailModalOpen)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Detail Task</DialogTitle>
+          </DialogHeader>
+
+          <section>
+            <div className="grid grid-cols-2">
+              <p className="font-semibold">Title </p>
+              <p>: {selectedTask?.title}</p>
+            </div>
+            <div className="grid grid-cols-2">
+              <p className="font-semibold">Description </p>
+              <p>: {selectedTask?.description}</p>
+            </div>
+            <div className="grid grid-cols-2">
+              <p className="font-semibold">Question </p>
+              <p>: {selectedTask?.question}</p>
+            </div>
+            <p className="my-6 font-semibold">
+              make a section for creating the answer too
             </p>
-            <p>
-              <strong>Description:</strong> {selectedTask.description}
-            </p>
-            <p>
-              <strong>Question:</strong> {selectedTask.question}
-            </p>
-            {/* make a section for creating the answer too */}
-            <ul>
-              {selectedTask.answers.map((answer, idx) => (
-                <li key={idx}>
+            <ul className="list-disc">
+              {selectedTask?.answers.map((answer, idx) => (
+                <li className="flex list-disc items-center gap-2" key={idx}>
                   <p>
-                    <strong>Answer:</strong> {answer.answer}
+                    <strong>Answer:</strong> {answer.answer ?? "-"}
                   </p>
                   <p>
-                    <strong>Stats:</strong> {answer.stats}
+                    <strong>Stats:</strong> {answer.stats ?? "-"}
                   </p>
                 </li>
               ))}
             </ul>
-            <button
+
+            <Button
               onClick={() => setIsDetailModalOpen(false)}
-              className="px-4 py-2 bg-gray-300 rounded mt-4"
+              className="mt-8 w-full"
             >
               Close
-            </button>
-          </div>
-        </div>
-      )}
+            </Button>
+          </section>
+        </DialogContent>
+      </Dialog>
 
       <div className="bg-white p-6 border rounded shadow">
         <Table>
@@ -250,19 +259,19 @@ export default function TaskManagement() {
                 <TableCell>
                   <span>{task.description}</span>
                 </TableCell>
-                <TableCell className="text-right space-x-2">
-                  <button
+                <TableCell className="text-right space-x-2 flex items-center justify-end">
+                  <Button
                     onClick={() => handleGetTaskById(task.id)}
-                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-400"
+                    className="bg-[#0a1e5e]"
                   >
                     View
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    variant="destructive"
                     onClick={() => handleDeleteTask(task.id)}
-                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-400"
                   >
-                    Delete
-                  </button>
+                    <Trash2 />
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}

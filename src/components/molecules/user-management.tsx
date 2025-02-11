@@ -14,6 +14,16 @@ import {
   TableRow,
 } from "../ui/table";
 import { Trash2, UserPlus } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 
 export default function UserManagement() {
   const { data, refetch } = useQuery(GET_ALL_USERS);
@@ -26,6 +36,7 @@ export default function UserManagement() {
     email: "",
     role: "WORKER",
   });
+
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const { data: userData } = useQuery(GET_USER_BY_ID, {
     variables: { id: selectedUserId },
@@ -69,39 +80,47 @@ export default function UserManagement() {
   };
 
   return (
-    <div className={`p-6 bg-gray-50 ${selectedUserId ? 'blur-sm' : ''}`}>
+    <div className={`p-6 bg-gray-50 ${selectedUserId ? "blur-sm" : ""}`}>
       <div className="flex justify-end items-center mb-6">
-        <button
-          className="px-4 py-2 flex items-center gap-2 bg-[#001333] text-white rounded shadow"
+        <Button
+          className="flex items-center gap-2 bg-[#001333] text-white rounded shadow"
           onClick={() => setIsModalOpen(true)}
         >
           <UserPlus size={16} /> Create User
-        </button>
+        </Button>
       </div>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded shadow-lg w-1/2">
-            <h2 className="text-xl font-bold mb-4">Create New User</h2>
-            <input
-              type="text"
-              placeholder="First Name"
-              value={newUser.firstName}
-              onChange={(e) =>
-                setNewUser({ ...newUser, firstName: e.target.value })
-              }
-              className="w-full p-3 mb-3 border rounded"
-            />
-            <input
-              type="text"
-              placeholder="Last Name"
-              value={newUser.lastName}
-              onChange={(e) =>
-                setNewUser({ ...newUser, lastName: e.target.value })
-              }
-              className="w-full p-3 mb-3 border rounded"
-            />
-            <input
+      <Dialog
+        open={isModalOpen}
+        onOpenChange={() => setIsModalOpen(!isModalOpen)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create New User</DialogTitle>
+          </DialogHeader>
+
+          <div className="bg-white mt-6">
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                type="text"
+                placeholder="First Name"
+                value={newUser.firstName}
+                onChange={(e) =>
+                  setNewUser({ ...newUser, firstName: e.target.value })
+                }
+                className="w-full p-3 mb-3 border rounded"
+              />
+              <Input
+                type="text"
+                placeholder="Last Name"
+                value={newUser.lastName}
+                onChange={(e) =>
+                  setNewUser({ ...newUser, lastName: e.target.value })
+                }
+                className="w-full p-3 mb-3 border rounded"
+              />
+            </div>
+            <Input
               type="email"
               placeholder="Email"
               value={newUser.email}
@@ -110,52 +129,65 @@ export default function UserManagement() {
               }
               className="w-full p-3 mb-3 border rounded"
             />
-            <select
-              value={newUser.role}
-              onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-              className="w-full p-3 mb-3 border rounded"
+
+            <Select
+              onValueChange={(value) =>
+                setNewUser((prev) => ({ ...prev, role: value }))
+              }
             >
-              <option value="WORKER">Worker</option>
-              <option value="ADMIN">Admin</option>
-              <option value="COMPANY_REPRESENTATIVE">
-                Company Representative
-              </option>
-            </select>
-            <div className="flex justify-end space-x-4">
-              <button
+              <SelectTrigger className="bg-white">
+                <SelectValue className="bg-white" placeholder="Select Role" />
+              </SelectTrigger>
+              <SelectContent className="bg-white">
+                <SelectItem value="WORKER">Worker</SelectItem>
+                <SelectItem value="ADMIN">Admin</SelectItem>
+                <SelectItem value="COMPANY_REPRESENTATIVE">
+                  Company Representative
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            <div className="mt-8 gap-4 flex justify-end">
+              <Button
                 onClick={() => setIsModalOpen(false)}
                 className="px-4 py-2 bg-gray-300 rounded"
               >
                 Cancel
-              </button>
-              <button
-                onClick={handleCreateUser}
-                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-400"
-              >
-                Create
-              </button>
+              </Button>
+              <Button onClick={handleCreateUser}>Create</Button>
             </div>
           </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
 
-      {selectedUserId && userData && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded shadow-lg w-1/2">
-            <h2 className="text-xl font-bold mb-4">User Details</h2>
-            <p><strong>First Name:</strong> {userData.getUserById.firstName}</p>
-            <p><strong>Last Name:</strong> {userData.getUserById.lastName}</p>
-            <p><strong>Email:</strong> {userData.getUserById.email}</p>
-            <p><strong>Role:</strong> {userData.getUserById.role}</p>
-            <button
-              onClick={() => setSelectedUserId(null)}
-              className="mt-4 px-4 py-2 bg-gray-300 rounded"
-            >
-              Close
-            </button>
+      <Dialog
+        open={!!selectedUserId}
+        onOpenChange={() => setSelectedUserId(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Detail User</DialogTitle>
+          </DialogHeader>
+          <div className="mb-8">
+            <div className="grid grid-cols-2">
+              <p className="font-semibold">First Name </p>
+              <p>: {userData?.getUserById?.firstName}</p>
+            </div>
+            <div className="grid grid-cols-2">
+              <p className="font-semibold">Last Name </p>
+              <p>: {userData?.getUserById?.lastName}</p>
+            </div>
+            <div className="grid grid-cols-2">
+              <p className="font-semibold">Email </p>
+              <p>: {userData?.getUserById?.email}</p>
+            </div>
+            <div className="grid grid-cols-2">
+              <p className="font-semibold">Role </p>
+              <p>: {userData?.getUserById?.role}</p>
+            </div>
           </div>
-        </div>
-      )}
+          <Button onClick={() => setSelectedUserId(null)}>Close</Button>
+        </DialogContent>
+      </Dialog>
 
       <div className="bg-white p-6 border rounded shadow">
         <Table>
@@ -163,7 +195,9 @@ export default function UserManagement() {
           <TableHeader>
             <TableRow>
               <TableHead className="font-semibold text-primary">Name</TableHead>
-              <TableHead className="font-semibold text-primary">Email</TableHead>
+              <TableHead className="font-semibold text-primary">
+                Email
+              </TableHead>
               <TableHead className="font-semibold text-primary">Role</TableHead>
               <TableHead className="font-semibold text-right text-primary">
                 Action
@@ -179,28 +213,28 @@ export default function UserManagement() {
                 <TableCell>{user.email}</TableCell>
                 <TableCell>
                   <span
-                    className={`text-white px-4 py-1 rounded-lg ${
+                    className={`text-white text-sm px-4 py-1 rounded-lg ${
                       user.role.includes("worker")
-                        ? "bg-purple-400"
-                        : "bg-red-500"
+                        ? "border border-[#4a57e8] text-[#4a57e8]"
+                        : "border border-[#0a1e5e] text-[#0a1e5e]"
                     }`}
                   >
                     {user.role}
                   </span>
                 </TableCell>
-                <TableCell className="text-right">
-                  <button
+                <TableCell className="text-right flex items-center gap-2 justify-end">
+                  <Button
                     onClick={() => handleViewUserDetails(user.id)}
-                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-400 mr-2"
+                    className="bg-[#0a1e5e]"
                   >
                     View
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => handleDeleteUser(user.id)}
-                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-400"
+                    variant="destructive"
                   >
                     <Trash2 size={14} />
-                  </button>
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
