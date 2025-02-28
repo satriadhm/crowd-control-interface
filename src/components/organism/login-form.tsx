@@ -7,9 +7,9 @@ import { LOGIN } from "@/graphql/mutations/auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { setCookie } from "cookies-next/client";
 import Image from "next/image";
 import Link from "next/link";
+import { useAuthStore } from "@/store/authStore";
 
 interface LoginFormInputs {
   email: string;
@@ -18,6 +18,7 @@ interface LoginFormInputs {
 
 export default function LoginForm() {
   const router = useRouter();
+  const { setAuth } = useAuthStore();
   const {
     register,
     handleSubmit,
@@ -34,10 +35,10 @@ export default function LoginForm() {
       if (!response?.data?.login) {
         throw new Error("Invalid API response");
       }
+
       const { role, accessToken, refreshToken } = response.data.login;
 
-      setCookie("accessToken", accessToken);
-      setCookie("refreshToken", refreshToken);
+      setAuth(role, accessToken, refreshToken);
 
       router.push(role === "admin" ? `/task-management` : `/dashboard`);
     } catch (err) {
@@ -117,3 +118,5 @@ export default function LoginForm() {
     </section>
   );
 }
+
+

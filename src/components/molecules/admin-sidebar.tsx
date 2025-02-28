@@ -4,17 +4,13 @@ import { usePathname, useRouter } from "next/navigation";
 import { useMutation } from "@apollo/client";
 import { LOGOUT } from "@/graphql/mutations/auth";
 import { Users, ListChecks, LogOut } from "lucide-react";
-import { deleteCookie, getCookie } from "cookies-next/client";
+import { useAuthStore } from "@/store/authStore";
 
 export default function Sidebar() {
   const router = useRouter();
+  const { clearAuth } = useAuthStore();
   const [logoutMutation, { loading }] = useMutation(LOGOUT);
   const pathname = usePathname();
-  const userRole = getCookie("userRole");
-  console.log(userRole);
-  if (userRole !== "admin") {
-    return null;
-  }
   const navigateTo = (path: string) => {
     router.push(path);
   };
@@ -22,8 +18,7 @@ export default function Sidebar() {
   const handleLogout = async () => {
     try {
       await logoutMutation();
-      deleteCookie("accessToken");
-      deleteCookie("refreshToken");
+      clearAuth();
       router.push("/login");
     } catch (err) {
       console.error("Error during logout:", err);
