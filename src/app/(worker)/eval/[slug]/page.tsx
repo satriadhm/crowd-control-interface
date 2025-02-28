@@ -1,3 +1,4 @@
+// src/app/(worker)/eval/[slug]/page.tsx
 "use client";
 
 import { SUBMIT_ANSWER } from "@/graphql/mutations/tasks";
@@ -10,8 +11,8 @@ import React, { useEffect, useState } from "react";
 
 export default function PageDetail() {
   const taskId = useTaskDetail((state) => state.id);
-
   const [myAnswer, setMyAnswer] = useState<string>("");
+  const [timeLeft, setTimeLeft] = useState<number>(60); // 60 seconds
   const router = useRouter();
 
   const [submitAnswer] = useMutation(SUBMIT_ANSWER);
@@ -26,6 +27,20 @@ export default function PageDetail() {
     }
   }, [taskId, getTaskById]);
 
+  useEffect(() => {
+    if (timeLeft === 0) {
+      alert("Time's up!");
+      router.push("/eval");
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [timeLeft, router]);
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
@@ -38,7 +53,6 @@ export default function PageDetail() {
         },
       });
       alert("Answer submitted successfully!");
-
       router.push(`/eval`);
     } catch (err) {
       console.error("Error submitting answer:", err);
@@ -46,10 +60,16 @@ export default function PageDetail() {
   };
 
   return (
-    <div className="flex h-screen w-full justify-center items-center">
+    <div className="flex h-screen w-full justify-center items-center bg-gradient-to-r from-[#0a1e5e] to-[#001333] text-white">
       <div className="mt-5">
         {taskDetailData ? (
           <div className="">
+            <div className="w-full bg-gray-800 rounded-full h-2.5 mb-4">
+              <div
+                className="bg-green-500 h-2.5 rounded-full"
+                style={{ width: `${(timeLeft / 60) * 100}%` }}
+              ></div>
+            </div>
             <p>{taskDetailData?.getTaskById.question}</p>
 
             <div className="flex flex-wrap gap-4 items-center justify-center mt-12">
