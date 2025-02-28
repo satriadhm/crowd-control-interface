@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { getCookie } from "cookies-next/client";
 
 type TTaskDetail = {
   id: string;
@@ -18,3 +19,8 @@ export const useTaskDetail = create<TTaskDetail>()(
     }
   )
 );
+
+export const getUserRole = () => {
+  const role = getCookie("userRole");
+  return role;
+};

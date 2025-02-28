@@ -7,7 +7,7 @@ import { LOGIN } from "@/graphql/mutations/auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { setCookie } from "cookies-next/client";
+import { getCookie, setCookie } from "cookies-next/client";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -38,8 +38,11 @@ export default function LoginForm() {
 
       setCookie("accessToken", accessToken);
       setCookie("refreshToken", refreshToken);
-
-      router.push(role === "admin" ? `/task-management` : `/dashboard`);
+      setCookie("userRole", role);
+      console.log(getCookie("userRole"));
+      setTimeout(() => {
+        router.push(role === "admin" ? `/task-management` : `/dashboard`);
+      }, 100);
     } catch (err) {
       console.error("Login failed:", err);
     }
