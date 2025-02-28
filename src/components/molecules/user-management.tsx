@@ -212,15 +212,16 @@ export default function UserManagement() {
                 </TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>
-                  <span
-                    className={`text-white text-sm px-4 py-1 rounded-lg ${
-                      user.role.includes("worker")
-                        ? "border border-[#4a57e8] text-[#4a57e8]"
-                        : "border border-[#0a1e5e] text-[#0a1e5e]"
-                    }`}
-                  >
-                    {user.role}
-                  </span>
+                <span
+  className={`text-sm px-4 py-1 rounded-lg ${
+    user.role.includes("worker")
+      ? "bg-green-500 text-white border border-green-700"
+      : "bg-orange-500 text-white border border-orange-700"
+  }`}
+>
+  {user.role}
+</span>
+
                 </TableCell>
                 <TableCell className="text-right flex items-center gap-2 justify-end">
                   <Button
