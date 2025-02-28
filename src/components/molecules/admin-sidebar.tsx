@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useMutation } from "@apollo/client";
 import { LOGOUT } from "@/graphql/mutations/auth";
-import { Users, ListChecks, LogOut } from "lucide-react";
+import { Users, ListChecks, LogOut, User } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 
 export default function Sidebar() {
@@ -26,8 +26,6 @@ export default function Sidebar() {
   };
 
   const isActive = (path: string) => path.includes(pathname);
-
-  console.log(pathname);
 
   return (
     <aside className="bg-[#001333] h-screen text-white col-span-2 flex flex-col justify-between shadow-xl overflow-hidden">
@@ -65,6 +63,21 @@ export default function Sidebar() {
               >
                 <ListChecks size={20} />
                 <span>Task Management</span>
+              </button>
+            </li>
+            <li
+              className={` text-sm bg-gradient-to-r p-4 rounded-lg ${
+                isActive("/dashboard/edit-profile")
+                  ? "border bg-[#5460ff] to-[#032054] "
+                  : ""
+              }`}
+            >
+              <button
+                onClick={() => navigateTo("/dashboard/edit-profile")}
+                className="flex items-center gap-3 w-full text-gray-300 hover:text-white transition-all"
+              >
+                <User size={20} />
+                <span>Edit Profile</span>
               </button>
             </li>
           </ul>
