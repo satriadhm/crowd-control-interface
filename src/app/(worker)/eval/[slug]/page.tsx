@@ -70,7 +70,7 @@ export default function PageDetail() {
                 style={{ width: `${(timeLeft / 60) * 100}%` }}
               ></div>
             </div>
-            <p>{taskDetailData?.getTaskById.question}</p>
+            <p className="text-white">{taskDetailData?.getTaskById.question}</p>
 
             <div className="flex flex-wrap gap-4 items-center justify-center mt-12">
               {taskDetailData.getTaskById.answers?.map((item, index) => (
@@ -78,7 +78,7 @@ export default function PageDetail() {
                   onClick={() => setMyAnswer(item.answer)}
                   className={`border ${
                     myAnswer.includes(item.answer) ? "bg-cyan-500/25" : ""
-                  } border-cyan-500 px-8 py-2 hover:bg-cyan-500/25 rounded-lg`}
+                  } border-cyan-500 px-8 py-2 hover:bg-cyan-500/25 rounded-lg text-white`}
                   key={index}
                 >
                   {item.answer}

@@ -1,3 +1,4 @@
+// src/components/molecules/charts.tsx
 "use client";
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -14,17 +15,17 @@ const data = [
 
 export default function DashboardCharts() {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold mb-4">Task Completion Rate</h2>
+    <div className="bg-white/10 p-6 rounded-lg shadow-md">
+      <h2 className="text-xl font-semibold mb-4 text-white">Task Completion Rate</h2>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
+          <CartesianGrid strokeDasharray="3 3" stroke="#4A5568" />
+          <XAxis dataKey="name" stroke="#CBD5E0" />
+          <YAxis stroke="#CBD5E0" />
+          <Tooltip contentStyle={{ backgroundColor: '#2D3748', border: 'none', borderRadius: '8px' }} />
           <Legend />
-          <Bar dataKey="pv" fill="#8884d8" />
-          <Bar dataKey="uv" fill="#82ca9d" />
+          <Bar dataKey="pv" fill="#4299E1" />
+          <Bar dataKey="uv" fill="#48BB78" />
         </BarChart>
       </ResponsiveContainer>
     </div>
