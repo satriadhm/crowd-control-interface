@@ -1,17 +1,18 @@
 import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
-import { getCookie } from "cookies-next/client";
+import { useAuthStore } from "@/store/authStore"; // Import Zustand store
 
 const httpLink = createHttpLink({
   uri: process.env.NEXT_PUBLIC_GRAPHQL_URI || "http://localhost:5000/graphql",
 });
 
 const authLink = setContext((_, { headers }) => {
-  const token = getCookie("accessToken") ?? "";
+  const { accessToken } = useAuthStore.getState(); // Ambil token dari Zustand
+
   return {
     headers: {
       ...headers,
-      authorization: token ? `Bearer ${token}` : "",
+      authorization: accessToken ? `Bearer ${accessToken}` : "",
     },
   };
 });

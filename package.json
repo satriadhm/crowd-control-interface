@@ -20,7 +20,6 @@
     "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "cookies-next": "^5.1.0",
     "framer-motion": "^11.18.1",
     "graphql": "^16.10.0",
     "jsonwebtoken": "^9.0.2",

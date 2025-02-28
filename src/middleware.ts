@@ -13,6 +13,8 @@ export async function middleware(request: NextRequest) {
     "/user-management",
   ];
 
+  console.log(pathname);
+
   const isPublicPath: boolean = publicPaths.some((path) =>
     pathname.startsWith(path)
   );

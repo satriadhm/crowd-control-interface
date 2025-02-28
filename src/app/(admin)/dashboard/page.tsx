@@ -11,9 +11,26 @@ export default function Dashboard() {
   const router = useRouter();
 
   // Fetch User Data from GraphQL
+  console.log("Sending request to fetch user data with token:", accessToken);
   const { data, loading, error } = useQuery(GET_LOGGED_IN_USER, {
     variables: { token: accessToken }, 
     fetchPolicy: "network-only",
+    onCompleted: (data) => {
+      console.log("User data fetched successfully:", data);
+    },
+    onError: (error) => {
+      console.error("Error fetching user data:", error);
+    },
+    context: {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    },
+  });
+
+  console.log("GraphQL Query:", GET_LOGGED_IN_USER.loc?.source.body);
+  console.log("GraphQL Headers:", {
+    Authorization: `Bearer ${accessToken}`,
   });
 
   const handleLogout = () => {
