@@ -85,7 +85,7 @@ export default function RegisterForm() {
             <p className="text-white text-sm mt-2">
               Registering is quick and easy! Just fill out the form below, and{" "}
               {`you'll`} be on your way to enjoying everything{" "}
-              <strong>Evaluate</strong> has to offer
+              <strong>TrustCrowd©</strong> has to offer
             </p>
           </div>
           <form onSubmit={handleSubmit(onSubmit)} className="flex-1">

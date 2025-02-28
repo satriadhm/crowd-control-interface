@@ -61,7 +61,7 @@ export default function LoginForm() {
           <div className="text-left mb-8 w-full">
             <h1 className="text-2xl items-center gap-2">
               Hi, Welcome <br /> to{" "}
-              <span className="text-white font-semibold">Evaluate</span>
+              <span className="text-white font-semibold">TrustCrowd©</span>
             </h1>
           </div>
           <div className="w-full">

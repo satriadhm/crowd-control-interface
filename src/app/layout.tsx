@@ -2,8 +2,9 @@ import ApolloProviderWrapper from "../layout/apollo-provider";
 import "./globals.css";
 
 export const metadata = {
-  title: "Worker Quality Control",
-  description: "Next.js integrated with Apollo Client",
+  title: "TrustCrowd©",
+  description: "Quality Control Mechanism for Crowdsourcing",
+  keywords: "TrustCrowd, Crowdsourcing, Quality Control",
 };
 
 export default function RootLayout({
