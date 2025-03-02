@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuthStore } from "@/store/authStore";
+import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@apollo/client";
 import Sidebar from "@/components/molecules/admin-sidebar";
@@ -13,6 +14,7 @@ export default function Dashboard() {
 
   const { data, loading, error } = useQuery(GET_LOGGED_IN_USER, {
     variables: { token: accessToken },
+    skip: !accessToken,
     fetchPolicy: "network-only",
     onCompleted: (data) => {
       console.log("User data fetched successfully:", data);
@@ -29,6 +31,8 @@ export default function Dashboard() {
 
   const handleLogout = () => {
     clearAuth();
+    Cookies.remove("accessToken");
+    Cookies.remove("refreshToken");
     router.push("/login");
   };
 

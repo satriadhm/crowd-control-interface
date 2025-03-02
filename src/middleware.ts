@@ -9,9 +9,9 @@ export async function middleware(request: NextRequest) {
   const refreshToken = request.cookies.get("refreshToken")?.value ?? "";
   // Ambil token dari header
   const authHeader = request.headers.get("authorization") ?? "";
-
+  console.log("Auth header:", authHeader);
   const publicPaths: string[] = ["/login/", "/register"];
-  const protectedPaths: string[] = ["/dashboard", "/task-management", "/user-management"];
+  const protectedPaths: string[] = ["/dashboard", "/task-management", "/user-management","/eval"];
 
   const isPublicPath = publicPaths.some((path) => pathname.startsWith(path));
   const isProtectedPath = protectedPaths.some((path) => pathname.startsWith(path));
@@ -19,9 +19,6 @@ export async function middleware(request: NextRequest) {
   if (isPublicPath) {
     return NextResponse.next();
   }
-
-  // Jika mengakses path yang dilindungi dan tidak ada token di cookie maupun header,
-  // redirect ke /login.
   if (isProtectedPath && !accessToken && !refreshToken && !authHeader) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
