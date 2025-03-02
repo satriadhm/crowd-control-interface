@@ -42,7 +42,6 @@ export default function TaskManagement() {
   const [createTask] = useMutation(CREATE_TASK);
   const [deleteTask] = useMutation(DELETE_TASK);
 
-  console.log({ data });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [newTask, setNewTask] = useState<CreateTask>({
