@@ -52,9 +52,3 @@ export const DELETE_TASK = gql`
     }
   }
 `;
-
-export const SUBMIT_ANSWER = gql`
-  mutation SubmitAnswer($answer: String!, $taskId: String!) {
-    submitAnswer(answer: $answer, taskId: $taskId)
-  }
-`;

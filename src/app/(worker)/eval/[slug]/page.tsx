@@ -1,7 +1,7 @@
 // src/app/(worker)/eval/[slug]/page.tsx
 "use client";
 
-import { SUBMIT_ANSWER } from "@/graphql/mutations/tasks";
+import { SUBMIT_ANSWER } from "@/graphql/queries/m1";
 import { GET_TASK_BY_ID } from "@/graphql/queries/tasks";
 import { Task } from "@/graphql/types/tasks";
 import { useTaskDetail } from "@/utils/common";
