@@ -5,6 +5,7 @@ import { useMutation } from "@apollo/client";
 import { LOGOUT } from "@/graphql/mutations/auth";
 import { User, LogOut, ClipboardList } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
+import Cookies from "js-cookie";
 
 export default function WorkerSidebar() {
   const router = useRouter();
@@ -19,6 +20,8 @@ export default function WorkerSidebar() {
   const handleLogout = async () => {
     try {
       await logoutMutation();
+      Cookies.remove("accessToken");
+      Cookies.remove("refreshToken");
       clearAuth();
       router.push("/login");
     } catch (err) {
