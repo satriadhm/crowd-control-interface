@@ -31,3 +31,9 @@ export const GET_TASK_BY_ID = gql`
     }
   }
 `;
+
+export const GET_TOTAL_TASKS = gql`
+  query GetTotalTasks {
+    getTotalTasks
+  }
+`;

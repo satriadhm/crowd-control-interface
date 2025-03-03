@@ -3,18 +3,39 @@
 import { useAuthStore } from "@/store/authStore";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@apollo/client";
-import WorkerSidebar from "@/components/molecules/worker-sidebar"; // Ganti impor ini
+import WorkerSidebar from "@/components/molecules/worker-sidebar";
 import { GET_LOGGED_IN_USER } from "@/graphql/queries/auth";
+import { GET_TOTAL_TASKS } from "@/graphql/queries/tasks";
+import { GET_TOTAL_USERS } from "@/graphql/queries/users";
 import DashboardCharts from "@/components/molecules/charts";
 
 export default function Dashboard() {
   const { accessToken } = useAuthStore();
   const router = useRouter();
 
+  // Query untuk mendapatkan data user yang sedang login
   const { data, loading, error } = useQuery(GET_LOGGED_IN_USER, {
     variables: { token: accessToken },
     skip: !accessToken,
     fetchPolicy: "network-only",
+  });
+
+  // Query untuk mendapatkan total tasks
+  const { data: tasksData, loading: tasksLoading, error: tasksError } = useQuery(GET_TOTAL_TASKS, {
+    context: {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    },
+  });
+
+  // Query untuk mendapatkan total active user
+  const { data: usersData, loading: usersLoading, error: usersError } = useQuery(GET_TOTAL_USERS, {
+    context: {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    },
   });
 
   if (loading)
@@ -22,11 +43,22 @@ export default function Dashboard() {
   if (error)
     return <p className="text-center text-red-500">Error: {error.message}</p>;
 
+  // Pastikan data dashboard untuk tasks dan users sudah ada
+  if (tasksLoading || usersLoading)
+    return <p className="text-center text-gray-500">Loading dashboard data...</p>;
+  if (tasksError)
+    return <p className="text-center text-red-500">Error: {tasksError.message}</p>;
+  if (usersError)
+    return <p className="text-center text-red-500">Error: {usersError.message}</p>;
+
   const user = data?.me;
+
+  const totalTasks = tasksData?.getTotalTasks || 0;
+  const totalActiveUsers = usersData?.getTotalUsers || 0;
 
   return (
     <div className="flex min-h-screen bg-gradient-to-r from-[#0a1e5e] to-[#001333] text-white overflow-hidden">
-      <WorkerSidebar /> {/* Render worker sidebar */}
+      <WorkerSidebar />
       <main className="flex-1 p-6">
         <div className="flex justify-between items-center bg-white/10 p-4 rounded-lg shadow-md mb-6">
           <div>
@@ -40,34 +72,22 @@ export default function Dashboard() {
           </div>
           <div className="flex gap-4">
             <button
-              onClick={() => router.push("/dashboard/edit-profile")}
-              className="px-4 py-2 bg-gradient-to-r from-tertiary to-tertiary-light text-white rounded-lg shadow hover:bg-secondary"
-            >
-              Edit Profile
-            </button>
-            <button
               onClick={() => router.push("/eval")}
-              className="px-4 py-2 bg-gradient-to-r from-tertiary to-tertiary-light text-white rounded-lg shadow hover:bg-secondary"
+              className="px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold rounded-xl shadow-lg border border-white/20 hover:shadow-2xl hover:scale-105 transition-all duration-300"
             >
               Go to Eval
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-6">
           <div className="bg-white/10 p-6 rounded-lg shadow-lg flex flex-col items-center">
             <h2 className="text-lg font-semibold text-white">Total Tasks</h2>
-            <p className="text-4xl font-bold text-blue-400 mt-2">24</p>
+            <p className="text-4xl font-bold text-blue-400 mt-2">{totalTasks}</p>
           </div>
           <div className="bg-white/10 p-6 rounded-lg shadow-lg flex flex-col items-center">
-            <h2 className="text-lg font-semibold text-white">
-              Completed Tasks
-            </h2>
-            <p className="text-4xl font-bold text-green-400 mt-2">18</p>
-          </div>
-          <div className="bg-white/10 p-6 rounded-lg shadow-lg flex flex-col items-center">
-            <h2 className="text-lg font-semibold text-white">Pending Tasks</h2>
-            <p className="text-4xl font-bold text-orange-400 mt-2">6</p>
+            <h2 className="text-lg font-semibold text-white">Total Active User</h2>
+            <p className="text-4xl font-bold text-orange-400 mt-2">{totalActiveUsers}</p>
           </div>
         </div>
 
