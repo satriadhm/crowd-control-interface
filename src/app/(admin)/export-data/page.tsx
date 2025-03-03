@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { CSVLink } from "react-csv";
 import jsPDF from "jspdf";
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
 import { GET_TEST_RESULTS } from "@/graphql/queries/evaluation";
 
 export default function ExportDataPage() {
@@ -21,14 +21,14 @@ export default function ExportDataPage() {
   const exportPDF = () => {
     const doc = new jsPDF();
     const tableColumn = ["Test ID", "User", "Score", "Date"];
-    const tableRows = [];
+    const tableRows: (string | number)[][] = [];
 
-    testResults.forEach((result: any) => {
+    testResults.forEach((result: { id: string; userName: string; score: number; date: string }) => {
       const rowData = [result.id, result.userName, result.score, result.date];
       tableRows.push(rowData);
     });
 
-    doc.autoTable({ head: [tableColumn], body: tableRows, startY: 20 });
+    autoTable(doc, { head: [tableColumn], body: tableRows, startY: 20 });
     doc.text("Test Results Report", 14, 15);
     doc.save("test_results.pdf");
   };
@@ -54,7 +54,7 @@ export default function ExportDataPage() {
             </tr>
           </thead>
           <tbody>
-            {testResults.map((result: any) => (
+            {testResults.map((result: { id: string; userName: string; score: number; date: string }) => (
               <tr key={result.id}>
                 <td className="border px-4 py-2">{result.id}</td>
                 <td className="border px-4 py-2">{result.userName}</td>

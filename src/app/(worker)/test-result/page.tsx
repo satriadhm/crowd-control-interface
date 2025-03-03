@@ -1,11 +1,11 @@
 "use client";
 
 import { useQuery } from "@apollo/client";
-import { GET_TEST_HISTORY } from "@/graphql/queries/testHistory";
 import WorkerSidebar from "@/components/molecules/worker-sidebar";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from "recharts";
+import { GET_TEST_HISTORY } from "@/graphql/queries/evaluation";
 
 export default function TestResultsPage() {
   const router = useRouter();
@@ -16,7 +16,7 @@ export default function TestResultsPage() {
 
   const testHistory = data?.getTestHistory || [];
   const averageScore =
-    testHistory.reduce((acc: number, curr: any) => acc + curr.score, 0) / (testHistory.length || 1);
+    testHistory.reduce((acc: number, curr: { score: number }) => acc + curr.score, 0) / (testHistory.length || 1);
   let feedback = "";
   if (averageScore >= 90) feedback = "Excellent performance!";
   else if (averageScore >= 75) feedback = "Good performance, but room for improvement.";

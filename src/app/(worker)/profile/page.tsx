@@ -2,11 +2,11 @@
 
 import { useQuery } from "@apollo/client";
 import { GET_LOGGED_IN_USER } from "@/graphql/queries/auth";
-import { GET_TEST_HISTORY } from "@/graphql/queries/testHistory"; // query baru untuk riwayat test
 import WorkerSidebar from "@/components/molecules/worker-sidebar";
 import { Button } from "@/components/ui/button";
 import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from "recharts";
 import { useRouter } from "next/navigation";
+import { GET_TEST_HISTORY } from "@/graphql/queries/evaluation";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -45,7 +45,7 @@ export default function ProfilePage() {
                 </tr>
               </thead>
               <tbody>
-                {testHistory.map((test: any) => (
+                {testHistory.map((test: { id: string; score: number; date: string; feedback?: string }) => (
                   <tr key={test.id}>
                     <td className="border px-4 py-2">{test.id}</td>
                     <td className="border px-4 py-2">{test.score}</td>

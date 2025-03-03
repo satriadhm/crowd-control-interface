@@ -1,11 +1,11 @@
 "use client";
 
 import { useQuery } from "@apollo/client";
-import { GET_TESTER_ANALYSIS } from "@/graphql/queries/testerAnalysis"; // query baru yang mengembalikan data analisis tester
 import Sidebar from "@/components/molecules/admin-sidebar";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line } from "recharts";
+import { GET_TESTER_ANALYSIS } from "@/graphql/queries/evaluation";
 
 export default function TesterAnalysisDashboard() {
   const router = useRouter();
