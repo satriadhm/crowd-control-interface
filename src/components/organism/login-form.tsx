@@ -32,18 +32,22 @@ export default function LoginForm() {
   const onSubmit = async (data: LoginFormInputs) => {
     try {
       const response = await loginMutation({ variables: { input: data } });
-      console.log("Login response:", response);
       if (!response?.data?.login) {
         throw new Error("Invalid API response");
       }
 
       const { role, accessToken, refreshToken } = response.data.login;
-      Cookies.set("accessToken", accessToken, { expires: 1, path: "/" }); // Cookie berlaku selama 1 hari
-      Cookies.set("refreshToken", refreshToken, { expires: 7, path: "/" }); // Cookie berlaku selama 7 hari
-
+      Cookies.set("accessToken", accessToken, { expires: 1, path: "/" });
+      Cookies.set("refreshToken", refreshToken, { expires: 7, path: "/" });
       setAuth(role, accessToken, refreshToken);
-      console.log("Role:", role);
-      router.push(role === "admin" ? `/task-management` : `/dashboard`);
+      
+      if (role === "admin") {
+        router.push(`/task-management`);
+      } else if (role === "question_validator") {
+        router.push(`/validator/validate-question`);
+      } else {
+        router.push(`/dashboard`);
+      }
     } catch (err) {
       console.error("Login failed:", err);
     }

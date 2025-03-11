@@ -59,7 +59,13 @@ export default function RegisterForm() {
   const onSubmit = async (data: RegisterFormInputs) => {
     try {
       await registerMutation({ variables: { input: data } });
-      router.push("/dashboard?isActive=true");
+      if (data.role === "admin") {
+        router.push(`/task-management`);
+      } else if (data.role === "question_validator") {
+        router.push(`/validator/validate-question`);
+      } else {
+        router.push(`/dashboard`);
+      }
     } catch (err) {
       console.error("Registration error:", err);
     }
@@ -127,7 +133,6 @@ export default function RegisterForm() {
               />
               <p className="text-red-400 text-xs">{errors.userName?.message}</p>
             </div>
-
             <div className="mb-3">
               <Input
                 {...register("password")}
@@ -204,7 +209,6 @@ export default function RegisterForm() {
               Login
             </Link>
           </span>
-
           <div className="flex flex-col gap-2 w-full">
             <Button disabled variant="outline" className="w-full">
               <Image
