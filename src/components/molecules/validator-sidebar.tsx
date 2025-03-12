@@ -1,9 +1,11 @@
+"use client";
+
 import { LOGOUT } from "@/graphql/mutations/auth";
 import { useAuthStore } from "@/store/authStore";
 import { useMutation } from "@apollo/client";
 import { Users } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function ValidatorSidebar() {
   const router = useRouter();
