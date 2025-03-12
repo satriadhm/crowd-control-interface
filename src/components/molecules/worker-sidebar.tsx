@@ -29,7 +29,6 @@ export default function WorkerSidebar() {
     }
   };
 
-  // Gunakan style yang sama dengan admin sidebar
   const isActive = (path: string) => pathname.includes(path);
 
   return (
@@ -59,7 +58,7 @@ export default function WorkerSidebar() {
             {/* Menu Test Results */}
             <li
               className={`text-sm bg-gradient-to-r p-4 rounded-lg ${
-                isActive("/test-results")
+                isActive("/test-result")
                   ? "border bg-[#5460ff] to-[#032054]"
                   : ""
               }`}
