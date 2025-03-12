@@ -62,7 +62,7 @@ export default function RegisterForm() {
       if (data.role === "admin") {
         router.push(`/task-management`);
       } else if (data.role === "question_validator") {
-        router.push(`/validator/validate-question`);
+        router.push(`/validate-question`);
       } else {
         router.push(`/dashboard`);
       }
@@ -161,6 +161,7 @@ export default function RegisterForm() {
                 <SelectContent className="bg-white">
                   <SelectItem value="WORKER">Worker</SelectItem>
                   <SelectItem value="ADMIN">Admin</SelectItem>
+                  <SelectItem value="QUESTION_VALIDATOR">Validator</SelectItem>
                   <SelectItem value="COMPANY_REPRESENTATIVE">
                     Company Representative
                   </SelectItem>
