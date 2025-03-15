@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { CSVLink } from "react-csv";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { GET_TASK_RESULTS } from "@/graphql/queries/evaluation";
+import { GET_TASK_RESULTS } from "@/graphql/queries/m1";
 
 export default function ExportDataPage() {
   const router = useRouter();
