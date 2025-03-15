@@ -7,11 +7,11 @@ import { useRouter } from "next/navigation";
 import { CSVLink } from "react-csv";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { GET_TEST_RESULTS } from "@/graphql/queries/evaluation";
+import { GET_TASK_RESULTS } from "@/graphql/queries/evaluation";
 
 export default function ExportDataPage() {
   const router = useRouter();
-  const { data, loading, error } = useQuery(GET_TEST_RESULTS, { fetchPolicy: "network-only" });
+  const { data, loading, error } = useQuery(GET_TASK_RESULTS, { fetchPolicy: "network-only" });
 
   if (loading) return <p>Loading test results...</p>;
   if (error) return <p>Error: {error.message}</p>;

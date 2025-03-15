@@ -6,12 +6,12 @@ import WorkerSidebar from "@/components/molecules/worker-sidebar";
 import { Button } from "@/components/ui/button";
 import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from "recharts";
 import { useRouter } from "next/navigation";
-import { GET_TEST_HISTORY } from "@/graphql/queries/evaluation";
+import { GET_TASK_HISTORY } from "@/graphql/queries/m1";
 
 export default function ProfilePage() {
   const router = useRouter();
   const { data: userData, loading: userLoading, error: userError } = useQuery(GET_LOGGED_IN_USER);
-  const { data: historyData, loading: historyLoading, error: historyError } = useQuery(GET_TEST_HISTORY);
+  const { data: historyData, loading: historyLoading, error: historyError } = useQuery(GET_TASK_HISTORY);
 
   if (userLoading || historyLoading) return <p>Loading...</p>;
   if (userError) return <p>Error: {userError.message}</p>;
@@ -28,7 +28,6 @@ export default function ProfilePage() {
           <h2 className="text-xl font-semibold">Profile Information</h2>
           <p>Name: {userData.me.firstName} {userData.me.lastName}</p>
           <p>Email: {userData.me.email}</p>
-          {/* Tambahkan info lain bila perlu */}
         </section>
         <section className="mb-6">
           <h2 className="text-xl font-semibold mb-2">Test History</h2>

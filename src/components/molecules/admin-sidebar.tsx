@@ -73,6 +73,21 @@ export default function Sidebar() {
               }`}
             >
               <button
+                onClick={() => navigateTo("/worker-analysis")}
+                className="flex items-center gap-3 w-full text-gray-300 hover:text-white transition-all"
+              >
+                <User size={20} />
+                <span>Worker Analysis</span>
+              </button>
+            </li>
+            <li
+              className={` text-sm bg-gradient-to-r p-4 rounded-lg ${
+                isActive("/dashboard/edit-profile")
+                  ? "border bg-[#5460ff] to-[#032054] "
+                  : ""
+              }`}
+            >
+              <button
                 onClick={() => navigateTo("/dashboard/edit-profile")}
                 className="flex items-center gap-3 w-full text-gray-300 hover:text-white transition-all"
               >

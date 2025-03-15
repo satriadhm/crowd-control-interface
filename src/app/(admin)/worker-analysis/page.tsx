@@ -5,11 +5,11 @@ import Sidebar from "@/components/molecules/admin-sidebar";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line } from "recharts";
-import { GET_TESTER_ANALYSIS } from "@/graphql/queries/evaluation";
+import { GET_WORKER_ANALYSIS } from "@/graphql/queries/m1";
 
 export default function TesterAnalysisDashboard() {
   const router = useRouter();
-  const { data, loading, error } = useQuery(GET_TESTER_ANALYSIS, { fetchPolicy: "network-only" });
+  const { data, loading, error } = useQuery(GET_WORKER_ANALYSIS, { fetchPolicy: "network-only" });
 
   if (loading) return <p>Loading tester analysis...</p>;
   if (error) return <p>Error: {error.message}</p>;

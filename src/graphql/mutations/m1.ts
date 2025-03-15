@@ -1,17 +1,21 @@
 import { gql } from "@apollo/client";
 
-export const GET_ELIGIBLE_WORKERS = gql`
-  query GetEligibleWorkers($taskId: String!, $workerIds: [String!]!) {
-    getEligibleWorkers(taskId: $taskId, workerIds: $workerIds)
+
+export const RECORD_TASK_RESULT = gql`
+  mutation RecordTaskResult($workerId: String!, $testId: String!, $score: Int!, $feedback: String) {
+    RecordTaskResult(workerId: $workerId, testId: $testId, score: $score, feedback: $feedback) {
+      id
+      testId
+      score
+      feedback
+      createdAt
+    }
   }
 `;
 
-export const GET_RECORDED_ANSWERS = gql`
-  query GetRecordedAnswers($taskId: String!) {
-    getRecordedAnswers(taskId: $taskId) {
-      workerId
-      answer
-      createdAt
-    }
+
+export const SUBMIT_ANSWER = gql`
+  mutation SubmitAnswer($taskId: String!, $answer: String!) {
+    submitAnswer(taskId: $taskId, answer: $answer)
   }
 `;
