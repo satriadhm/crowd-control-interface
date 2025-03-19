@@ -17,6 +17,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import Cookies from "js-cookie";
+import { useAuthStore } from "@/store/authStore";
 
 interface RegisterFormInputs {
   email: string;
@@ -46,6 +48,7 @@ const schema = yup.object({
 
 export default function RegisterForm() {
   const router = useRouter();
+  const { setAuth } = useAuthStore();
   const {
     register,
     handleSubmit,
@@ -58,10 +61,15 @@ export default function RegisterForm() {
 
   const onSubmit = async (data: RegisterFormInputs) => {
     try {
-      await registerMutation({ variables: { input: data } });
-      if (data.role === "admin") {
+      const response = await registerMutation({ variables: { input: data } });
+      const { role, accessToken, refreshToken } = response.data.register;
+      Cookies.set("accessToken", accessToken, { expires: 1, path: "/" });
+      Cookies.set("refreshToken", refreshToken, { expires: 7, path: "/" });
+      setAuth(role, accessToken, refreshToken);
+
+      if (data.role === "ADMIN") {
         router.push(`/task-management`);
-      } else if (data.role === "question_validator") {
+      } else if (data.role === "QUESTION_VALIDATOR") {
         router.push(`/validate-question`);
       } else {
         router.push(`/dashboard`);
@@ -83,7 +91,7 @@ export default function RegisterForm() {
           />
         </div>
 
-        <div className="col-span-1 flex flex-col px-4 justify-center py-12 w-full">
+        <div className="col-span-1 text-white flex flex-col px-4 justify-center py-12 w-full">
           <div className="text-left mb-8 w-full">
             <h1 className="text-2xl items-center gap-2">
               <span className="text-white font-semibold">Registration</span>
@@ -96,41 +104,25 @@ export default function RegisterForm() {
           </div>
           <form onSubmit={handleSubmit(onSubmit)} className="flex-1">
             <div className="mb-3">
-              <Input
-                {...register("email")}
-                placeholder="Email"
-                className="block w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
-              />
+              <Input {...register("email")} placeholder="Email" type="email" />
               <p className="text-red-400 text-xs">{errors.email?.message}</p>
             </div>
             <div className="grid grid-cols-2 space-x-4">
               <div className="mb-3">
-                <Input
-                  {...register("firstName")}
-                  placeholder="First Name"
-                  className="block w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
-                />
+                <Input {...register("firstName")} placeholder="First Name" />
                 <p className="text-red-400 text-xs">
                   {errors.firstName?.message}
                 </p>
               </div>
               <div className="mb-3">
-                <Input
-                  {...register("lastName")}
-                  placeholder="Last Name"
-                  className="block w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
-                />
+                <Input {...register("lastName")} placeholder="Last Name" />
                 <p className="text-red-400 text-xs">
                   {errors.lastName?.message}
                 </p>
               </div>
             </div>
             <div className="mb-3">
-              <Input
-                {...register("userName")}
-                placeholder="User Name"
-                className="block w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
-              />
+              <Input {...register("userName")} placeholder="User Name" />
               <p className="text-red-400 text-xs">{errors.userName?.message}</p>
             </div>
             <div className="mb-3">
@@ -138,7 +130,6 @@ export default function RegisterForm() {
                 {...register("password")}
                 type="password"
                 placeholder="Password"
-                className="block w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
               />
               <p className="text-red-400 text-xs">{errors.password?.message}</p>
             </div>
@@ -147,7 +138,6 @@ export default function RegisterForm() {
                 {...register("passwordConfirmation")}
                 type="password"
                 placeholder="Confirm Password"
-                className="block w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-opacity-70"
               />
               <p className="text-red-400 text-xs">
                 {errors.passwordConfirmation?.message}
@@ -155,10 +145,10 @@ export default function RegisterForm() {
             </div>
             <div className="mb-6">
               <Select onValueChange={(value) => setValue("role", value)}>
-                <SelectTrigger className="bg-white">
-                  <SelectValue className="bg-white" placeholder="Select Role" />
+                <SelectTrigger className="bg-[#4c0e8f] border border-[#001333] text-white">
+                  <SelectValue placeholder="Select Role" />
                 </SelectTrigger>
-                <SelectContent className="bg-white">
+                <SelectContent className="bg-[#4c0e8f] text-white">
                   <SelectItem value="WORKER">Worker</SelectItem>
                   <SelectItem value="ADMIN">Admin</SelectItem>
                   <SelectItem value="QUESTION_VALIDATOR">Validator</SelectItem>

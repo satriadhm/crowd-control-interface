@@ -212,7 +212,7 @@ export default function TaskManagement() {
               <p>: {selectedTask?.question}</p>
             </div>
             <p className="my-6 font-semibold">
-              make a section for creating the answer too
+              
             </p>
             <ul className="list-disc">
               {selectedTask?.answers.map((answer, idx) => (

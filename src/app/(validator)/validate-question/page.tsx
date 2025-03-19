@@ -12,7 +12,6 @@ export default function ValidateQuestionPage() {
   const { data, loading, error, refetch } = useQuery(GET_TASKS);
   const [updateTask] = useMutation(UPDATE_TASK);
 
-  // Filter task yang belum divalidasi
   const tasksToValidate = data?.getTasks.filter((task) => !task.validated) || [];
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -67,10 +66,8 @@ export default function ValidateQuestionPage() {
 
   return (
     <div className="flex min-h-screen bg-gradient-to-r from-[#0a1e5e] to-[#001333] text-white">
-      {/* Sidebar validator */}
       <ValidatorSidebar />
 
-      {/* Main content */}
       <main className="flex-1 p-6">
         <h1 className="text-2xl font-bold mb-6">Validate Task Question</h1>
         <div className="bg-white/10 p-6 rounded shadow mb-6">
@@ -82,7 +79,6 @@ export default function ValidateQuestionPage() {
           </Button>
         </div>
 
-        {/* Dialog untuk validasi */}
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogContent className="bg-white text-black">
             <DialogHeader>

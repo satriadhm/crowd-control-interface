@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 
 
 
-export const GET_TASK_HISTORY = gql`
+export const GET_ELIGIBILITY_HISTORY = gql`
   query GetTestHistory($workerId: String!) {
     getTestHistory(workerId: $workerId) {
       id

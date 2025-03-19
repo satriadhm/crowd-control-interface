@@ -5,6 +5,7 @@ export const CREATE_TASK = gql`
     createTask(input: $input) {
       title
       description
+      isValidQuestion
       question
       nAnswers
       answers {
@@ -19,6 +20,7 @@ export const GET_ALL_TASKS = gql`
     getTasks {
       id
       title
+      isValidQuestion
       description
       question
       nAnswers
@@ -35,6 +37,7 @@ export const GET_TASK_BY_ID = gql`
       id
       title
       description
+      isValidQuestion
       question
       nAnswers
       answers {
@@ -56,6 +59,21 @@ export const DELETE_TASK = gql`
 export const UPDATE_TASK = gql`
   mutation UpdateTask($id: String!, $input: UpdateTaskInput!) {
     updateTask(id: $id, input: $input) {
+      title
+      description
+      isValidQuestion
+      question
+      nAnswers
+      answers {
+        answer
+      }
+    }
+  }
+`;
+
+export const VALIDATE_TASK = gql`
+  mutation ValidateTask($id: String!) {
+    validateQuestionTask(id: $id) {
       title
       description
       question

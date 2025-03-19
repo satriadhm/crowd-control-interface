@@ -5,11 +5,11 @@ import WorkerSidebar from "@/components/molecules/worker-sidebar";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from "recharts";
-import { GET_TASK_HISTORY } from "@/graphql/queries/m1";
+import { GET_ELIGIBILITY_HISTORY } from "@/graphql/queries/m1";
 
 export default function TestResultsPage() {
   const router = useRouter();
-  const { data, loading, error } = useQuery(GET_TASK_HISTORY, { fetchPolicy: "network-only" });
+  const { data, loading, error } = useQuery(GET_ELIGIBILITY_HISTORY, { fetchPolicy: "network-only" });
 
   if (loading) return <p>Loading test results...</p>;
   if (error) return <p>Error: {error.message}</p>;
