@@ -18,15 +18,7 @@ import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
-
-type Task = {
-  id: string;
-  title: string;
-  description: string;
-  isValidQuestion: boolean;
-  question: string;
-  answers: { answer: string; stats: number }[];
-};
+import { Task } from "@/graphql/types/tasks";
 
 type CreateTask = {
   title: string;

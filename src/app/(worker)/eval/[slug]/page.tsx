@@ -92,7 +92,7 @@ export default function PageDetail() {
                 disabled={!myAnswer}
                 className="mt-24 bg-green-500 disabled:bg-gray-300 text-white rounded-lg px-8 py-2"
               >
-                Submit Jawaban
+                Submit Answer
               </button>
             </div>
           </div>

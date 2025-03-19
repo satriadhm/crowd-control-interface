@@ -1,10 +1,26 @@
 export interface Task {
   id: string;
   title: string;
-  description?: string;
+  description: string;
   question: string;
-  answers: Answer[];
+  isValidQuestion: boolean;
+  answers: Array<{
+    answer: string;
+    stats: number | null;
+  }>;
 }
+
+export interface EditProfileFormInputs {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  address1: string;
+  address2: string;
+}
+
+
 
 export interface Answer {
   workerId: string[];

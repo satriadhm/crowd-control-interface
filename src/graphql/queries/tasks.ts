@@ -6,6 +6,7 @@ export const GET_TASKS = gql`
       id
       title
       question
+      isValidQuestion
       description
       nAnswers
       answers {

@@ -9,16 +9,8 @@ import { UPDATE_USER } from "@/graphql/mutations/users";
 import { GET_LOGGED_IN_USER } from "@/graphql/queries/auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { EditProfileFormInputs } from "@/graphql/types/tasks";
 
-interface EditProfileFormInputs {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-  address1: string;
-  address2: string;
-}
 
 export default function EditProfile() {
   const { accessToken } = useAuthStore();
