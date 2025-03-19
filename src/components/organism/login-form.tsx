@@ -44,7 +44,7 @@ export default function LoginForm() {
       if (role === "admin") {
         router.push(`/task-management`);
       } else if (role === "question_validator") {
-        router.push(`/validator/validate-question`);
+        router.push(`/validate-question`);
       } else {
         router.push(`/dashboard`);
       }

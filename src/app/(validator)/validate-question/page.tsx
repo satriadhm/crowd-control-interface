@@ -3,22 +3,30 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { GET_TASKS } from "@/graphql/queries/tasks";
-import { UPDATE_TASK } from "@/graphql/mutations/tasks";
+import { VALIDATE_TASK } from "@/graphql/mutations/tasks"; 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import ValidatorSidebar from "@/components/molecules/validator-sidebar";
 
+type Task = {
+  id: string;
+  question: string;
+  description: string;
+  isValidQuestion: boolean;
+  answers: { answer: string; stats: number }[];
+}
+
 export default function ValidateQuestionPage() {
   const { data, loading, error, refetch } = useQuery(GET_TASKS);
-  const [updateTask] = useMutation(UPDATE_TASK);
-
-  const tasksToValidate = data?.getTasks.filter((task) => !task.validated) || [];
+  const [validateQuestionTask] = useMutation<Task>(VALIDATE_TASK);
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [mutationResult, setMutationResult] = useState<Task | null>(null);
 
   if (loading) return <p className="text-center text-gray-200">Loading tasks...</p>;
   if (error) return <p className="text-center text-red-300">Error: {error.message}</p>;
 
+  const tasksToValidate = data?.getTasks.filter((task: Task) => !task.isValidQuestion) || [];
   if (tasksToValidate.length === 0) {
     return (
       <div className="flex min-h-screen bg-gradient-to-r from-[#0a1e5e] to-[#001333] text-white">
@@ -34,21 +42,16 @@ export default function ValidateQuestionPage() {
 
   const currentTask = tasksToValidate[currentTaskIndex];
 
-  const handleValidation = async (isValid: boolean) => {
+  const handleValidation = async () => {
     try {
-      await updateTask({
-        variables: {
-          id: currentTask.id,
-          input: {
-            isValidQuestion: isValid,
-            validated: true,
-          },
-        },
+      const { data } = await validateQuestionTask({
+        variables: { id: currentTask.id },
       });
+      if (data?.validateQuestionTask) {
+        setMutationResult(data.validateQuestionTask);
+      }
       alert("Task updated successfully!");
       setIsModalOpen(false);
-
-      // Beralih ke task berikutnya (jika ada)
       if (currentTaskIndex < tasksToValidate.length - 1) {
         setCurrentTaskIndex(currentTaskIndex + 1);
       } else {
@@ -56,11 +59,7 @@ export default function ValidateQuestionPage() {
       }
       refetch();
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        alert("Error updating task: " + err.message);
-      } else {
-        alert("Error updating task: Unknown error");
-      }
+      alert("Error updating task: " + (err instanceof Error ? err.message : "Unknown error"));
     }
   };
 
@@ -84,18 +83,52 @@ export default function ValidateQuestionPage() {
             <DialogHeader>
               <DialogTitle>Update Validation</DialogTitle>
             </DialogHeader>
-            <p className="mb-4">Apakah pertanyaan di atas valid?</p>
-            <div className="flex space-x-4">
-              <Button onClick={() => handleValidation(true)} className="bg-green-600 hover:bg-green-700">
-                Valid
-              </Button>
-              <Button
-                onClick={() => handleValidation(false)}
-                variant="destructive"
-              >
-                Invalid
-              </Button>
-            </div>
+            {mutationResult ? (
+              <div>
+                <p className="mb-4">
+                  <strong>Question:</strong> {mutationResult.question}
+                </p>
+                <p className="mb-4">
+                  <strong>Description:</strong> {mutationResult.description}
+                </p>
+                <p className="mb-4">
+                  <strong>Validation Status:</strong>{" "}
+                  {mutationResult.isValidQuestion ? "Valid" : "Invalid"}
+                </p>
+                <p className="mb-4">
+                  <strong>Answers:</strong>
+                </p>
+                <ul className="mb-4 list-disc list-inside">
+                  {mutationResult.answers.map((answerObj, index) => (
+                    <li key={index}>
+                      {answerObj.answer} {answerObj.stats && `(${answerObj.stats})`}
+                    </li>
+                  ))}
+                </ul>
+                <Button
+                  onClick={() => {
+                    setMutationResult(null);
+                    setIsModalOpen(false);
+                  }}
+                >
+                  Close
+                </Button>
+              </div>
+            ) : (
+              <>
+                <p className="mb-4">
+                  Press button below to validate the question:
+                </p>
+                <div className="flex space-x-4">
+                  <Button
+                    onClick={handleValidation}
+                    className="bg-green-600 hover:bg-green-700"
+                  >
+                    Validate
+                  </Button>
+                </div>
+              </>
+            )}
           </DialogContent>
         </Dialog>
       </main>

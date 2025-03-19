@@ -23,6 +23,7 @@ type Task = {
   id: string;
   title: string;
   description: string;
+  isValidQuestion: boolean;
   question: string;
   answers: { answer: string; stats: number }[];
 };
