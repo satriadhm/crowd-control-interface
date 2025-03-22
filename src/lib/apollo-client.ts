@@ -4,6 +4,7 @@ import { useAuthStore } from "@/store/authStore"; // Import Zustand store
 
 const httpLink = createHttpLink({
   uri: process.env.NEXT_PUBLIC_GRAPHQL_URI || "http://localhost:5000/graphql",
+  // credentials: "include", 
 });
 
 const authLink = setContext((_, { headers }) => {
