@@ -7,7 +7,7 @@ import WorkerSidebar from "@/components/molecules/worker-sidebar";
 import { GET_LOGGED_IN_USER } from "@/graphql/queries/auth";
 import { GET_TOTAL_TASKS } from "@/graphql/queries/tasks";
 import { GET_TOTAL_USERS } from "@/graphql/queries/users";
-import DashboardCharts from "@/components/molecules/charts";
+import DashboardCharts from "@/components/organism/charts";
 
 export default function Dashboard() {
   const { accessToken } = useAuthStore();
@@ -19,6 +19,7 @@ export default function Dashboard() {
     skip: !accessToken,
     fetchPolicy: "network-only",
   });
+  console.log(data);
 
   // Query untuk mendapatkan total tasks
   const { data: tasksData, loading: tasksLoading, error: tasksError } = useQuery(GET_TOTAL_TASKS, {
@@ -28,7 +29,7 @@ export default function Dashboard() {
       },
     },
   });
-
+  console.log(tasksData);
   // Query untuk mendapatkan total active user
   const { data: usersData, loading: usersLoading, error: usersError } = useQuery(GET_TOTAL_USERS, {
     context: {

@@ -54,7 +54,11 @@ export default function EditProfile() {
         },
       });
       alert("Profile updated successfully!");
-      router.push("/dashboard");
+      if (userData?.me.role === "admin") {
+        router.push("/task-management");
+      } else {
+        router.push("/dashboard");
+      }
     } catch (err) {
       console.error("Error updating profile:", err);
     }

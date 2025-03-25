@@ -32,6 +32,7 @@ export default function LoginForm() {
   const onSubmit = async (data: LoginFormInputs) => {
     try {
       const response = await loginMutation({ variables: { input: data } });
+      console.log(response)
       if (!response?.data?.login) {
         throw new Error("Invalid API response");
       }

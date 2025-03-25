@@ -5,10 +5,10 @@ export const GET_LOGGED_IN_USER = gql`
     me(token: $token) {
       id
       isEligible
-      completedTasks {
+      completedTasks{
         taskId
         answer
-      }
+      } 
       userName
       firstName
       lastName

@@ -6,23 +6,34 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { GET_LOGGED_IN_USER } from "@/graphql/queries/auth";
 import { useAuthStore } from "@/store/authStore";
+import SingleTaskQuestion from "@/components/organism/task-result";
+interface Task {
+  taskId: string;
+  answer: string;
+}
 
 export default function TestResultsPage() {
   const router = useRouter();
   const { accessToken } = useAuthStore();
 
+  // Ambil data user
   const {
     data: userData,
-    loading,
-    error,
+    loading: userLoading,
+    error: userError,
   } = useQuery(GET_LOGGED_IN_USER, {
     variables: { token: accessToken },
     skip: !accessToken,
     fetchPolicy: "network-only",
   });
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (userLoading) return <p>Loading user...</p>;
+  if (userError) return <p>Error: {userError.message}</p>;
+
+  const me = userData?.me;
+  if (!me) return <p>User data not available</p>;
+
+  const completedTasks = me.completedTasks || [];
 
   return (
     <div className="flex min-h-screen">
@@ -32,38 +43,23 @@ export default function TestResultsPage() {
 
         <div className="mb-6">
           <h2 className="text-xl font-semibold">Eligibility Status</h2>
-          <p
-            className={
-              userData.me.isEligible ? "text-green-400" : "text-red-400"
-            }
-          >
-            {userData.me.isEligible ? "Eligible" : "Not Eligible"}
+          <p className={me.isEligible ? "text-green-400" : "text-red-400"}>
+            {me.isEligible ? "Eligible" : "Not Eligible"}
           </p>
         </div>
 
         <section>
           <h2 className="text-xl font-semibold mb-2">Completed Tests</h2>
-          {userData.me.completedTasks.length === 0 ? (
+          {completedTasks.length === 0 ? (
             <p>No completed tests yet</p>
           ) : (
             <div className="grid gap-4">
-              {userData.me.completedTasks.map((task, index) => (
-                <div key={index} className="bg-white/10 p-4 rounded-lg">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="font-medium">Task ID: {task.taskId}</h3>
-                      <p className="text-sm opacity-75">
-                        Your answer: {task.answer}
-                      </p>
-                    </div>
-                    <Button
-                      onClick={() => router.push(`/eval/${task.taskId}`)}
-                      size="sm"
-                    >
-                      View Task
-                    </Button>
-                  </div>
-                </div>
+              {completedTasks.map((task: Task, index: number) => (
+                <SingleTaskQuestion
+                  key={index}
+                  taskId={task.taskId}
+                  answer={task.answer}
+                />
               ))}
             </div>
           )}

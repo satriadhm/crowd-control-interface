@@ -3,7 +3,7 @@
 
 import { useQuery } from "@apollo/client";
 import { GET_TASKS } from "@/graphql/queries/tasks";
-import TaskCard from "@/components/molecules/task-card";
+import TaskCard from "@/components/organism/task-card";
 import { useRouter } from "next/navigation";
 
 export default function EvalPage() {
