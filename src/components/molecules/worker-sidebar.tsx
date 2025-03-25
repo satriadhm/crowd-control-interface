@@ -42,7 +42,7 @@ export default function WorkerSidebar() {
             {/* Menu Edit Profile */}
             <li
               className={`text-sm bg-gradient-to-r p-4 rounded-lg ${
-                isActive("/dashboard/edit-profile")
+                isActive("/edit-profile")
                   ? "border bg-[#5460ff] to-[#032054]"
                   : ""
               }`}
