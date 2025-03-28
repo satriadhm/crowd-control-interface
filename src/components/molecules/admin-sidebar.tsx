@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useMutation } from "@apollo/client";
 import { LOGOUT } from "@/graphql/mutations/auth";
+import Cookies from "js-cookie";
 import { Users, ListChecks, LogOut, User } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 
@@ -18,6 +19,8 @@ export default function Sidebar() {
   const handleLogout = async () => {
     try {
       await logoutMutation();
+      Cookies.remove("accessToken");
+      Cookies.remove("refreshToken");
       clearAuth();
       router.push("/login");
     } catch (err) {
