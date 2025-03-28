@@ -4,6 +4,7 @@ import { useState } from "react";
 import { LOGOUT } from "@/graphql/mutations/auth";
 import { useAuthStore } from "@/store/authStore";
 import { useMutation } from "@apollo/client";
+import Cookies from "js-cookie";
 import { Users } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
@@ -23,6 +24,8 @@ export default function ValidatorSidebar() {
     setIsLoading(true);
     try {
       await logoutMutation();
+      Cookies.remove("accessToken");
+      Cookies.remove("refreshToken");
       clearAuth();
       router.push("/login");
     } catch (err) {
