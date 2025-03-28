@@ -45,11 +45,11 @@ export default function TestResultsPage() {
         <div className="mb-6">
           <h2 className="text-xl font-semibold">Eligibility Status</h2>
           <div
-            className={`flex items-center justify-center p-6 rounded-lg ${
+            className={`flex items-center justify-center p-6 rounded-lg border-2 ${
               me.isEligible
-                ? "bg-gradient-to-r from-green-400 to-green-500 text-white"
-                : "bg-gradient-to-r from-red-400 to-red-500 text-white"
-            } shadow-lg`}
+                ? "bg-gradient-to-r from-purple-300 to-purple-500 text-white border-purple-600"
+                : "bg-gradient-to-r from-pink-300 to-pink-500 text-white border-pink-600"
+            } shadow-lg bg-[length:100%_100%] bg-[url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 10 10%22%3E%3Cpath fill=%22%23ffffff%22 d=%22M0 0h5v5H0zm5 5h5v5H5z%22/%3E%3C/svg%3E')]`}
           >
             <p className="text-2xl font-bold">
               {me.isEligible ? "Eligible" : "Not Eligible"}
