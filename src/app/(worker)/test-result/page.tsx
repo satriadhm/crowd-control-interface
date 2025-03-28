@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { GET_LOGGED_IN_USER } from "@/graphql/queries/auth";
 import { useAuthStore } from "@/store/authStore";
 import SingleTaskQuestion from "@/components/organism/task-result";
+
 interface Task {
   taskId: string;
   answer: string;
@@ -43,9 +44,17 @@ export default function TestResultsPage() {
 
         <div className="mb-6">
           <h2 className="text-xl font-semibold">Eligibility Status</h2>
-          <p className={me.isEligible ? "text-green-400" : "text-red-400"}>
-            {me.isEligible ? "Eligible" : "Not Eligible"}
-          </p>
+          <div
+            className={`flex items-center justify-center p-6 rounded-lg ${
+              me.isEligible
+                ? "bg-gradient-to-r from-green-400 to-green-500 text-white"
+                : "bg-gradient-to-r from-red-400 to-red-500 text-white"
+            } shadow-lg`}
+          >
+            <p className="text-2xl font-bold">
+              {me.isEligible ? "Eligible" : "Not Eligible"}
+            </p>
+          </div>
         </div>
 
         <section>
