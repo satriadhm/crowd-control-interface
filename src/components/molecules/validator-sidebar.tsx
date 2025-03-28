@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { LOGOUT } from "@/graphql/mutations/auth";
 import { useAuthStore } from "@/store/authStore";
 import { useMutation } from "@apollo/client";
@@ -12,17 +13,22 @@ export default function ValidatorSidebar() {
   const { clearAuth } = useAuthStore();
   const [logoutMutation] = useMutation(LOGOUT);
   const pathname = usePathname();
+  const [isLoading, setIsLoading] = useState(false);
+
   const navigateTo = (path: string) => {
     router.push(path);
   };
 
   const handleLogout = async () => {
+    setIsLoading(true);
     try {
       await logoutMutation();
       clearAuth();
       router.push("/login");
     } catch (err) {
       console.error("Error during logout:", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -37,14 +43,14 @@ export default function ValidatorSidebar() {
         <nav className="p-2">
           <ul className="space-y-2">
             <li
-              className={` text-sm bg-gradient-to-r p-4 rounded-lg ${
-                isActive("/validator/validate-question")
-                  ? "border  bg-[#5460ff] to-[#032054] "
+              className={`text-sm bg-gradient-to-r p-4 rounded-lg ${
+                isActive("/validate-question")
+                  ? "border bg-[#5460ff] to-[#032054]"
                   : ""
               }`}
             >
               <button
-                onClick={() => navigateTo("/validator/validate-question")}
+                onClick={() => navigateTo("/validate-question")}
                 className="flex items-center gap-3 w-full text-gray-300 hover:text-white transition-all"
               >
                 <Users size={20} />
@@ -57,9 +63,17 @@ export default function ValidatorSidebar() {
       <div className="p-2">
         <button
           onClick={handleLogout}
-          className="bg-gradient-to-r from-[#5460ff] to-[#032054] text-white rounded-lg p-4 w-full"
+          className="bg-gradient-to-r from-[#5460ff] to-[#032054] text-white rounded-lg p-4 w-full flex items-center justify-center gap-2"
+          disabled={isLoading}
         >
-          Logout
+          {isLoading ? (
+            <svg
+              className="animate-spin h-5 w-5 border-t-2 border-b-2 border-white rounded-full"
+              viewBox="0 0 24 24"
+            ></svg>
+          ) : (
+            "Logout"
+          )}
         </button>
       </div>
     </aside>
