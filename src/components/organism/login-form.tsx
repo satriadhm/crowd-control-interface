@@ -12,8 +12,9 @@ import Link from "next/link";
 import { useAuthStore } from "@/store/authStore";
 import Cookies from "js-cookie";
 
+// Ubah interface login untuk menerima identifier (username atau email)
 interface LoginFormInputs {
-  email: string;
+  identifier: string;
   password: string;
 }
 
@@ -29,10 +30,9 @@ export default function LoginForm() {
     fetchPolicy: "no-cache",
   });
 
-  const onSubmit = async (data: LoginFormInputs) => {
+  const onSubmit = async (input: LoginFormInputs) => {
     try {
-      const response = await loginMutation({ variables: { input: data } });
-      console.log(response)
+      const response = await loginMutation({ variables: { input } });
       if (!response?.data?.login) {
         throw new Error("Invalid API response");
       }
@@ -41,7 +41,7 @@ export default function LoginForm() {
       Cookies.set("accessToken", accessToken, { expires: 1, path: "/" });
       Cookies.set("refreshToken", refreshToken, { expires: 7, path: "/" });
       setAuth(role, accessToken, refreshToken);
-      
+
       if (role === "admin") {
         router.push(`/task-management`);
       } else if (role === "question_validator") {
@@ -82,20 +82,22 @@ export default function LoginForm() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div>
                 <Input
-                  {...register("email", { required: "Email is required" })}
-                  placeholder="Email"
-                  type="email"
+                  {...register("identifier", {
+                    required: "Username atau Email diperlukan",
+                  })}
+                  placeholder="Username atau Email"
+                  type="text"
                 />
-                {errors.email && (
+                {errors.identifier && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.email.message}
+                    {errors.identifier.message}
                   </p>
                 )}
               </div>
               <div>
                 <Input
                   {...register("password", {
-                    required: "Password is required",
+                    required: "Password diperlukan",
                   })}
                   placeholder="Password"
                   type="password"
@@ -116,7 +118,7 @@ export default function LoginForm() {
             </form>
           </div>
           <span className="text-center text-white w-full my-4 text-sm">
-            {`Don't`} have account ?{" "}
+            {`Don't`} have account?{" "}
             <Link href="/register" className="font-semibold">
               Register
             </Link>
