@@ -13,4 +13,10 @@ export interface User {
   export interface DeleteUserVariables {
     id: string;
   }
+
+  export interface LoginFormInputs {
+    identifier: string;
+    password: string;
+  }
+  
   

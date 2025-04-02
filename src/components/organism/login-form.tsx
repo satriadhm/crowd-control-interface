@@ -11,12 +11,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAuthStore } from "@/store/authStore";
 import Cookies from "js-cookie";
+import { LoginFormInputs } from "@/graphql/types/users";
 
-// Ubah interface login untuk menerima identifier (username atau email)
-interface LoginFormInputs {
-  identifier: string;
-  password: string;
-}
 
 export default function LoginForm() {
   const router = useRouter();
@@ -83,9 +79,9 @@ export default function LoginForm() {
               <div>
                 <Input
                   {...register("identifier", {
-                    required: "Username atau Email diperlukan",
+                    required: "Username or Email is required",
                   })}
-                  placeholder="Username atau Email"
+                  placeholder="Username or Email"
                   type="text"
                 />
                 {errors.identifier && (

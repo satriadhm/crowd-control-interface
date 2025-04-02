@@ -2,13 +2,30 @@ export interface Task {
   id: string;
   title: string;
   description: string;
-  question: string;
+  question: {
+    scenario: string;
+    given: string;
+    when: string;
+    then: string;
+  };
   isValidQuestion: boolean;
   answers: Array<{
     answer: string;
     stats: number | null;
   }>;
 }
+
+export type CreateTask = {
+  title: string;
+  description: string;
+  question: {
+    scenario: string;
+    given: string;
+    when: string;
+    then: string;
+  };
+  answers: { answer: string }[];
+};
 
 export interface EditProfileFormInputs {
   id: string;
@@ -19,8 +36,6 @@ export interface EditProfileFormInputs {
   address1: string;
   address2: string;
 }
-
-
 
 export interface Answer {
   workerId: string[];

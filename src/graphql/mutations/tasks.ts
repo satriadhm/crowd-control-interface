@@ -6,7 +6,12 @@ export const CREATE_TASK = gql`
       title
       description
       isValidQuestion
-      question
+      question {
+        scenario
+        given
+        when
+        then
+      }
       nAnswers
       answers {
         answer
@@ -14,7 +19,6 @@ export const CREATE_TASK = gql`
     }
   }
 `;
-
 
 export const DELETE_TASK = gql`
   mutation DeleteTask($id: String!) {
@@ -31,7 +35,12 @@ export const UPDATE_TASK = gql`
       title
       description
       isValidQuestion
-      question
+      question {
+        scenario
+        given
+        when
+        then
+      }
       nAnswers
       answers {
         answer
@@ -45,7 +54,12 @@ export const VALIDATE_TASK = gql`
     validateQuestionTask(id: $id) {
       title
       description
-      question
+      question {
+        scenario
+        given
+        when
+        then
+      }
       nAnswers
       answers {
         answer

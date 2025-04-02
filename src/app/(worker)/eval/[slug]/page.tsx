@@ -1,4 +1,3 @@
-// src/app/(worker)/eval/[slug]/page.tsx
 "use client";
 
 import { SUBMIT_ANSWER } from "@/graphql/mutations/m1";
@@ -61,25 +60,46 @@ export default function PageDetail() {
 
   return (
     <div className="flex h-screen w-full justify-center items-center bg-gradient-to-r from-[#0a1e5e] to-[#001333] text-white">
-      <div className="mt-5">
+      <div className="max-w-3xl w-full p-6">
         {taskDetailData ? (
-          <div className="">
-            <div className="w-full bg-gray-800 rounded-full h-2.5 mb-4">
+          <div className="bg-gray-900 p-6 rounded-lg shadow-lg">
+            {/* Timer Progress Bar */}
+            <div className="w-full bg-gray-800 rounded-full h-2.5 mb-6">
               <div
                 className="bg-green-500 h-2.5 rounded-full"
                 style={{ width: `${(timeLeft / 60) * 100}%` }}
               ></div>
             </div>
-            <p className="text-white">{taskDetailData?.getTaskById.question}</p>
 
-            <div className="flex flex-wrap gap-4 items-center justify-center mt-12">
+            {/* Gherkin Layout */}
+            <div className="mb-6 space-y-4">
+              <div>
+                <span className="font-bold">Scenario:</span>{" "}
+                <span>{taskDetailData.getTaskById.question?.scenario}</span>
+              </div>
+              <div>
+                <span className="font-bold">Given:</span>{" "}
+                <span>{taskDetailData.getTaskById.question?.given}</span>
+              </div>
+              <div>
+                <span className="font-bold">When:</span>{" "}
+                <span>{taskDetailData.getTaskById.question?.when}</span>
+              </div>
+              <div>
+                <span className="font-bold">Then:</span>{" "}
+                <span>{taskDetailData.getTaskById.question?.then}</span>
+              </div>
+            </div>
+
+            {/* Answers Section */}
+            <div className="flex flex-wrap gap-4 items-center justify-center mb-6">
               {taskDetailData.getTaskById.answers?.map((item, index) => (
                 <button
-                  onClick={() => setMyAnswer(item.answer)}
-                  className={`border ${
-                    myAnswer.includes(item.answer) ? "bg-cyan-500/25" : ""
-                  } border-cyan-500 px-8 py-2 hover:bg-cyan-500/25 rounded-lg text-white`}
                   key={index}
+                  onClick={() => setMyAnswer(item.answer)}
+                  className={`border border-cyan-500 px-8 py-2 rounded-lg hover:bg-cyan-500/25 ${
+                    myAnswer === item.answer ? "bg-cyan-500/25" : ""
+                  }`}
                 >
                   {item.answer}
                 </button>
@@ -90,7 +110,7 @@ export default function PageDetail() {
               <button
                 onClick={onSubmitAnswer}
                 disabled={!myAnswer}
-                className="mt-24 bg-green-500 disabled:bg-gray-300 text-white rounded-lg px-8 py-2"
+                className="mt-4 bg-green-500 disabled:bg-gray-300 text-white rounded-lg px-8 py-2"
               >
                 Submit Answer
               </button>

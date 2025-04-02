@@ -5,7 +5,12 @@ export const GET_TASKS = gql`
     getTasks(question: $question, skip: $skip, take: $take) {
       id
       title
-      question
+      question {
+        scenario
+        given
+        when
+        then
+      }
       isValidQuestion
       description
       nAnswers
@@ -22,7 +27,12 @@ export const GET_TASK_BY_ID = gql`
     getTaskById(id: $id) {
       id
       title
-      question
+      question {
+        scenario
+        given
+        when
+        then
+      }
       description
       nAnswers
       answers {
