@@ -196,7 +196,7 @@ export default function RegisterForm() {
           </form>
           <span className="text-center w-full my-4 text-sm text-white">
             I have account ?{" "}
-            <Link href="/login" className="font-semibold text-white">
+            <Link href="/login" className="font-semibold inline-block transition-transform duration-300 hover:scale-110">
               Login
             </Link>
           </span>

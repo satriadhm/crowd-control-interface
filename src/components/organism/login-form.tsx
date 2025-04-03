@@ -13,7 +13,6 @@ import { useAuthStore } from "@/store/authStore";
 import Cookies from "js-cookie";
 import { LoginFormInputs } from "@/graphql/types/users";
 
-
 export default function LoginForm() {
   const router = useRouter();
   const { setAuth } = useAuthStore();
@@ -115,7 +114,10 @@ export default function LoginForm() {
           </div>
           <span className="text-center text-white w-full my-4 text-sm">
             {`Don't`} have account?{" "}
-            <Link href="/register" className="font-semibold">
+            <Link
+              href="/register"
+              className="font-semibold inline-block transition-transform duration-300 hover:scale-110"
+            >
               Register
             </Link>
           </span>
