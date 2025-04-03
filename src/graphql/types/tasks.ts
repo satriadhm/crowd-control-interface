@@ -61,3 +61,9 @@ export interface AnswerTaskInput {
 export interface DeleteTaskVariables {
   id: string;
 }
+
+export interface AnsweredTask {
+  taskId: string;
+  answer: string;
+  stats: string;
+}

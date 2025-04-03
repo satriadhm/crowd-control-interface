@@ -17,13 +17,9 @@ interface SingleTaskProps {
   answer: string;
 }
 
-export default function SingleTaskQuestion({
-  taskId,
-  answer,
-}: SingleTaskProps) {
+export default function SingleTaskQuestion({ taskId, answer }: SingleTaskProps) {
   const [openModal, setOpenModal] = useState(false);
 
-  // Panggil query GET_TASK_BY_ID hanya untuk 1 ID
   const { data, loading, error } = useQuery(GET_TASK_BY_ID, {
     variables: { id: taskId },
     fetchPolicy: "network-only",
@@ -44,25 +40,27 @@ export default function SingleTaskQuestion({
     );
   }
 
-  // data.getTaskById mengandung { id, question, ... }
   const taskData = data?.getTaskById;
 
   return (
     <div className="bg-white/10 p-4 rounded-lg">
       <div className="flex justify-between items-start">
         <div>
-          <h3 className="font-medium">
-            {/* Tampilkan question di tampilan ringkas (bisa potong teks jika kepanjangan) */}
-            Task Question: {taskData?.question || "No question"}
-          </h3>
-          <p className="text-sm opacity-75">Your answer: {answer}</p>
+          <h3 className="font-medium mb-2">Task</h3>
+          {taskData?.question ? (
+            <div className="text-sm">
+              <p><strong>Scenario:</strong> {taskData.question.scenario}</p>
+            </div>
+          ) : (
+            <p>No question available</p>
+          )}
+          <p className="text-sm opacity-75 mt-2">Your Answer: {answer}</p>
         </div>
         <Button onClick={() => setOpenModal(true)} size="sm">
           View Task
         </Button>
       </div>
 
-      {/* Modal */}
       <Dialog open={openModal} onOpenChange={setOpenModal}>
         <DialogContent>
           <DialogHeader>
@@ -70,15 +68,27 @@ export default function SingleTaskQuestion({
           </DialogHeader>
           {taskData ? (
             <div className="space-y-2">
-              <p>
-                <strong>Question:</strong> {taskData.question}
-              </p>
+              {taskData.question && (
+                <>
+                  <p>
+                    <strong>Scenario:</strong> {taskData.question.scenario}
+                  </p>
+                  <p>
+                    <strong>Given:</strong> {taskData.question.given}
+                  </p>
+                  <p>
+                    <strong>When:</strong> {taskData.question.when}
+                  </p>
+                  <p>
+                    <strong>Then:</strong> {taskData.question.then}
+                  </p>
+                </>
+              )}
               {taskData.description && (
                 <p>
                   <strong>Description:</strong> {taskData.description}
                 </p>
               )}
-              {/* Tampilkan answers kalau ada */}
               {taskData.answers?.length > 0 && (
                 <div>
                   <strong>Answers:</strong>

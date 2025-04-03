@@ -7,11 +7,7 @@ import { useRouter } from "next/navigation";
 import { GET_LOGGED_IN_USER } from "@/graphql/queries/auth";
 import { useAuthStore } from "@/store/authStore";
 import SingleTaskQuestion from "@/components/organism/task-result";
-
-interface Task {
-  taskId: string;
-  answer: string;
-}
+import { AnsweredTask } from "@/graphql/types/tasks";
 
 export default function TestResultsPage() {
   const router = useRouter();
@@ -58,12 +54,12 @@ export default function TestResultsPage() {
         </div>
 
         <section>
-          <h2 className="text-xl font-semibold mb-2">Completed Tests</h2>
+          <h2 className="text-xl font-semibold mb-2">Completed Tasks</h2>
           {completedTasks.length === 0 ? (
             <p>No completed tests yet</p>
           ) : (
-            <div className="grid gap-4">
-              {completedTasks.map((task: Task, index: number) => (
+            <div className="max-h-96 overflow-y-auto grid gap-4">
+              {completedTasks.map((task: AnsweredTask , index: number) => (
                 <SingleTaskQuestion
                   key={index}
                   taskId={task.taskId}
