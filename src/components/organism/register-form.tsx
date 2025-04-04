@@ -151,10 +151,7 @@ export default function RegisterForm() {
                 <SelectContent className="bg-[#4c0e8f] text-white">
                   <SelectItem value="WORKER">Worker</SelectItem>
                   <SelectItem value="ADMIN">Admin</SelectItem>
-                  <SelectItem value="QUESTION_VALIDATOR">Validator</SelectItem>
-                  <SelectItem value="COMPANY_REPRESENTATIVE">
-                    Company Representative
-                  </SelectItem>
+                  <SelectItem value="QUESTION_VALIDATOR">Question Validator</SelectItem>
                 </SelectContent>
               </Select>
               <p className="text-red-400 text-xs">{errors.role?.message}</p>
