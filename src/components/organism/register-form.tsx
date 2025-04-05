@@ -149,8 +149,7 @@ export default function RegisterForm() {
                   <SelectValue placeholder="Select Role" />
                 </SelectTrigger>
                 <SelectContent className="bg-[#4c0e8f] text-white">
-                  <SelectItem value="WORKER">Worker</SelectItem>
-                  <SelectItem value="ADMIN">Admin</SelectItem>
+                  <SelectItem value="WORKER">Crowd Worker</SelectItem>
                   <SelectItem value="QUESTION_VALIDATOR">Question Validator</SelectItem>
                 </SelectContent>
               </Select>
