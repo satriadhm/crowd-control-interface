@@ -197,26 +197,6 @@ export default function RegisterForm() {
               Login
             </Link>
           </span>
-          <div className="flex flex-col gap-2 w-full">
-            <Button disabled variant="outline" className="w-full">
-              <Image
-                src="/icons/google-icon.svg"
-                width={23}
-                height={23}
-                alt="image-illustration"
-              />
-              Email
-            </Button>
-            <Button disabled variant="outline" className="w-full">
-              <Image
-                src="/icons/github-icon.svg"
-                width={23}
-                height={23}
-                alt="image-illustration"
-              />
-              Github
-            </Button>
-          </div>
         </div>
       </div>
     </section>
