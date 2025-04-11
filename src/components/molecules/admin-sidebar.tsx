@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useMutation } from "@apollo/client";
 import { LOGOUT } from "@/graphql/mutations/auth";
 import Cookies from "js-cookie";
-import { Users, ListChecks, LogOut, User } from "lucide-react";
+import { Users, ListChecks, LogOut, User, BarChart2 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 
 export default function Sidebar() {
@@ -70,7 +70,22 @@ export default function Sidebar() {
             </li>
             <li
               className={` text-sm bg-gradient-to-r p-4 rounded-lg ${
-                isActive("/dashboard/edit-profile")
+                isActive("/test-results")
+                  ? "border bg-[#5460ff] to-[#032054] "
+                  : ""
+              }`}
+            >
+              <button
+                onClick={() => navigateTo("/test-results")}
+                className="flex items-center gap-3 w-full text-gray-300 hover:text-white transition-all"
+              >
+                <BarChart2 size={20} />
+                <span>Test Results</span>
+              </button>
+            </li>
+            <li
+              className={` text-sm bg-gradient-to-r p-4 rounded-lg ${
+                isActive("/worker-analysis")
                   ? "border bg-[#5460ff] to-[#032054] "
                   : ""
               }`}
@@ -85,7 +100,7 @@ export default function Sidebar() {
             </li>
             <li
               className={` text-sm bg-gradient-to-r p-4 rounded-lg ${
-                isActive("/dashboard/edit-profile")
+                isActive("/edit-profile")
                   ? "border bg-[#5460ff] to-[#032054] "
                   : ""
               }`}

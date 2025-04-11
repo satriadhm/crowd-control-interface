@@ -15,6 +15,7 @@ export const GET_TASKS = gql`
       description
       nAnswers
       answers {
+        answerId
         answer
         stats
       }
@@ -36,6 +37,7 @@ export const GET_TASK_BY_ID = gql`
       description
       nAnswers
       answers {
+        answerId
         answer
         stats
       }

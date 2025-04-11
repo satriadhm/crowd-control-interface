@@ -24,7 +24,7 @@ export default function ValidateQuestionPage() {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 4;
+  const pageSize = 6;
   
   // Query detail task
   const { data: taskDetail, loading: loadingTaskDetail } = useQuery(
