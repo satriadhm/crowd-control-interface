@@ -7,10 +7,12 @@ export default function AdminLayout({ children }) {
   const { userRole } = useAuthStore();
 
   return (
-    <div className="grid grid-cols-12">
+    <div className="flex min-h-screen">
       {userRole === "admin" && <Sidebar />}
-      <main className={`${userRole === "admin" ? "col-span-10" : "col-span-12"} bg-background p-6`}>
-        {children}
+      <main className="flex-1 h-screen overflow-hidden bg-gradient-to-r from-[#0a1e5e] to-[#001333] text-white">
+        <div className="h-full overflow-y-auto">
+          {children}
+        </div>
       </main>
     </div>
   );
