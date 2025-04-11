@@ -10,6 +10,7 @@ export interface Task {
   };
   isValidQuestion: boolean;
   answers: Array<{
+    answerId: number;
     answer: string;
     stats: number | null;
   }>;
@@ -66,4 +67,10 @@ export interface AnsweredTask {
   taskId: string;
   answer: string;
   stats: string;
+}
+
+export interface CreateRecordedAnswerInput {
+  taskId: string;
+  answer: string;
+  answerId: number;
 }

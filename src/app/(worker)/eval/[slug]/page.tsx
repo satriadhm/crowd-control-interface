@@ -11,6 +11,7 @@ import React, { useEffect, useState } from "react";
 export default function PageDetail() {
   const taskId = useTaskDetail((state) => state.id);
   const [myAnswer, setMyAnswer] = useState<string>("");
+  const [selectedAnswerId, setSelectedAnswerId] = useState<number | null>(null);
   const [timeLeft, setTimeLeft] = useState<number>(60); // 60 seconds
   const router = useRouter();
 
@@ -44,11 +45,19 @@ export default function PageDetail() {
   if (error) return <p>Error: {error.message}</p>;
 
   const onSubmitAnswer = async () => {
+    if (selectedAnswerId === null) {
+      alert("Please select an answer");
+      return;
+    }
+
     try {
       await submitAnswer({
         variables: {
-          answer: myAnswer,
-          taskId: taskId,
+          input: {
+            taskId: taskId,
+            answer: myAnswer,
+            answerId: selectedAnswerId,
+          },
         },
       });
       alert("Answer submitted successfully!");
@@ -96,7 +105,10 @@ export default function PageDetail() {
               {taskDetailData.getTaskById.answers?.map((item, index) => (
                 <button
                   key={index}
-                  onClick={() => setMyAnswer(item.answer)}
+                  onClick={() => {
+                    setMyAnswer(item.answer);
+                    setSelectedAnswerId(item.answerId || index);
+                  }}
                   className={`border border-cyan-500 px-8 py-2 rounded-lg hover:bg-cyan-500/25 ${
                     myAnswer === item.answer ? "bg-cyan-500/25" : ""
                   }`}
