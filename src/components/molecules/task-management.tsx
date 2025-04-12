@@ -13,7 +13,14 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import { ClipboardList, ClipboardPlus, Trash2 } from "lucide-react";
+import {
+  ClipboardList,
+  ClipboardPlus,
+  Trash2,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+} from "lucide-react";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Input } from "../ui/input";
@@ -21,7 +28,9 @@ import { Textarea } from "../ui/textarea";
 import { CreateTask, Task } from "@/graphql/types/tasks";
 
 export default function TaskManagement() {
-  const { data, refetch } = useQuery<{ getTasks: Task[] }>(GET_TASKS);
+  const { data, loading, error, refetch } = useQuery<{ getTasks: Task[] }>(
+    GET_TASKS
+  );
   const [getTaskById, { data: taskDetailData }] = useLazyQuery<{
     getTaskById: Task;
   }>(GET_TASK_BY_ID);
@@ -120,11 +129,36 @@ export default function TaskManagement() {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6 bg-white/10 rounded-lg shadow-lg text-center">
+        <AlertCircle className="h-12 w-12 mx-auto text-red-500 mb-4" />
+        <p className="text-white">Error loading tasks: {error.message}</p>
+        <Button onClick={() => refetch()} className="mt-4">
+          Retry
+        </Button>
+      </div>
+    );
+  }
+
   return (
-    <div className="p-6 bg-gray-50">
-      <div className="flex justify-end items-center mb-6">
-        <Button className="bg-[#001333]" onClick={() => setIsModalOpen(true)}>
-          <ClipboardList size={16} /> Create Task
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-white">Task Management</h1>
+        <Button
+          className="flex items-center gap-2 bg-gradient-to-r from-tertiary to-tertiary-light text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+          onClick={() => setIsModalOpen(true)}
+        >
+          <ClipboardPlus size={16} />
+          Create Task
         </Button>
       </div>
 
@@ -133,9 +167,11 @@ export default function TaskManagement() {
         open={isModalOpen}
         onOpenChange={() => setIsModalOpen(!isModalOpen)}
       >
-        <DialogContent>
+        <DialogContent className="bg-[#0a1e5e] text-white border border-white/20 max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Create New Task</DialogTitle>
+            <DialogTitle className="text-xl font-bold">
+              Create New Task
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 mt-6">
             <Input
@@ -145,6 +181,7 @@ export default function TaskManagement() {
               onChange={(e) =>
                 setNewTask({ ...newTask, title: e.target.value })
               }
+              className="bg-white/10 border-white/20 text-white"
             />
             <Textarea
               placeholder="Description"
@@ -152,95 +189,128 @@ export default function TaskManagement() {
               onChange={(e) =>
                 setNewTask({ ...newTask, description: e.target.value })
               }
-            />
-            <Input
-              type="text"
-              placeholder="Scenario"
-              value={newTask.question.scenario}
-              onChange={(e) =>
-                setNewTask({
-                  ...newTask,
-                  question: { ...newTask.question, scenario: e.target.value },
-                })
-              }
-            />
-            <Input
-              type="text"
-              placeholder="Given"
-              value={newTask.question.given}
-              onChange={(e) =>
-                setNewTask({
-                  ...newTask,
-                  question: { ...newTask.question, given: e.target.value },
-                })
-              }
-            />
-            <Input
-              type="text"
-              placeholder="When"
-              value={newTask.question.when}
-              onChange={(e) =>
-                setNewTask({
-                  ...newTask,
-                  question: { ...newTask.question, when: e.target.value },
-                })
-              }
-            />
-            <Input
-              type="text"
-              placeholder="Then"
-              value={newTask.question.then}
-              onChange={(e) =>
-                setNewTask({
-                  ...newTask,
-                  question: { ...newTask.question, then: e.target.value },
-                })
-              }
+              className="bg-white/10 border-white/20 text-white"
             />
 
-            {newTask.answers.map((answer, idx) => (
-              <div key={idx} className="mb-3 gap-2 flex items-center">
-                <Input
-                  type="text"
-                  placeholder={`Answer - ${idx + 1}`}
-                  value={answer.answer}
-                  onChange={(e) => {
-                    const updatedAnswers = [...newTask.answers];
-                    updatedAnswers[idx].answer = e.target.value;
-                    setNewTask({ ...newTask, answers: updatedAnswers });
-                  }}
-                />
-                <Button
-                  variant="destructive"
-                  onClick={() => {
-                    const updatedAnswers = newTask.answers.filter(
-                      (_, index) => index !== idx
-                    );
-                    setNewTask({ ...newTask, answers: updatedAnswers });
-                  }}
-                >
-                  <Trash2 />
-                </Button>
-              </div>
-            ))}
-            <Button
-              onClick={() =>
-                setNewTask({
-                  ...newTask,
-                  answers: [...newTask.answers, { answer: "" }],
-                })
-              }
-            >
-              <ClipboardPlus size={16} /> Add Answer
-            </Button>
-            <div className="flex justify-end space-x-4">
+            <div className="bg-white/10 p-4 rounded-lg border border-white/20">
+              <h3 className="text-md font-semibold mb-3">
+                Question Format (Gherkin)
+              </h3>
+              <Input
+                type="text"
+                placeholder="Scenario"
+                value={newTask.question.scenario}
+                onChange={(e) =>
+                  setNewTask({
+                    ...newTask,
+                    question: { ...newTask.question, scenario: e.target.value },
+                  })
+                }
+                className="bg-white/10 border-white/20 text-white mb-2"
+              />
+              <Input
+                type="text"
+                placeholder="Given"
+                value={newTask.question.given}
+                onChange={(e) =>
+                  setNewTask({
+                    ...newTask,
+                    question: { ...newTask.question, given: e.target.value },
+                  })
+                }
+                className="bg-white/10 border-white/20 text-white mb-2"
+              />
+              <Input
+                type="text"
+                placeholder="When"
+                value={newTask.question.when}
+                onChange={(e) =>
+                  setNewTask({
+                    ...newTask,
+                    question: { ...newTask.question, when: e.target.value },
+                  })
+                }
+                className="bg-white/10 border-white/20 text-white mb-2"
+              />
+              <Input
+                type="text"
+                placeholder="Then"
+                value={newTask.question.then}
+                onChange={(e) =>
+                  setNewTask({
+                    ...newTask,
+                    question: { ...newTask.question, then: e.target.value },
+                  })
+                }
+                className="bg-white/10 border-white/20 text-white"
+              />
+            </div>
+
+            <div className="bg-white/10 p-4 rounded-lg border border-white/20">
+              <h3 className="text-md font-semibold mb-3">Possible Answers</h3>
+              {newTask.answers.map((answer, idx) => (
+                <div key={idx} className="mb-3 gap-2 flex items-center">
+                  <Input
+                    type="text"
+                    placeholder={`Answer - ${idx + 1}`}
+                    value={answer.answer}
+                    onChange={(e) => {
+                      const updatedAnswers = [...newTask.answers];
+                      updatedAnswers[idx].answer = e.target.value;
+                      setNewTask({ ...newTask, answers: updatedAnswers });
+                    }}
+                    className="bg-white/10 border-white/20 text-white"
+                  />
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      if (newTask.answers.length > 1) {
+                        const updatedAnswers = newTask.answers.filter(
+                          (_, index) => index !== idx
+                        );
+                        setNewTask({ ...newTask, answers: updatedAnswers });
+                      } else {
+                        alert("Task must have at least one answer option.");
+                      }
+                    }}
+                    className="bg-red-600 hover:bg-red-700"
+                    disabled={newTask.answers.length <= 1}
+                  >
+                    <Trash2 size={16} />
+                  </Button>
+                </div>
+              ))}
+              <Button
+                onClick={() =>
+                  setNewTask({
+                    ...newTask,
+                    answers: [...newTask.answers, { answer: "" }],
+                  })
+                }
+                className="w-full mt-2 bg-white/10 hover:bg-white/20 border border-white/20"
+              >
+                <ClipboardPlus size={16} className="mr-2" /> Add Answer Option
+              </Button>
+            </div>
+
+            <div className="flex justify-end space-x-4 mt-6">
               <Button
                 onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 bg-gray-300 rounded"
+                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white"
               >
                 Cancel
               </Button>
-              <Button onClick={handleCreateTask}>Create</Button>
+              <Button
+                onClick={handleCreateTask}
+                className="bg-gradient-to-r from-tertiary to-tertiary-light text-white hover:shadow-lg"
+                disabled={
+                  !newTask.title ||
+                  !newTask.question.scenario ||
+                  newTask.answers.some((a) => !a.answer)
+                }
+              >
+                Create Task
+              </Button>
             </div>
           </div>
         </DialogContent>
@@ -251,79 +321,126 @@ export default function TaskManagement() {
         open={isDetailModalOpen}
         onOpenChange={() => setIsDetailModalOpen(!isDetailModalOpen)}
       >
-        <DialogContent className="max-w-5xl w-full">
+        <DialogContent className="bg-[#0a1e5e] text-white border border-white/20 max-w-5xl w-full max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold">
               Task Details
             </DialogTitle>
           </DialogHeader>
-          <div className="mt-4 flex space-x-8">
-            <div className="w-1/2 border-r border-gray-300 pr-4">
-              <table className="min-w-full border-collapse">
-                <tbody>
-                  <tr className="border-b border-gray-300">
-                    <td className="py-2 px-4 font-semibold w-32">Title</td>
-                    <td className="py-2 px-4">{selectedTask?.title}</td>
-                  </tr>
-                  <tr className="border-b border-gray-300">
-                    <td className="py-2 px-4 font-semibold">Description</td>
-                    <td className="py-2 px-4">{selectedTask?.description}</td>
-                  </tr>
-                  <tr className="border-b border-gray-300">
-                    <td className="py-2 px-4 font-semibold">Scenario</td>
-                    <td className="py-2 px-4">
-                      {selectedTask?.question?.scenario}
-                    </td>
-                  </tr>
-                  <tr className="border-b border-gray-300">
-                    <td className="py-2 px-4 font-semibold">Given</td>
-                    <td className="py-2 px-4">
-                      {selectedTask?.question?.given}
-                    </td>
-                  </tr>
-                  <tr className="border-b border-gray-300">
-                    <td className="py-2 px-4 font-semibold">When</td>
-                    <td className="py-2 px-4">
-                      {selectedTask?.question?.when}
-                    </td>
-                  </tr>
-                  <tr className="border-b border-gray-300 bg-blue-50">
-                    <td className="py-2 px-4 font-semibold text-blue-800">
-                      Then
-                    </td>
-                    <td className="py-2 px-4 text-blue-800">
+          <div className="mt-4 flex flex-col md:flex-row md:space-x-8">
+            <div className="w-full md:w-1/2 border-b md:border-b-0 md:border-r border-white/20 pb-4 md:pb-0 md:pr-4">
+              <div className="bg-white/10 p-4 rounded-lg mb-4">
+                <h3 className="text-lg font-semibold mb-2 text-tertiary-light">
+                  Basic Information
+                </h3>
+                <p className="mb-2">
+                  <span className="font-semibold">Title:</span>{" "}
+                  {selectedTask?.title}
+                </p>
+                <p className="mb-2">
+                  <span className="font-semibold">Description:</span>{" "}
+                  {selectedTask?.description || "No description provided"}
+                </p>
+                <p className="mb-2">
+                  <span className="font-semibold">Status:</span>{" "}
+                  <span
+                    className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${
+                      selectedTask?.isValidQuestion
+                        ? "bg-green-500/20 text-green-400"
+                        : "bg-red-500/20 text-red-400"
+                    }`}
+                  >
+                    {selectedTask?.isValidQuestion ? (
+                      <>
+                        <CheckCircle size={14} className="mr-1" /> Valid
+                      </>
+                    ) : (
+                      <>
+                        <XCircle size={14} className="mr-1" /> Not Validated
+                      </>
+                    )}
+                  </span>
+                </p>
+              </div>
+
+              <div className="bg-white/10 p-4 rounded-lg">
+                <h3 className="text-lg font-semibold mb-2 text-tertiary-light">
+                  Question Format
+                </h3>
+                <div className="space-y-2">
+                  <p>
+                    <span className="font-semibold">Scenario:</span>{" "}
+                    {selectedTask?.question?.scenario}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Given:</span>{" "}
+                    {selectedTask?.question?.given}
+                  </p>
+                  <p>
+                    <span className="font-semibold">When:</span>{" "}
+                    {selectedTask?.question?.when}
+                  </p>
+                  <p>
+                    <span className="font-semibold text-blue-400">Then:</span>{" "}
+                    <span className="text-blue-400">
                       {selectedTask?.question?.then}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+                    </span>
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className="w-1/2">
-              <h3 className="text-xl font-semibold mb-3">Answers</h3>
-              <div className="max-h-96 overflow-y-hidden hover:overflow-y-auto transition-all duration-300">
-                <table className="min-w-full border-collapse">
-                  <thead>
-                    <tr className="border-b border-gray-300">
-                      <th className="py-2 px-4 text-left">Answer</th>
-                      <th className="py-2 px-4 text-left">Stats</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {selectedTask?.answers.map((answer, idx) => (
-                      <tr key={idx} className="border-b border-gray-300">
-                        <td className="py-2 px-4">{answer.answer ?? "-"}</td>
-                        <td className="py-2 px-4">{answer.stats ?? "-"}</td>
+
+            <div className="w-full md:w-1/2 mt-4 md:mt-0">
+              <div className="bg-white/10 p-4 rounded-lg h-full">
+                <h3 className="text-lg font-semibold mb-4 text-tertiary-light">
+                  Answer Options
+                </h3>
+                <div className="max-h-96 overflow-y-auto pr-2">
+                  <table className="w-full">
+                    <thead className="border-b border-white/20">
+                      <tr>
+                        <th className="py-2 px-3 text-left text-sm font-semibold">
+                          #
+                        </th>
+                        <th className="py-2 px-3 text-left text-sm font-semibold">
+                          Answer
+                        </th>
+                        <th className="py-2 px-3 text-left text-sm font-semibold">
+                          Stats
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {selectedTask?.answers.map((answer, idx) => (
+                        <tr
+                          key={idx}
+                          className="border-b border-white/10 hover:bg-white/5"
+                        >
+                          <td className="py-3 px-3">{idx + 1}</td>
+                          <td className="py-3 px-3">{answer.answer ?? "-"}</td>
+                          <td className="py-3 px-3">{answer.stats ?? "-"}</td>
+                        </tr>
+                      ))}
+                      {selectedTask?.answers.length === 0 && (
+                        <tr>
+                          <td
+                            colSpan={3}
+                            className="py-4 text-center text-gray-400"
+                          >
+                            No answers available
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
-          <div className="mt-6">
+          <div className="mt-6 flex justify-end">
             <Button
               onClick={() => setIsDetailModalOpen(false)}
-              className="w-full"
+              className="bg-gradient-to-r from-tertiary to-tertiary-light text-white hover:shadow-lg"
             >
               Close
             </Button>
@@ -332,80 +449,114 @@ export default function TaskManagement() {
       </Dialog>
 
       {/* Task List Table with Pagination */}
-      <div className="bg-white p-6 border rounded shadow">
-        <Table>
-          <TableCaption>A list of task.</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="font-semibold text-primary">
-                Title
-              </TableHead>
-              <TableHead className="font-semibold text-primary">
-                Description
-              </TableHead>
-              <TableHead className="font-semibold text-primary">
-                Status
-              </TableHead>
-              <TableHead className="text-right">Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {paginatedTasks.map((task) => (
-              <TableRow key={task.id}>
-                <TableCell>{task.title}</TableCell>
-                <TableCell>
-                  <span>{task.description}</span>
-                </TableCell>
-                <TableCell>
-                  {task.isValidQuestion ? (
-                    <span className="flex items-center">
-                      <span className="inline-block w-3 h-3 rounded-full bg-green-600 mr-2"></span>
-                      <span className="text-green-600 font-semibold">
-                        Valid
-                      </span>
-                    </span>
-                  ) : (
-                    <span className="flex items-center">
-                      <span className="inline-block w-3 h-3 rounded-full bg-red-600 mr-2"></span>
-                      <span className="text-red-600 font-semibold">
-                        Invalid
-                      </span>
-                    </span>
-                  )}
-                </TableCell>
-                <TableCell className="text-right space-x-2 flex items-center justify-end">
-                  <Button
-                    onClick={() => handleGetTaskById(task.id)}
-                    className="bg-[#0a1e5e]"
+      <div className="bg-white/10 p-6 rounded-lg shadow-lg">
+        {tasks.length === 0 ? (
+          <div className="text-center py-12">
+            <ClipboardList className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+            <p className="text-gray-300 mb-4">No tasks found</p>
+            <Button
+              onClick={() => setIsModalOpen(true)}
+              className="bg-gradient-to-r from-tertiary to-tertiary-light text-white"
+            >
+              Create Your First Task
+            </Button>
+          </div>
+        ) : (
+          <>
+            <Table>
+              <TableCaption>
+                A list of tasks ({tasks.length} total)
+              </TableCaption>
+              <TableHeader className="bg-white/5">
+                <TableRow>
+                  <TableHead className="font-semibold text-white">
+                    Title
+                  </TableHead>
+                  <TableHead className="font-semibold text-white">
+                    Description
+                  </TableHead>
+                  <TableHead className="font-semibold text-white">
+                    Status
+                  </TableHead>
+                  <TableHead className="text-right text-white">
+                    Action
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {paginatedTasks.map((task) => (
+                  <TableRow
+                    key={task.id}
+                    className="border-b border-white/10 hover:bg-white/5"
                   >
-                    View
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    onClick={() => handleDeleteTask(task.id)}
-                  >
-                    <Trash2 />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        {/* Pagination Controls */}
-        <div className="flex justify-between items-center mt-4">
-          <Button onClick={handlePrevPage} disabled={currentPage === 1}>
-            Prev
-          </Button>
-          <span>
-            Page {currentPage} of {totalPages}
-          </span>
-          <Button
-            onClick={handleNextPage}
-            disabled={currentPage === totalPages || totalPages === 0}
-          >
-            Next
-          </Button>
-        </div>
+                    <TableCell className="font-medium text-white">
+                      {task.title}
+                    </TableCell>
+                    <TableCell className="text-gray-300">
+                      <span>{task.description || "-"}</span>
+                    </TableCell>
+                    <TableCell>
+                      {task.isValidQuestion ? (
+                        <span className="flex items-center">
+                          <span className="inline-block w-3 h-3 rounded-full bg-green-600 mr-2"></span>
+                          <span className="text-green-500 font-semibold">
+                            Valid
+                          </span>
+                        </span>
+                      ) : (
+                        <span className="flex items-center">
+                          <span className="inline-block w-3 h-3 rounded-full bg-red-600 mr-2"></span>
+                          <span className="text-red-500 font-semibold">
+                            Not Validated
+                          </span>
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-right space-x-2 flex items-center justify-end">
+                      <Button
+                        onClick={() => handleGetTaskById(task.id)}
+                        className="bg-blue-600 hover:bg-blue-700"
+                        size="sm"
+                      >
+                        View
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        onClick={() => handleDeleteTask(task.id)}
+                        size="sm"
+                      >
+                        <Trash2 size={16} />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex justify-between items-center mt-6">
+                <Button
+                  onClick={handlePrevPage}
+                  disabled={currentPage === 1}
+                  className="bg-white/10 hover:bg-white/20 border border-white/20 text-white disabled:opacity-50"
+                >
+                  Previous
+                </Button>
+                <span className="text-white">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <Button
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages || totalPages === 0}
+                  className="bg-white/10 hover:bg-white/20 border border-white/20 text-white disabled:opacity-50"
+                >
+                  Next
+                </Button>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );
