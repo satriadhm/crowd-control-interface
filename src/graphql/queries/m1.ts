@@ -1,7 +1,5 @@
 import { gql } from "@apollo/client";
 
-
-
 export const GET_ELIGIBILITY_HISTORY = gql`
   query GetTestHistory($workerId: String!) {
     getTestHistory(workerId: $workerId) {
@@ -50,6 +48,40 @@ export const GET_RECORDED_ANSWERS = gql`
       workerId
       answer
       createdAt
+    }
+  }
+`;
+
+export const GET_ALGORITHM_PERFORMANCE = gql`
+  query GetAlgorithmPerformance {
+    getAlgorithmPerformance {
+      month
+      accuracyRate
+      responseTime
+    }
+  }
+`;
+
+export const GET_TEST_RESULTS = gql`
+  query GetTestResults {
+    getTestResults {
+      id
+      workerId
+      testId
+      score
+      feedback
+      createdAt
+    }
+  }
+`;
+
+export const GET_TESTER_ANALYSIS = gql`
+  query GetTesterAnalysis {
+    getTesterAnalysis {
+      workerId
+      testerName
+      averageScore
+      accuracy
     }
   }
 `;

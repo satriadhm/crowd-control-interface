@@ -32,6 +32,26 @@ export default function TestResultsPage() {
 
   const completedTasks = me.completedTasks || [];
 
+  // Determine card style and text based on isEligible value
+  const getEligibilityStyle = () => {
+    // If isEligible is null or true, show as eligible
+    if (me.isEligible === null || me.isEligible === true) {
+      return {
+        cardClass:
+          "bg-gradient-to-r from-purple-300 to-purple-500 text-white border-purple-600",
+        text: "Eligible",
+      };
+    } else {
+      return {
+        cardClass:
+          "bg-gradient-to-r from-pink-300 to-pink-500 text-white border-pink-600",
+        text: "Not Eligible",
+      };
+    }
+  };
+
+  const eligibilityStyle = getEligibilityStyle();
+
   return (
     <div className="flex min-h-screen">
       <WorkerSidebar />
@@ -41,15 +61,9 @@ export default function TestResultsPage() {
         <div className="mb-6">
           <h2 className="text-xl font-semibold">Eligibility Status</h2>
           <div
-            className={`flex items-center justify-center p-6 rounded-lg border-2 ${
-              me.isEligible
-                ? "bg-gradient-to-r from-purple-300 to-purple-500 text-white border-purple-600"
-                : "bg-gradient-to-r from-pink-300 to-pink-500 text-white border-pink-600"
-            } shadow-lg bg-[length:100%_100%] bg-[url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 10 10%22%3E%3Cpath fill=%22%23ffffff%22 d=%22M0 0h5v5H0zm5 5h5v5H5z%22/%3E%3C/svg%3E')]`}
+            className={`flex items-center justify-center p-6 rounded-lg border-2 ${eligibilityStyle.cardClass} shadow-lg bg-[length:100%_100%] bg-[url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 10 10%22%3E%3Cpath fill=%22%23ffffff%22 d=%22M0 0h5v5H0zm5 5h5v5H5z%22/%3E%3C/svg%3E')]`}
           >
-            <p className="text-2xl font-bold">
-              {me.isEligible ? "Eligible" : "Not Eligible"}
-            </p>
+            <p className="text-2xl font-bold">{eligibilityStyle.text}</p>
           </div>
         </div>
 
@@ -59,7 +73,7 @@ export default function TestResultsPage() {
             <p>No completed tests yet</p>
           ) : (
             <div className="max-h-96 overflow-y-auto grid gap-4">
-              {completedTasks.map((task: AnsweredTask , index: number) => (
+              {completedTasks.map((task: AnsweredTask, index: number) => (
                 <SingleTaskQuestion
                   key={index}
                   taskId={task.taskId}

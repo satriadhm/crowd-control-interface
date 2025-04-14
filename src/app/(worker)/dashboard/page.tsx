@@ -19,7 +19,6 @@ export default function Dashboard() {
     skip: !accessToken,
     fetchPolicy: "network-only",
   });
-  console.log(data);
 
   // Query untuk mendapatkan total tasks
   const { data: tasksData, loading: tasksLoading, error: tasksError } = useQuery(GET_TOTAL_TASKS, {
@@ -29,7 +28,7 @@ export default function Dashboard() {
       },
     },
   });
-  console.log(tasksData);
+  
   // Query untuk mendapatkan total active user
   const { data: usersData, loading: usersLoading, error: usersError } = useQuery(GET_TOTAL_USERS, {
     context: {
@@ -58,9 +57,14 @@ export default function Dashboard() {
   const totalActiveUsers = usersData?.getTotalUsers || 0;
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-r from-[#0a1e5e] to-[#001333] text-white overflow-hidden">
-      <WorkerSidebar />
-      <main className="flex-1 p-6">
+    <div className="flex h-screen overflow-hidden bg-gradient-to-r from-[#0a1e5e] to-[#001333] text-white">
+      {/* Fixed Sidebar */}
+      <div className="flex-none">
+        <WorkerSidebar />
+      </div>
+      
+      {/* Scrollable Main Content */}
+      <main className="flex-1 overflow-y-auto p-6">
         <div className="flex justify-between items-center bg-white/10 p-4 rounded-lg shadow-md mb-6">
           <div>
             <h1 className="text-2xl font-bold text-white">Dashboard</h1>
@@ -92,7 +96,10 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <DashboardCharts />
+        {/* Dashboard Charts */}
+        <div className="pb-8">
+          <DashboardCharts />
+        </div>
       </main>
     </div>
   );
