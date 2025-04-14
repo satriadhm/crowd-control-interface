@@ -12,7 +12,7 @@ export default function DashboardSidebar() {
             </Link>
           </li>
           <li>
-            <Link href="/dashboard/edit-profile" className="hover:text-blue-300">
+            <Link href="/edit-profile" className="hover:text-blue-300">
               Edit Profile
             </Link>
           </li>

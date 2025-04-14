@@ -34,18 +34,25 @@ export default function TestResultsPage() {
 
   // Determine card style and text based on isEligible value
   const getEligibilityStyle = () => {
+    console.log("Eligibility:", me.isEligible); // Debugging line
     // If isEligible is null or true, show as eligible
-    if (me.isEligible === null || me.isEligible === true) {
+    if (me.isEligible === true) {
       return {
         cardClass:
           "bg-gradient-to-r from-purple-300 to-purple-500 text-white border-purple-600",
         text: "Eligible",
       };
-    } else {
+    } else if (me.isEligible === false) {
       return {
         cardClass:
           "bg-gradient-to-r from-pink-300 to-pink-500 text-white border-pink-600",
         text: "Not Eligible",
+      };
+    } else {
+      return {
+        cardClass:
+          "bg-gradient-to-r from-gray-300 to-gray-500 text-white border-gray-600",
+        text: "Eligibility Unknown",
       };
     }
   };
