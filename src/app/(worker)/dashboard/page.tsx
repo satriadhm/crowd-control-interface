@@ -21,16 +21,24 @@ export default function Dashboard() {
   });
 
   // Query untuk mendapatkan total tasks
-  const { data: tasksData, loading: tasksLoading, error: tasksError } = useQuery(GET_TOTAL_TASKS, {
+  const {
+    data: tasksData,
+    loading: tasksLoading,
+    error: tasksError,
+  } = useQuery(GET_TOTAL_TASKS, {
     context: {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     },
   });
-  
+
   // Query untuk mendapatkan total active user
-  const { data: usersData, loading: usersLoading, error: usersError } = useQuery(GET_TOTAL_USERS, {
+  const {
+    data: usersData,
+    loading: usersLoading,
+    error: usersError,
+  } = useQuery(GET_TOTAL_USERS, {
     context: {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -45,11 +53,17 @@ export default function Dashboard() {
 
   // Pastikan data dashboard untuk tasks dan users sudah ada
   if (tasksLoading || usersLoading)
-    return <p className="text-center text-gray-500">Loading dashboard data...</p>;
+    return (
+      <p className="text-center text-gray-500">Loading dashboard data...</p>
+    );
   if (tasksError)
-    return <p className="text-center text-red-500">Error: {tasksError.message}</p>;
+    return (
+      <p className="text-center text-red-500">Error: {tasksError.message}</p>
+    );
   if (usersError)
-    return <p className="text-center text-red-500">Error: {usersError.message}</p>;
+    return (
+      <p className="text-center text-red-500">Error: {usersError.message}</p>
+    );
 
   const user = data?.me;
 
@@ -62,7 +76,7 @@ export default function Dashboard() {
       <div className="flex-none">
         <WorkerSidebar />
       </div>
-      
+
       {/* Scrollable Main Content */}
       <main className="flex-1 overflow-y-auto p-6">
         <div className="flex justify-between items-center bg-white/10 p-4 rounded-lg shadow-md mb-6">
@@ -85,14 +99,43 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <div className="bg-white/10 p-6 rounded-lg shadow-lg flex flex-col items-center">
             <h2 className="text-lg font-semibold text-white">Total Tasks</h2>
-            <p className="text-4xl font-bold text-blue-400 mt-2">{totalTasks}</p>
+            <p className="text-4xl font-bold text-blue-400 mt-2">
+              {totalTasks}
+            </p>
           </div>
           <div className="bg-white/10 p-6 rounded-lg shadow-lg flex flex-col items-center">
-            <h2 className="text-lg font-semibold text-white">Total Active User</h2>
-            <p className="text-4xl font-bold text-orange-400 mt-2">{totalActiveUsers}</p>
+            <h2 className="text-lg font-semibold text-white">
+              Total Active User
+            </h2>
+            <p className="text-4xl font-bold text-orange-400 mt-2">
+              {totalActiveUsers}
+            </p>
+          </div>
+          <div className="bg-white/10 p-6 rounded-lg shadow-lg flex flex-col items-center">
+            <h2 className="text-lg font-semibold text-white">
+              Your Eligibility
+            </h2>
+            <div className="text-center">
+              <p className="text-4xl font-bold mt-2">
+                {user?.isEligible === true && (
+                  <span className="text-green-400">Eligible</span>
+                )}
+                {user?.isEligible === false && (
+                  <span className="text-red-400">Not Eligible</span>
+                )}
+                {user?.isEligible === null && (
+                  <span className="text-yellow-400">Pending</span>
+                )}
+              </p>
+              {user?.isEligible === null && (
+                <p className="text-xs text-gray-300 mt-1">
+                  Complete more tasks for evaluation
+                </p>
+              )}
+            </div>
           </div>
         </div>
 

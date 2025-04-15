@@ -1,6 +1,3 @@
-// Update the DashboardCharts component to use real data from the new API
-// src/components/organism/charts.tsx
-
 "use client";
 
 import { useState } from "react";
@@ -90,12 +87,31 @@ export default function DashboardCharts() {
     ],
   };
 
-  const {
-    iterationMetrics,
-    workerEligibility,
-    taskValidation,
-    accuracyDistribution,
-  } = dashboardData;
+  // Get current active iteration
+  // Look for the first iteration with non-zero workers, or use the first iteration if all are zero
+  const currentIterationIndex = dashboardData.iterationMetrics.findIndex(
+    (metric) => metric.workers > 0
+  );
+  const currentIteration =
+    currentIterationIndex >= 0 ? currentIterationIndex + 1 : 1;
+
+  // Modify iteration metrics for display - zero out worker counts for future iterations
+  // (iterations after the current active one)
+  const modifiedIterationMetrics = dashboardData.iterationMetrics.map(
+    (metric, index) => {
+      // If this iteration is after the current active one, set workers to 0
+      if (index + 1 > currentIteration) {
+        return {
+          ...metric,
+          workers: 0, // Future iterations have 0 workers until they become active
+        };
+      }
+      return metric;
+    }
+  );
+
+  const { workerEligibility, taskValidation, accuracyDistribution } =
+    dashboardData;
 
   // Calculate summary values for the small charts
   const eligibleCount =
@@ -163,10 +179,11 @@ export default function DashboardCharts() {
         {activeChart === "iterationMetrics" && (
           <>
             <p className="text-sm text-gray-300 mb-4">
-              Number of workers and tasks across iterations
+              Number of workers and tasks across iterations (Current: Iteration{" "}
+              {currentIteration})
             </p>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={iterationMetrics}>
+              <BarChart data={modifiedIterationMetrics}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#4A5568" />
                 <XAxis dataKey="iteration" stroke="#CBD5E0" />
                 <YAxis stroke="#CBD5E0" />
@@ -175,6 +192,16 @@ export default function DashboardCharts() {
                     backgroundColor: "#2D3748",
                     border: "none",
                     borderRadius: "8px",
+                  }}
+                  formatter={(value, name) => {
+                    // For future iterations, show "Not active yet" for workers
+                    const iterationNum = parseInt(
+                      String(name).replace("Iteration ", "")
+                    );
+                    if (name === "workers" && iterationNum > currentIteration) {
+                      return ["Not active yet", name];
+                    }
+                    return [value, name];
                   }}
                 />
                 <Legend />

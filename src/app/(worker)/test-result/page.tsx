@@ -34,8 +34,7 @@ export default function TestResultsPage() {
 
   // Determine card style and text based on isEligible value
   const getEligibilityStyle = () => {
-    console.log("Eligibility:", me.isEligible); // Debugging line
-    // If isEligible is null or true, show as eligible
+    // Handle the three possible states more clearly
     if (me.isEligible === true) {
       return {
         cardClass:
@@ -49,10 +48,11 @@ export default function TestResultsPage() {
         text: "Not Eligible",
       };
     } else {
+      // Handle null/undefined case - pending evaluation
       return {
         cardClass:
-          "bg-gradient-to-r from-gray-300 to-gray-500 text-white border-gray-600",
-        text: "Eligibility Unknown",
+          "bg-gradient-to-r from-yellow-300 to-yellow-500 text-white border-yellow-600",
+        text: "Pending Evaluation",
       };
     }
   };
@@ -70,7 +70,22 @@ export default function TestResultsPage() {
           <div
             className={`flex items-center justify-center p-6 rounded-lg border-2 ${eligibilityStyle.cardClass} shadow-lg bg-[length:100%_100%] bg-[url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 10 10%22%3E%3Cpath fill=%22%23ffffff%22 d=%22M0 0h5v5H0zm5 5h5v5H5z%22/%3E%3C/svg%3E')]`}
           >
-            <p className="text-2xl font-bold">{eligibilityStyle.text}</p>
+            <div className="text-center">
+              <p className="text-2xl font-bold">{eligibilityStyle.text}</p>
+              {me.isEligible === null && (
+                <p className="text-sm mt-2 max-w-md">
+                  Your eligibility is being evaluated based on your test
+                  performance. Continue completing tasks to receive a full
+                  evaluation.
+                </p>
+              )}
+              {me.isEligible === false && (
+                <p className="text-sm mt-2 max-w-md">
+                  Based on your test performance, you&#39;re currently not eligible.
+                  Keep taking tests to improve your status!
+                </p>
+              )}
+            </div>
           </div>
         </div>
 
