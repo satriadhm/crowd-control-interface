@@ -1,8 +1,6 @@
-"use client";
-
 import { useState } from "react";
 import { useQuery } from "@apollo/client";
-import { useAuthStore } from "@/store/authStore";
+import { gql } from "@apollo/client";
 import {
   BarChart,
   Bar,
@@ -16,24 +14,50 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import { GET_DASHBOARD_SUMMARY } from "@/graphql/mutations/m1";
 
 // Default colors for pie charts
 const COLORS = ["#48BB78", "#FC8181", "#4299E1", "#F6AD55"];
 
+// GraphQL query for dashboard data
+const GET_DASHBOARD_SUMMARY = gql`
+  query GetDashboardSummary {
+    getDashboardSummary {
+      iterationMetrics {
+        iteration
+        workers
+        tasks
+      }
+      workerEligibility {
+        name
+        value
+      }
+      taskValidation {
+        name
+        value
+      }
+      accuracyDistribution {
+        name
+        value
+      }
+    }
+  }
+`;
+
 export default function DashboardCharts() {
   const [activeChart, setActiveChart] = useState("iterationMetrics");
-  const { accessToken } = useAuthStore();
 
-  // Fetch data from the new API endpoint
+  // Use the Apollo useQuery hook to fetch data
   const { data, loading, error } = useQuery(GET_DASHBOARD_SUMMARY, {
     context: {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
       },
     },
     fetchPolicy: "network-only",
   });
+
+  // Extract dashboard data from the query result
+  const dashboardData = data?.getDashboardSummary;
 
   // Loading state
   if (loading) {
@@ -61,68 +85,10 @@ export default function DashboardCharts() {
     );
   }
 
-  // Default fallback data if API returns nothing
-  const dashboardData = data?.getDashboardSummary || {
-    iterationMetrics: [
-      { iteration: "Iteration 1", workers: 35, tasks: 124 },
-      { iteration: "Iteration 2", workers: 42, tasks: 180 },
-      { iteration: "Iteration 3", workers: 48, tasks: 210 },
-      { iteration: "Iteration 4", workers: 55, tasks: 250 },
-      { iteration: "Iteration 5", workers: 62, tasks: 290 },
-      { iteration: "Iteration 6", workers: 70, tasks: 320 },
-    ],
-    workerEligibility: [
-      { name: "Eligible", value: 70 },
-      { name: "Not Eligible", value: 30 },
-    ],
-    taskValidation: [
-      { name: "Validated", value: 65 },
-      { name: "Not Validated", value: 35 },
-    ],
-    accuracyDistribution: [
-      { name: "90-100%", value: 35 },
-      { name: "80-89%", value: 42 },
-      { name: "70-79%", value: 18 },
-      { name: "Below 70%", value: 5 },
-    ],
-  };
-
-  // Get current active iteration
-  // Look for the first iteration with non-zero workers, or use the first iteration if all are zero
-  const currentIterationIndex = dashboardData.iterationMetrics.findIndex(
-    (metric) => metric.workers > 0
-  );
-  const currentIteration =
-    currentIterationIndex >= 0 ? currentIterationIndex + 1 : 1;
-
-  // Modify iteration metrics for display - zero out worker counts for future iterations
-  // (iterations after the current active one)
-  const modifiedIterationMetrics = dashboardData.iterationMetrics.map(
-    (metric, index) => {
-      // If this iteration is after the current active one, set workers to 0
-      if (index + 1 > currentIteration) {
-        return {
-          ...metric,
-          workers: 0, // Future iterations have 0 workers until they become active
-        };
-      }
-      return metric;
-    }
-  );
-
-  const { workerEligibility, taskValidation, accuracyDistribution } =
-    dashboardData;
-
-  // Calculate summary values for the small charts
-  const eligibleCount =
-    workerEligibility.find((item) => item.name === "Eligible")?.value || 0;
-  const nonEligibleCount =
-    workerEligibility.find((item) => item.name === "Not Eligible")?.value || 0;
-
-  const validatedCount =
-    taskValidation.find((item) => item.name === "Validated")?.value || 0;
-  const nonValidatedCount =
-    taskValidation.find((item) => item.name === "Not Validated")?.value || 0;
+  // If no data, provide default
+  if (!dashboardData) {
+    return <div>No data available</div>;
+  }
 
   return (
     <div className="space-y-6">
@@ -179,11 +145,10 @@ export default function DashboardCharts() {
         {activeChart === "iterationMetrics" && (
           <>
             <p className="text-sm text-gray-300 mb-4">
-              Number of workers and tasks across iterations (Current: Iteration{" "}
-              {currentIteration})
+              Number of workers and tasks across iterations
             </p>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={modifiedIterationMetrics}>
+              <BarChart data={dashboardData.iterationMetrics}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#4A5568" />
                 <XAxis dataKey="iteration" stroke="#CBD5E0" />
                 <YAxis stroke="#CBD5E0" />
@@ -192,16 +157,6 @@ export default function DashboardCharts() {
                     backgroundColor: "#2D3748",
                     border: "none",
                     borderRadius: "8px",
-                  }}
-                  formatter={(value, name) => {
-                    // For future iterations, show "Not active yet" for workers
-                    const iterationNum = parseInt(
-                      String(name).replace("Iteration ", "")
-                    );
-                    if (name === "workers" && iterationNum > currentIteration) {
-                      return ["Not active yet", name];
-                    }
-                    return [value, name];
                   }}
                 />
                 <Legend />
@@ -215,12 +170,12 @@ export default function DashboardCharts() {
         {activeChart === "eligibilityComparison" && (
           <>
             <p className="text-sm text-gray-300 mb-4">
-              Proportion of eligible and non-eligible workers
+              Proportion of worker eligibility status
             </p>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={workerEligibility}
+                  data={dashboardData.workerEligibility}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
@@ -233,6 +188,7 @@ export default function DashboardCharts() {
                 >
                   <Cell fill="#48BB78" /> {/* Eligible - Green */}
                   <Cell fill="#FC8181" /> {/* Not Eligible - Red */}
+                  <Cell fill="#F6AD55" /> {/* Pending - Orange */}
                 </Pie>
                 <Tooltip formatter={(value) => [`${value} workers`, ""]} />
                 <Legend />
@@ -249,7 +205,7 @@ export default function DashboardCharts() {
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={taskValidation}
+                  data={dashboardData.taskValidation}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
@@ -278,7 +234,7 @@ export default function DashboardCharts() {
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={accuracyDistribution}
+                  data={dashboardData.accuracyDistribution}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
@@ -289,7 +245,7 @@ export default function DashboardCharts() {
                     `${name}: ${(percent * 100).toFixed(0)}%`
                   }
                 >
-                  {accuracyDistribution.map((entry, index) => (
+                  {dashboardData.accuracyDistribution.map((entry, index) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={COLORS[index % COLORS.length]}
@@ -314,7 +270,7 @@ export default function DashboardCharts() {
           <ResponsiveContainer width="100%" height={200}>
             <PieChart>
               <Pie
-                data={workerEligibility}
+                data={dashboardData.workerEligibility}
                 cx="50%"
                 cy="50%"
                 labelLine={false}
@@ -325,22 +281,29 @@ export default function DashboardCharts() {
               >
                 <Cell fill="#48BB78" /> {/* Eligible - Green */}
                 <Cell fill="#FC8181" /> {/* Not Eligible - Red */}
+                <Cell fill="#F6AD55" /> {/* Pending - Orange */}
               </Pie>
               <Tooltip formatter={(value) => [`${value} workers`, ""]} />
               <Legend />
             </PieChart>
           </ResponsiveContainer>
-          <div className="grid grid-cols-2 mt-2 text-center">
+          <div className="grid grid-cols-3 mt-2 text-center gap-2">
             <div className="bg-white/5 p-2 rounded">
               <p className="text-sm text-gray-300">Eligible</p>
               <p className="text-xl font-bold text-green-400">
-                {eligibleCount}
+                {dashboardData?.workerEligibility[0]?.value || 0}
               </p>
             </div>
             <div className="bg-white/5 p-2 rounded">
               <p className="text-sm text-gray-300">Not Eligible</p>
               <p className="text-xl font-bold text-red-400">
-                {nonEligibleCount}
+                {dashboardData?.workerEligibility[1]?.value || 0}
+              </p>
+            </div>
+            <div className="bg-white/5 p-2 rounded">
+              <p className="text-sm text-gray-300">Pending</p>
+              <p className="text-xl font-bold text-yellow-400">
+                {dashboardData?.workerEligibility[2]?.value || 0}
               </p>
             </div>
           </div>
@@ -354,7 +317,7 @@ export default function DashboardCharts() {
           <ResponsiveContainer width="100%" height={200}>
             <PieChart>
               <Pie
-                data={taskValidation}
+                data={dashboardData.taskValidation}
                 cx="50%"
                 cy="50%"
                 labelLine={false}
@@ -374,13 +337,13 @@ export default function DashboardCharts() {
             <div className="bg-white/5 p-2 rounded">
               <p className="text-sm text-gray-300">Validated</p>
               <p className="text-xl font-bold text-green-400">
-                {validatedCount}
+                {dashboardData.taskValidation[0].value}
               </p>
             </div>
             <div className="bg-white/5 p-2 rounded">
               <p className="text-sm text-gray-300">Not Validated</p>
               <p className="text-xl font-bold text-red-400">
-                {nonValidatedCount}
+                {dashboardData.taskValidation[1].value}
               </p>
             </div>
           </div>
