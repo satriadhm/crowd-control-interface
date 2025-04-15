@@ -16,7 +16,7 @@ import {
 } from "recharts";
 
 // Default colors for pie charts
-const COLORS = ["#48BB78", "#FC8181", "#4299E1", "#F6AD55"];
+const COLORS = ["#48BB78", "#FC8181", "#F6AD55", "#4299E1"];
 
 // GraphQL query for dashboard data
 const GET_DASHBOARD_SUMMARY = gql`
@@ -291,19 +291,25 @@ export default function DashboardCharts() {
             <div className="bg-white/5 p-2 rounded">
               <p className="text-sm text-gray-300">Eligible</p>
               <p className="text-xl font-bold text-green-400">
-                {dashboardData?.workerEligibility[0]?.value || 0}
+                {dashboardData.workerEligibility.find(
+                  (item) => item.name === "Eligible"
+                )?.value || 0}
               </p>
             </div>
             <div className="bg-white/5 p-2 rounded">
               <p className="text-sm text-gray-300">Not Eligible</p>
               <p className="text-xl font-bold text-red-400">
-                {dashboardData?.workerEligibility[1]?.value || 0}
+                {dashboardData.workerEligibility.find(
+                  (item) => item.name === "Not Eligible"
+                )?.value || 0}
               </p>
             </div>
             <div className="bg-white/5 p-2 rounded">
               <p className="text-sm text-gray-300">Pending</p>
               <p className="text-xl font-bold text-yellow-400">
-                {dashboardData?.workerEligibility[2]?.value || 0}
+                {dashboardData.workerEligibility.find(
+                  (item) => item.name === "Pending"
+                )?.value || 0}
               </p>
             </div>
           </div>

@@ -48,7 +48,7 @@ export default function WorkerSidebar() {
               }`}
             >
               <button
-                onClick={() => navigateTo("/dashboard/edit-profile")}
+                onClick={() => navigateTo("/edit-profile")}
                 className="flex items-center gap-3 w-full text-gray-300 hover:text-white transition-all"
               >
                 <User size={20} />
