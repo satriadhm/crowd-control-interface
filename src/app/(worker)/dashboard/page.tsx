@@ -66,6 +66,7 @@ export default function Dashboard() {
     );
 
   const user = data?.me;
+  console.log("User data:", user.isEligible);
 
   const totalTasks = tasksData?.getTotalTasks || 0;
   const totalActiveUsers = usersData?.getTotalUsers || 0;
