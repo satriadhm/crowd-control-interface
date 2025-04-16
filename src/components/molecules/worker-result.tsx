@@ -187,8 +187,8 @@ export default function WorkerAnalysis() {
             onClick={() => setActiveTab("overview")}
             className={
               activeTab === "overview"
-                ? "bg-blue-600"
-                : "border-blue-600 text-white"
+                ? "bg-blue-600 text-white font-medium"
+                : "bg-white/5 backdrop-blur-sm border border-white/10 text-white hover:bg-white/15 transition-all duration-200"
             }
           >
             Overview
@@ -198,8 +198,8 @@ export default function WorkerAnalysis() {
             onClick={() => setActiveTab("workers")}
             className={
               activeTab === "workers"
-                ? "bg-blue-600"
-                : "border-blue-600 text-white"
+                ? "bg-blue-600 text-white font-medium"
+                : "bg-white/5 backdrop-blur-sm border border-white/10 text-white hover:bg-white/15 transition-all duration-200"
             }
           >
             Worker Performance
@@ -209,8 +209,8 @@ export default function WorkerAnalysis() {
             onClick={() => setActiveTab("algorithm")}
             className={
               activeTab === "algorithm"
-                ? "bg-blue-600"
-                : "border-blue-600 text-white"
+                ? "bg-blue-600 text-white font-medium"
+                : "bg-white/5 backdrop-blur-sm border border-white/10 text-white hover:bg-white/15 transition-all duration-200"
             }
           >
             Algorithm Metrics
@@ -220,8 +220,8 @@ export default function WorkerAnalysis() {
             onClick={() => setActiveTab("results")}
             className={
               activeTab === "results"
-                ? "bg-blue-600"
-                : "border-blue-600 text-white"
+                ? "bg-blue-600 text-white font-medium"
+                : "bg-white/5 backdrop-blur-sm border border-white/10 text-white hover:bg-white/15 transition-all duration-200"
             }
           >
             Test Results
@@ -282,7 +282,7 @@ export default function WorkerAnalysis() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-3 gap-4 mb-4">
-                  <div className="bg-green-800/30 p-4 rounded-lg text-center">
+                  <div className="bg-green-800/30 p-4 rounded-lg text-center text-white">
                     <div className="text-3xl font-bold text-green-400">
                       {eligibleCount}
                     </div>
@@ -790,7 +790,7 @@ export default function WorkerAnalysis() {
         {/* Results Tab */}
         {activeTab === "results" && (
           <div className="space-y-6">
-            <Card className="bg-white/10 border-0">
+            <Card className="bg-white/10 border-0 text-white">
               <CardHeader>
                 <CardTitle className="text-white">Test Results</CardTitle>
               </CardHeader>
