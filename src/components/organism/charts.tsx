@@ -110,26 +110,6 @@ export default function DashboardCharts() {
               Iteration Metrics
             </button>
             <button
-              onClick={() => setActiveChart("eligibilityComparison")}
-              className={`px-3 py-1 rounded-md text-sm ${
-                activeChart === "eligibilityComparison"
-                  ? "bg-tertiary text-white"
-                  : "bg-white/10 text-white"
-              }`}
-            >
-              Worker Status
-            </button>
-            <button
-              onClick={() => setActiveChart("taskValidation")}
-              className={`px-3 py-1 rounded-md text-sm ${
-                activeChart === "taskValidation"
-                  ? "bg-tertiary text-white"
-                  : "bg-white/10 text-white"
-              }`}
-            >
-              Task Status
-            </button>
-            <button
               onClick={() => setActiveChart("accuracyDistribution")}
               className={`px-3 py-1 rounded-md text-sm ${
                 activeChart === "accuracyDistribution"
@@ -163,65 +143,6 @@ export default function DashboardCharts() {
                 <Bar name="Workers" dataKey="workers" fill="#4299E1" />
                 <Bar name="Tasks" dataKey="tasks" fill="#48BB78" />
               </BarChart>
-            </ResponsiveContainer>
-          </>
-        )}
-
-        {activeChart === "eligibilityComparison" && (
-          <>
-            <p className="text-sm text-gray-300 mb-4">
-              Proportion of worker eligibility status
-            </p>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={dashboardData.workerEligibility}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value"
-                  label={({ name, percent }) =>
-                    `${name}: ${(percent * 100).toFixed(0)}%`
-                  }
-                >
-                  <Cell fill="#48BB78" /> {/* Eligible - Green */}
-                  <Cell fill="#FC8181" /> {/* Not Eligible - Red */}
-                  <Cell fill="#F6AD55" /> {/* Pending - Orange */}
-                </Pie>
-                <Tooltip formatter={(value) => [`${value} workers`, ""]} />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          </>
-        )}
-
-        {activeChart === "taskValidation" && (
-          <>
-            <p className="text-sm text-gray-300 mb-4">
-              Proportion of validated and non-validated tasks
-            </p>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={dashboardData.taskValidation}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value"
-                  label={({ name, percent }) =>
-                    `${name}: ${(percent * 100).toFixed(0)}%`
-                  }
-                >
-                  <Cell fill="#48BB78" /> {/* Validated - Green */}
-                  <Cell fill="#FC8181" /> {/* Not Validated - Red */}
-                </Pie>
-                <Tooltip formatter={(value) => [`${value} tasks`, ""]} />
-                <Legend />
-              </PieChart>
             </ResponsiveContainer>
           </>
         )}
@@ -260,98 +181,95 @@ export default function DashboardCharts() {
         )}
       </div>
 
-      {/* Additional Summary Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Worker Eligibility Summary */}
-        <div className="bg-white/10 p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-semibold text-white mb-4">
-            Worker Eligibility Status
-          </h3>
-          <ResponsiveContainer width="100%" height={200}>
-            <PieChart>
-              <Pie
-                data={dashboardData.workerEligibility}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                outerRadius={70}
-                fill="#8884d8"
-                dataKey="value"
-                label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
-              >
-                <Cell fill="#48BB78" /> {/* Eligible - Green */}
-                <Cell fill="#FC8181" /> {/* Not Eligible - Red */}
-                <Cell fill="#F6AD55" /> {/* Pending - Orange */}
-              </Pie>
-              <Tooltip formatter={(value) => [`${value} workers`, ""]} />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-          <div className="grid grid-cols-3 mt-2 text-center gap-2">
-            <div className="bg-white/5 p-2 rounded">
-              <p className="text-sm text-gray-300">Eligible</p>
-              <p className="text-xl font-bold text-green-400">
-                {dashboardData.workerEligibility.find(
-                  (item) => item.name === "Eligible"
-                )?.value || 0}
-              </p>
-            </div>
-            <div className="bg-white/5 p-2 rounded">
-              <p className="text-sm text-gray-300">Not Eligible</p>
-              <p className="text-xl font-bold text-red-400">
-                {dashboardData.workerEligibility.find(
-                  (item) => item.name === "Not Eligible"
-                )?.value || 0}
-              </p>
-            </div>
-            <div className="bg-white/5 p-2 rounded">
-              <p className="text-sm text-gray-300">Pending</p>
-              <p className="text-xl font-bold text-yellow-400">
-                {dashboardData.workerEligibility.find(
-                  (item) => item.name === "Pending"
-                )?.value || 0}
-              </p>
-            </div>
+      {/* Additional Summary - Worker Eligibility Status */}
+      <div className="bg-white/10 p-6 rounded-lg shadow-md">
+        <h3 className="text-lg font-semibold text-white mb-4">
+          Worker Eligibility Status
+        </h3>
+        <ResponsiveContainer width="100%" height={200}>
+          <PieChart>
+            <Pie
+              data={dashboardData.workerEligibility}
+              cx="50%"
+              cy="50%"
+              labelLine={false}
+              outerRadius={70}
+              fill="#8884d8"
+              dataKey="value"
+              label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+            >
+              <Cell fill="#48BB78" /> {/* Eligible - Green */}
+              <Cell fill="#FC8181" /> {/* Not Eligible - Red */}
+              <Cell fill="#F6AD55" /> {/* Pending - Orange */}
+            </Pie>
+            <Tooltip formatter={(value) => [`${value} workers`, ""]} />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
+        <div className="grid grid-cols-3 mt-2 text-center gap-2">
+          <div className="bg-white/5 p-2 rounded">
+            <p className="text-sm text-gray-300">Eligible</p>
+            <p className="text-xl font-bold text-green-400">
+              {dashboardData.workerEligibility.find(
+                (item) => item.name === "Eligible"
+              )?.value || 0}
+            </p>
+          </div>
+          <div className="bg-white/5 p-2 rounded">
+            <p className="text-sm text-gray-300">Not Eligible</p>
+            <p className="text-xl font-bold text-red-400">
+              {dashboardData.workerEligibility.find(
+                (item) => item.name === "Not Eligible"
+              )?.value || 0}
+            </p>
+          </div>
+          <div className="bg-white/5 p-2 rounded">
+            <p className="text-sm text-gray-300">Pending</p>
+            <p className="text-xl font-bold text-yellow-400">
+              {dashboardData.workerEligibility.find(
+                (item) => item.name === "Pending"
+              )?.value || 0}
+            </p>
           </div>
         </div>
+      </div>
 
-        {/* Task Validation Summary */}
-        <div className="bg-white/10 p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-semibold text-white mb-4">
-            Task Validation Status
-          </h3>
-          <ResponsiveContainer width="100%" height={200}>
-            <PieChart>
-              <Pie
-                data={dashboardData.taskValidation}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                outerRadius={70}
-                fill="#8884d8"
-                dataKey="value"
-                label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
-              >
-                <Cell fill="#48BB78" /> {/* Validated - Green */}
-                <Cell fill="#FC8181" /> {/* Not Validated - Red */}
-              </Pie>
-              <Tooltip formatter={(value) => [`${value} tasks`, ""]} />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-          <div className="grid grid-cols-2 mt-2 text-center">
-            <div className="bg-white/5 p-2 rounded">
-              <p className="text-sm text-gray-300">Validated</p>
-              <p className="text-xl font-bold text-green-400">
-                {dashboardData.taskValidation[0].value}
-              </p>
-            </div>
-            <div className="bg-white/5 p-2 rounded">
-              <p className="text-sm text-gray-300">Not Validated</p>
-              <p className="text-xl font-bold text-red-400">
-                {dashboardData.taskValidation[1].value}
-              </p>
-            </div>
+      {/* Task Validation Status */}
+      <div className="bg-white/10 p-6 rounded-lg shadow-md">
+        <h3 className="text-lg font-semibold text-white mb-4">
+          Task Validation Status
+        </h3>
+        <ResponsiveContainer width="100%" height={200}>
+          <PieChart>
+            <Pie
+              data={dashboardData.taskValidation}
+              cx="50%"
+              cy="50%"
+              labelLine={false}
+              outerRadius={70}
+              fill="#8884d8"
+              dataKey="value"
+              label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+            >
+              <Cell fill="#48BB78" /> {/* Validated - Green */}
+              <Cell fill="#FC8181" /> {/* Not Validated - Red */}
+            </Pie>
+            <Tooltip formatter={(value) => [`${value} tasks`, ""]} />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
+        <div className="grid grid-cols-2 mt-2 text-center">
+          <div className="bg-white/5 p-2 rounded">
+            <p className="text-sm text-gray-300">Validated</p>
+            <p className="text-xl font-bold text-green-400">
+              {dashboardData.taskValidation[0].value}
+            </p>
+          </div>
+          <div className="bg-white/5 p-2 rounded">
+            <p className="text-sm text-gray-300">Not Validated</p>
+            <p className="text-xl font-bold text-red-400">
+              {dashboardData.taskValidation[1].value}
+            </p>
           </div>
         </div>
       </div>
