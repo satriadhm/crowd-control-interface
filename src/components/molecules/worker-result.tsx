@@ -124,12 +124,6 @@ export default function WorkerAnalysis() {
   // Process test results data
   const testResults = testResultsData?.getTestResults || [];
 
-  // Format date for test results
-  const formattedTestResults = testResults.map((result) => ({
-    ...result,
-    formattedDate: new Date(result.createdAt).toLocaleDateString(),
-  }));
-
   // Calculate accuracy distribution for pie chart
   const excellentCount = testerAnalysisData.filter(
     (t) => t.accuracy >= 0.9
@@ -161,6 +155,17 @@ export default function WorkerAnalysis() {
       ? testerAnalysisData.reduce((sum, tester) => sum + tester.accuracy, 0) /
         testerAnalysisData.length
       : 0;
+
+  // Calculate eligible vs not eligible count
+  const eligibleCount = testerAnalysisData.filter(
+    (t) => t.isEligible === true
+  ).length;
+  const notEligibleCount = testerAnalysisData.filter(
+    (t) => t.isEligible === false
+  ).length;
+  const pendingCount = testerAnalysisData.filter(
+    (t) => t.isEligible === null || t.isEligible === undefined
+  ).length;
 
   return (
     <div className="w-full h-screen overflow-hidden bg-gradient-to-r from-[#0a1e5e] to-[#001333] text-white">
@@ -230,9 +235,9 @@ export default function WorkerAnalysis() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card className="bg-white/10 border-0">
                 <CardHeader className="pb-2">
-                    <CardTitle className="text-lg text-white">
+                  <CardTitle className="text-lg text-white">
                     Total Workers
-                    </CardTitle>
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-3xl font-bold text-white">
@@ -243,7 +248,9 @@ export default function WorkerAnalysis() {
 
               <Card className="bg-white/10 border-0">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-lg text-white">Average Accuracy</CardTitle>
+                  <CardTitle className="text-lg text-white">
+                    Average Accuracy
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-3xl font-bold text-white">
@@ -254,13 +261,54 @@ export default function WorkerAnalysis() {
 
               <Card className="bg-white/10 border-0">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-lg text-white">Test Results</CardTitle>
+                  <CardTitle className="text-lg text-white">
+                    Test Results
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-3xl font-bold text-white">{testResults.length}</p>
+                  <p className="text-3xl font-bold text-white">
+                    {testResults.length}
+                  </p>
                 </CardContent>
               </Card>
             </div>
+
+            {/* Eligibility Status Overview */}
+            <Card className="bg-white/10 border-0">
+              <CardHeader>
+                <CardTitle className="text-white">
+                  Eligibility Overview
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-3 gap-4 mb-4">
+                  <div className="bg-green-800/30 p-4 rounded-lg text-center">
+                    <div className="text-3xl font-bold text-green-400">
+                      {eligibleCount}
+                    </div>
+                    <div className="text-sm text-green-200">
+                      Eligible Workers
+                    </div>
+                  </div>
+                  <div className="bg-red-800/30 p-4 rounded-lg text-center">
+                    <div className="text-3xl font-bold text-red-400">
+                      {notEligibleCount}
+                    </div>
+                    <div className="text-sm text-red-200">
+                      Not Eligible Workers
+                    </div>
+                  </div>
+                  <div className="bg-yellow-800/30 p-4 rounded-lg text-center">
+                    <div className="text-3xl font-bold text-yellow-400">
+                      {pendingCount}
+                    </div>
+                    <div className="text-sm text-yellow-200">
+                      Pending Evaluation
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Side by side charts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -319,7 +367,9 @@ export default function WorkerAnalysis() {
               {/* Worker Accuracy Distribution */}
               <Card className="bg-white/10 border-0">
                 <CardHeader>
-                  <CardTitle className="text-white">Accuracy Distribution</CardTitle>
+                  <CardTitle className="text-white">
+                    Accuracy Distribution
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
@@ -360,7 +410,9 @@ export default function WorkerAnalysis() {
             {/* Algorithm Performance Over Time */}
             <Card className="bg-white/10 border-0">
               <CardHeader>
-                <CardTitle className="text-white">Algorithm Performance Trends</CardTitle>
+                <CardTitle className="text-white">
+                  Algorithm Performance Trends
+                </CardTitle>
               </CardHeader>
               <CardContent className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
@@ -425,7 +477,9 @@ export default function WorkerAnalysis() {
           <div className="space-y-6">
             <Card className="bg-white/10 border-0">
               <CardHeader>
-                <CardTitle className="text-white">Worker Performance Comparison</CardTitle>
+                <CardTitle className="text-white">
+                  Worker Performance Comparison
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-96">
@@ -491,7 +545,9 @@ export default function WorkerAnalysis() {
 
             <Card className="bg-white/10 border-0">
               <CardHeader>
-                <CardTitle className="text-white">Worker Detail Table</CardTitle>
+                <CardTitle className="text-white">
+                  Worker Detail Table
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
@@ -506,6 +562,9 @@ export default function WorkerAnalysis() {
                         </TableHead>
                         <TableHead className="text-white">Accuracy</TableHead>
                         <TableHead className="text-white">
+                          Eligibility Status
+                        </TableHead>
+                        <TableHead className="text-white">
                           Performance Level
                         </TableHead>
                       </TableRow>
@@ -516,11 +575,26 @@ export default function WorkerAnalysis() {
                           <TableCell className="font-medium text-white">
                             {worker.testerName}
                           </TableCell>
-                          <TableCell  className="text-white">
+                          <TableCell className="text-white">
                             {(worker.averageScore * 100).toFixed(1)}%
                           </TableCell>
-                          <TableCell  className="text-white">
+                          <TableCell className="text-white">
                             {(worker.accuracy * 100).toFixed(1)}%
+                          </TableCell>
+                          <TableCell className="text-white">
+                            {worker.isEligible === true ? (
+                              <span className="px-2 py-1 rounded-full bg-green-800 text-green-200">
+                                Eligible
+                              </span>
+                            ) : worker.isEligible === false ? (
+                              <span className="px-2 py-1 rounded-full bg-red-800 text-red-200">
+                                Not Eligible
+                              </span>
+                            ) : (
+                              <span className="px-2 py-1 rounded-full bg-yellow-800 text-yellow-200">
+                                Pending
+                              </span>
+                            )}
                           </TableCell>
                           <TableCell>
                             {worker.accuracy >= 0.9 ? (
@@ -556,7 +630,9 @@ export default function WorkerAnalysis() {
           <div className="space-y-6">
             <Card className="bg-white/10 border-0">
               <CardHeader>
-                <CardTitle className="text-white">Algorithm Accuracy Rate</CardTitle>
+                <CardTitle className="text-white">
+                  Algorithm Accuracy Rate
+                </CardTitle>
               </CardHeader>
               <CardContent className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
@@ -595,7 +671,9 @@ export default function WorkerAnalysis() {
 
             <Card className="bg-white/10 border-0">
               <CardHeader>
-                <CardTitle className="text-white">Algorithm Response Time (ms)</CardTitle>
+                <CardTitle className="text-white">
+                  Algorithm Response Time (ms)
+                </CardTitle>
               </CardHeader>
               <CardContent className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
@@ -627,7 +705,9 @@ export default function WorkerAnalysis() {
 
             <Card className="bg-white/10 border-0">
               <CardHeader>
-                <CardTitle className="text-white">Performance Metrics Table</CardTitle>
+                <CardTitle className="text-white">
+                  Performance Metrics Table
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
@@ -646,7 +726,7 @@ export default function WorkerAnalysis() {
                         </TableHead>
                       </TableRow>
                     </TableHeader>
-                    <TableBody  className="text-white">
+                    <TableBody className="text-white">
                       {algorithmPerformanceData.map((metric, index) => {
                         // Calculate trends if possible
                         let accuracyTrend: boolean | undefined = undefined;
@@ -712,7 +792,7 @@ export default function WorkerAnalysis() {
           <div className="space-y-6">
             <Card className="bg-white/10 border-0">
               <CardHeader>
-                <CardTitle>Test Results</CardTitle>
+                <CardTitle className="text-white">Test Results</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
@@ -723,12 +803,15 @@ export default function WorkerAnalysis() {
                         <TableHead className="text-white">Test ID</TableHead>
                         <TableHead className="text-white">Worker ID</TableHead>
                         <TableHead className="text-white">Score</TableHead>
+                        <TableHead className="text-white">
+                          Eligibility
+                        </TableHead>
                         <TableHead className="text-white">Date</TableHead>
                         <TableHead className="text-white">Feedback</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {formattedTestResults.map((result) => (
+                      {testResults.map((result) => (
                         <TableRow key={result.id}>
                           <TableCell className="font-medium text-white">
                             {result.testId.substring(0, 8)}...
@@ -739,7 +822,18 @@ export default function WorkerAnalysis() {
                           <TableCell>
                             {(result.score * 100).toFixed(1)}%
                           </TableCell>
-                          <TableCell>{result.formattedDate}</TableCell>
+                          <TableCell>
+                            {result.eligibilityStatus === "Eligible" ? (
+                              <span className="px-2 py-1 rounded-full bg-green-800 text-green-200">
+                                Eligible
+                              </span>
+                            ) : (
+                              <span className="px-2 py-1 rounded-full bg-red-800 text-red-200">
+                                Not Eligible
+                              </span>
+                            )}
+                          </TableCell>
+                          <TableCell>{result.formattedDate || "N/A"}</TableCell>
                           <TableCell className="max-w-xs truncate">
                             {result.feedback || "No feedback provided"}
                           </TableCell>

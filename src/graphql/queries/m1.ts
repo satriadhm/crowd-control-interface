@@ -20,7 +20,9 @@ export const GET_TASK_RESULTS = gql`
       testId
       score
       feedback
+      eligibilityStatus
       createdAt
+      formattedDate
     }
   }
 `;
@@ -32,6 +34,7 @@ export const GET_WORKER_ANALYSIS = gql`
       testerName
       averageScore
       accuracy
+      isEligible
     }
   }
 `;
@@ -70,7 +73,9 @@ export const GET_TEST_RESULTS = gql`
       testId
       score
       feedback
+      eligibilityStatus
       createdAt
+      formattedDate
     }
   }
 `;
@@ -82,6 +87,31 @@ export const GET_TESTER_ANALYSIS = gql`
       testerName
       averageScore
       accuracy
+      isEligible
+    }
+  }
+`;
+
+export const GET_DASHBOARD_SUMMARY = gql`
+  query GetDashboardSummary {
+    getDashboardSummary {
+      iterationMetrics {
+        iteration
+        workers
+        tasks
+      }
+      workerEligibility {
+        name
+        value
+      }
+      taskValidation {
+        name
+        value
+      }
+      accuracyDistribution {
+        name
+        value
+      }
     }
   }
 `;
