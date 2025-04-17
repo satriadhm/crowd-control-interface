@@ -6,7 +6,7 @@ type TTaskDetail = {
   id: string;
   setId: (id: string) => void;
 };
-//fuyoh
+
 export const useTaskDetail = create<TTaskDetail>()(
   persist(
     (set) => ({

@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  ReferenceLine,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -21,6 +22,8 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { TesterAnalysisData } from "@/graphql/types/analysis";
+import { useQuery } from "@apollo/client";
+import { GET_THRESHOLD_SETTINGS } from "@/graphql/queries/utils";
 
 interface WorkerPerformanceProps {
   testerAnalysisData: TesterAnalysisData[];
@@ -43,6 +46,16 @@ export default function WorkerPerformanceTab({
     currentPage * itemsPerPage
   );
 
+  // Get threshold value
+  const { data: thresholdData } = useQuery(GET_THRESHOLD_SETTINGS);
+  const thresholdValue =
+    thresholdData?.getThresholdSettings?.thresholdValue || 0.7;
+  const thresholdType =
+    thresholdData?.getThresholdSettings?.thresholdType || "median";
+
+  // This is the raw threshold value without rounding - important for exact comparisons
+  const exactThreshold = thresholdValue;
+
   // Handler for pagination
   const goToPage = (pageNumber: number) => {
     setCurrentPage(Math.max(1, Math.min(pageNumber, totalPages)));
@@ -64,8 +77,9 @@ export default function WorkerPerformanceTab({
                 <XAxis dataKey="testerName" stroke="#CBD5E0" />
                 <YAxis
                   stroke="#CBD5E0"
-                  domain={[0, 1]}
-                  tickFormatter={(value) => `${(value * 100).toFixed(0)}%`}
+                  domain={[0.5, 1]}
+                  tickCount={10}
+                  tickFormatter={(value) => `${(value * 100).toFixed(1)}%`}
                 />
                 <Tooltip
                   formatter={(value) => [
@@ -85,8 +99,30 @@ export default function WorkerPerformanceTab({
                   name="Accuracy"
                   radius={[4, 4, 0, 0]}
                 />
+                {/* Adding threshold reference line */}
+                <ReferenceLine
+                  y={exactThreshold}
+                  stroke="#FF8C00"
+                  strokeDasharray="3 3"
+                  label={{
+                    value: `Threshold (${thresholdType}): ${
+                      exactThreshold.toString().includes(".")
+                        ? `${(exactThreshold * 100).toFixed(4)}%`
+                        : `${exactThreshold * 100}%`
+                    }`,
+                    position: "insideBottomRight",
+                    fill: "#FF8C00",
+                    fontSize: 12,
+                  }}
+                />
               </BarChart>
             </ResponsiveContainer>
+          </div>
+          <div className="mt-4 p-3 bg-blue-900/30 rounded-lg text-sm">
+            <p className="text-blue-300">
+              Worker accuracy is measured on a scale from 0 to 1 (0-100%). The
+              orange line indicates the current eligibility threshold.
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -108,53 +144,79 @@ export default function WorkerPerformanceTab({
                   <TableHead className="text-white">
                     Performance Level
                   </TableHead>
+                  <TableHead className="text-white">Threshold Diff</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {currentPageData.map((worker) => (
-                  <TableRow key={worker.workerId}>
-                    <TableCell className="font-medium text-white">
-                      {worker.testerName}
-                    </TableCell>
-                    <TableCell className="text-white">
-                      {(worker.accuracy * 100).toFixed(1)}%
-                    </TableCell>
-                    <TableCell className="text-white">
-                      {worker.isEligible === true ? (
-                        <span className="px-2 py-1 rounded-full bg-green-800 text-green-200">
-                          Eligible
+                {currentPageData.map((worker) => {
+
+                  // Calculate the exact difference without rounding
+                  const exactDiffFromThreshold =
+                    worker.accuracy - exactThreshold;
+
+                  // Determine eligibility status based on exact comparison to threshold
+                  // Display the calculated eligibility instead of using the stored value
+                  const calculatedEligibility =
+                    worker.accuracy > exactThreshold;
+
+                  return (
+                    <TableRow key={worker.workerId}>
+                      <TableCell className="font-medium text-white">
+                        {worker.testerName}
+                      </TableCell>
+                      <TableCell className="text-white">
+                        {(worker.accuracy * 100).toFixed(1)}%
+                      </TableCell>
+                      <TableCell className="text-white">
+                        {calculatedEligibility ? (
+                          <span className="px-2 py-1 rounded-full bg-green-800 text-green-200">
+                            Eligible
+                          </span>
+                        ) : (
+                          <span className="px-2 py-1 rounded-full bg-red-800 text-red-200">
+                            Not Eligible
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {worker.accuracy >= 0.9 ? (
+                          <span className="px-2 py-1 rounded-full bg-green-800 text-green-200">
+                            Excellent
+                          </span>
+                        ) : worker.accuracy >= 0.8 ? (
+                          <span className="px-2 py-1 rounded-full bg-blue-800 text-blue-200">
+                            Good
+                          </span>
+                        ) : worker.accuracy >= 0.7 ? (
+                          <span className="px-2 py-1 rounded-full bg-yellow-800 text-yellow-200">
+                            Average
+                          </span>
+                        ) : (
+                          <span className="px-2 py-1 rounded-full bg-red-800 text-red-200">
+                            Below Average
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className={`${
+                            exactDiffFromThreshold >= 0
+                              ? "text-green-400"
+                              : "text-red-400"
+                          }`}
+                        >
+                          {exactDiffFromThreshold >= 0 ? "+" : ""}
+                          {(exactDiffFromThreshold * 100).toFixed(1)}%
                         </span>
-                      ) : worker.isEligible === false ? (
-                        <span className="px-2 py-1 rounded-full bg-red-800 text-red-200">
-                          Not Eligible
-                        </span>
-                      ) : (
-                        <span className="px-2 py-1 rounded-full bg-yellow-800 text-yellow-200">
-                          Pending
-                        </span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {worker.accuracy >= 0.9 ? (
-                        <span className="px-2 py-1 rounded-full bg-green-800 text-green-200">
-                          Excellent
-                        </span>
-                      ) : worker.accuracy >= 0.8 ? (
-                        <span className="px-2 py-1 rounded-full bg-blue-800 text-blue-200">
-                          Good
-                        </span>
-                      ) : worker.accuracy >= 0.7 ? (
-                        <span className="px-2 py-1 rounded-full bg-yellow-800 text-yellow-200">
-                          Average
-                        </span>
-                      ) : (
-                        <span className="px-2 py-1 rounded-full bg-red-800 text-red-200">
-                          Below Average
-                        </span>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                        {exactDiffFromThreshold >= 0 && (
+                          <span className="ml-2 text-xs text-green-300">
+                            (Eligible)
+                          </span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
 

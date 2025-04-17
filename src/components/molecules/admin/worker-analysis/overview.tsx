@@ -20,6 +20,8 @@ import {
   TestResult,
   AlgorithmPerformanceData,
 } from "@/graphql/types/analysis";
+import { useQuery } from "@apollo/client";
+import { GET_THRESHOLD_SETTINGS } from "@/graphql/queries/utils";
 
 interface OverviewProps {
   testerAnalysisData: TesterAnalysisData[];
@@ -70,20 +72,44 @@ export default function WorkerAnalysisOverview({
       : 0;
 
   // Calculate eligible vs not eligible count
+  // Calculate eligibility counts based on actual accuracy vs threshold
+  // This replaces the use of the stored isEligible field which may have inconsistencies
+
+  // Fetch threshold settings
+  const { data: thresholdData } = useQuery(GET_THRESHOLD_SETTINGS);
+  const thresholdValue =
+    thresholdData?.getThresholdSettings?.thresholdValue || 0.7;
+  const thresholdType =
+    thresholdData?.getThresholdSettings?.thresholdType || "median";
+
+  // Exact threshold value without rounding for accurate eligibility calculation
+  const exactThresholdValue = thresholdValue;
+
+  // Calculate accurate eligibility counts based on exact threshold
   const eligibleCount = testerAnalysisData.filter(
-    (t) => t.isEligible === true
+    (t) => t.accuracy > exactThresholdValue
   ).length;
+
   const notEligibleCount = testerAnalysisData.filter(
-    (t) => t.isEligible === false
+    (t) => t.accuracy <= exactThresholdValue
   ).length;
+
   const pendingCount = testerAnalysisData.filter(
-    (t) => t.isEligible === null || t.isEligible === undefined
+    (t) => t.accuracy === null || t.accuracy === undefined
   ).length;
+
+  // Convert algorithm performance data to daily visualization
+  // This assumes the month field can be converted to a date
+  const dailyPerformanceData = algorithmPerformanceData.map((item, index) => ({
+    day: `Day ${index + 1}`,
+    accuracyRate: item.accuracyRate,
+    responseTime: item.responseTime,
+  }));
 
   return (
     <div className="space-y-6">
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card className="bg-white/10 border-0">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg text-white">Total Workers</CardTitle>
@@ -118,6 +144,21 @@ export default function WorkerAnalysisOverview({
             </p>
           </CardContent>
         </Card>
+
+        <Card className="bg-white/10 border-0">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg text-white">Threshold</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-3xl font-bold text-white">
+              {(thresholdValue * 100).toFixed(1)}%
+            </p>
+            <p className="text-sm text-gray-400">
+              Type:{" "}
+              {thresholdType.charAt(0).toUpperCase() + thresholdType.slice(1)}
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Eligibility Status Overview */}
@@ -146,6 +187,13 @@ export default function WorkerAnalysisOverview({
               <div className="text-sm text-yellow-200">Pending Evaluation</div>
             </div>
           </div>
+          <div className="bg-blue-900/30 p-3 rounded-lg text-sm mt-2">
+            <p className="text-blue-300 flex items-center">
+              <span className="mr-2">•</span>
+              Workers with accuracy above {(thresholdValue * 100).toFixed(1)}%
+              are marked as eligible
+            </p>
+          </div>
         </CardContent>
       </Card>
 
@@ -170,8 +218,9 @@ export default function WorkerAnalysisOverview({
                 />
                 <XAxis
                   type="number"
-                  domain={[0, 1]}
-                  tickFormatter={(value) => `${(value * 100).toFixed(0)}%`}
+                  domain={[0.5, 1]}
+                  tickCount={6}
+                  tickFormatter={(value) => `${(value * 100).toFixed(1)}%`}
                   stroke="#CBD5E0"
                 />
                 <YAxis
@@ -192,6 +241,18 @@ export default function WorkerAnalysisOverview({
                   }}
                 />
                 <Bar dataKey="accuracy" fill="#48BB78" radius={[0, 4, 4, 0]} />
+                {/* Adding a reference line for the threshold */}
+                <ReferenceLine
+                  x={thresholdValue}
+                  stroke="#FF8C00"
+                  strokeDasharray="3 3"
+                  label={{
+                    value: `Threshold: ${(thresholdValue * 100).toFixed(1)}%`,
+                    position: "insideBottomLeft",
+                    fill: "#FF8C00",
+                    fontSize: 12,
+                  }}
+                />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -236,22 +297,22 @@ export default function WorkerAnalysisOverview({
         </Card>
       </div>
 
-      {/* Algorithm Performance Over Time */}
+      {/* Algorithm Performance Over Time - Daily View */}
       <Card className="bg-white/10 border-0">
         <CardHeader>
           <CardTitle className="text-white">
-            Algorithm Performance Trends
+            Algorithm Performance by Day
           </CardTitle>
         </CardHeader>
         <CardContent className="h-80">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={algorithmPerformanceData}>
+            <LineChart data={dailyPerformanceData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#4A5568" />
-              <XAxis dataKey="month" stroke="#CBD5E0" />
+              <XAxis dataKey="day" stroke="#CBD5E0" />
               <YAxis
                 yAxisId="left"
                 stroke="#48BB78"
-                tickFormatter={(value) => `${(value * 100).toFixed(0)}%`}
+                tickFormatter={(value) => `${(value * 100).toFixed(1)}%`}
                 domain={[0.85, 1]}
               />
               <YAxis
@@ -294,6 +355,19 @@ export default function WorkerAnalysisOverview({
                 strokeWidth={2}
                 name="Response Time"
               />
+              {/* Add threshold reference line */}
+              <ReferenceLine
+                y={thresholdValue}
+                yAxisId="left"
+                stroke="#FF8C00"
+                strokeDasharray="3 3"
+                label={{
+                  value: `Threshold: ${(thresholdValue * 100).toFixed(1)}%`,
+                  position: "insideLeft",
+                  fill: "#FF8C00",
+                  fontSize: 12,
+                }}
+              />
             </LineChart>
           </ResponsiveContainer>
         </CardContent>
@@ -301,3 +375,6 @@ export default function WorkerAnalysisOverview({
     </div>
   );
 }
+
+// Import ReferenceLine at the top of your file
+import { ReferenceLine } from "recharts";
