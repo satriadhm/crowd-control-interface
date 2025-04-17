@@ -186,12 +186,14 @@ export default function WorkerAnalysis() {
             algorithmPerformanceData={
               performanceData?.getAlgorithmPerformance || []
             }
+            refreshData={refreshAllData}
           />
         )}
 
         {activeTab === "workers" && (
           <WorkerPerformanceTab
             testerAnalysisData={testerData?.getTesterAnalysis || []}
+            refreshData={refreshAllData}
           />
         )}
 
@@ -200,14 +202,20 @@ export default function WorkerAnalysis() {
             algorithmPerformanceData={
               performanceData?.getAlgorithmPerformance || []
             }
+            refreshData={refreshAllData}
           />
         )}
 
         {activeTab === "results" && (
-          <TestResultsTab testResults={testResultsData?.getTestResults || []} />
+          <TestResultsTab
+            testResults={testResultsData?.getTestResults || []}
+            refreshData={refreshAllData}
+          />
         )}
 
-        {activeTab === "threshold" && <ThresholdConfiguration />}
+        {activeTab === "threshold" && (
+          <ThresholdConfiguration onThresholdUpdate={refreshAllData} />
+        )}
       </div>
     </div>
   );

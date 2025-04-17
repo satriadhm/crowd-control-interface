@@ -1,9 +1,11 @@
+// src/components/molecules/admin/threshold-settings.tsx
 "use client";
 
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { GET_THRESHOLD_SETTINGS } from "@/graphql/queries/utils";
 import { UPDATE_THRESHOLD_SETTINGS } from "@/graphql/mutations/utils";
+import { TRIGGER_ELIGIBILITY_UPDATE } from "@/graphql/mutations/mx";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -16,9 +18,17 @@ import {
 } from "@/components/ui/select";
 import { ThresholdType } from "@/graphql/types/utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, CheckCircle } from "lucide-react";
+import { AlertCircle, CheckCircle, RefreshCw } from "lucide-react";
+import { useAuthStore } from "@/store/authStore";
 
-export default function ThresholdConfiguration() {
+interface ThresholdConfigurationProps {
+  onThresholdUpdate?: () => void;
+}
+
+export default function ThresholdConfiguration({
+  onThresholdUpdate,
+}: ThresholdConfigurationProps) {
+  const { accessToken } = useAuthStore();
   const [thresholdType, setThresholdType] = useState<ThresholdType>(
     ThresholdType.MEDIAN
   );
@@ -26,9 +36,15 @@ export default function ThresholdConfiguration() {
   const [customValueEnabled, setCustomValueEnabled] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [isUpdating, setIsUpdating] = useState(false);
 
   // Query current threshold settings
   const { data, loading, error, refetch } = useQuery(GET_THRESHOLD_SETTINGS, {
+    context: {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    },
     fetchPolicy: "network-only",
   });
 
@@ -36,9 +52,22 @@ export default function ThresholdConfiguration() {
   const [updateThresholdSettings, { loading: updating }] = useMutation(
     UPDATE_THRESHOLD_SETTINGS,
     {
+      context: {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
       onCompleted: () => {
         setSuccessMessage("Threshold settings updated successfully");
         setTimeout(() => setSuccessMessage(""), 3000); // Clear message after 3 seconds
+
+        // After updating threshold, trigger eligibility update
+        triggerEligibilityUpdate();
+
+        // Call parent callback if provided
+        if (onThresholdUpdate) {
+          onThresholdUpdate();
+        }
       },
       onError: (error) => {
         setErrorMessage(`Error updating threshold settings: ${error.message}`);
@@ -46,6 +75,34 @@ export default function ThresholdConfiguration() {
       },
     }
   );
+
+  // Trigger eligibility update mutation
+  const [triggerEligibilityUpdate, { loading: updatingEligibility }] =
+    useMutation(TRIGGER_ELIGIBILITY_UPDATE, {
+      context: {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+      onCompleted: () => {
+        setIsUpdating(false);
+        setSuccessMessage(
+          (prev) => prev + " Worker eligibility updated successfully."
+        );
+
+        // Refresh data after updating
+        refetch();
+
+        // Call parent callback if provided
+        if (onThresholdUpdate) {
+          onThresholdUpdate();
+        }
+      },
+      onError: (error) => {
+        setIsUpdating(false);
+        setErrorMessage(`Error updating worker eligibility: ${error.message}`);
+      },
+    });
 
   // Load current settings when data is available
   useEffect(() => {
@@ -77,6 +134,7 @@ export default function ThresholdConfiguration() {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsUpdating(true);
 
     try {
       const input = {
@@ -87,10 +145,20 @@ export default function ThresholdConfiguration() {
       await updateThresholdSettings({
         variables: { input },
       });
-
-      refetch(); // Refresh data after update
     } catch (err) {
       console.error("Error updating threshold settings:", err);
+      setIsUpdating(false);
+    }
+  };
+
+  // Handle manual trigger of eligibility update
+  const handleManualUpdate = async () => {
+    setIsUpdating(true);
+    try {
+      await triggerEligibilityUpdate();
+    } catch (err) {
+      console.error("Error triggering eligibility update:", err);
+      setIsUpdating(false);
     }
   };
 
@@ -135,6 +203,33 @@ export default function ThresholdConfiguration() {
             <AlertDescription>{errorMessage}</AlertDescription>
           </Alert>
         )}
+
+        <div className="mb-6 bg-blue-900/30 p-4 rounded-lg">
+          <h3 className="text-lg font-medium">Current Settings</h3>
+          <div className="mt-2 space-y-1">
+            <p>
+              <span className="text-gray-300">Threshold Type:</span>{" "}
+              <span className="font-semibold">
+                {data?.getThresholdSettings?.thresholdType
+                  ?.charAt(0)
+                  .toUpperCase() +
+                  data?.getThresholdSettings?.thresholdType?.slice(1) || "N/A"}
+              </span>
+            </p>
+            <p>
+              <span className="text-gray-300">Current Value:</span>{" "}
+              <span className="font-semibold">
+                {(data?.getThresholdSettings?.thresholdValue * 100).toFixed(2)}%
+              </span>
+            </p>
+            <p className="text-sm text-gray-400">
+              Last updated:{" "}
+              {new Date(
+                data?.getThresholdSettings?.lastUpdated
+              ).toLocaleString()}
+            </p>
+          </div>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
@@ -209,19 +304,52 @@ export default function ThresholdConfiguration() {
                   : "The system will calculate the average (mean) accuracy value from all workers. Workers with accuracy above this average will be considered eligible."}
               </p>
               <p className="text-sm text-gray-300 mt-2">
-                Current default value: {thresholdValue.toFixed(2)} (
-                {(thresholdValue * 100).toFixed(0)}%)
+                The exact threshold value will be calculated server-side based
+                on worker data.
               </p>
             </div>
           )}
 
-          <Button
-            type="submit"
-            className="w-full bg-gradient-to-r from-tertiary to-tertiary-light text-white"
-            disabled={updating}
-          >
-            {updating ? "Updating..." : "Save Configuration"}
-          </Button>
+          <div className="space-y-4">
+            <Button
+              type="submit"
+              className="w-full bg-gradient-to-r from-tertiary to-tertiary-light text-white"
+              disabled={updating || updatingEligibility || isUpdating}
+            >
+              {isUpdating ? (
+                <>
+                  <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                  Updating...
+                </>
+              ) : (
+                "Save Configuration"
+              )}
+            </Button>
+
+            <Button
+              type="button"
+              className="w-full bg-blue-700 hover:bg-blue-800 text-white"
+              onClick={handleManualUpdate}
+              disabled={updating || updatingEligibility || isUpdating}
+            >
+              {updatingEligibility ? (
+                <>
+                  <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                  Updating Worker Eligibility...
+                </>
+              ) : (
+                "Manually Update Worker Eligibility"
+              )}
+            </Button>
+          </div>
+
+          <div className="text-sm text-gray-400 p-3 border border-gray-700 rounded-lg">
+            <p>
+              <strong>Note:</strong> Changing the threshold type or value will
+              automatically update all worker eligibility statuses. This process
+              may take a moment to complete.
+            </p>
+          </div>
         </form>
       </CardContent>
     </Card>
