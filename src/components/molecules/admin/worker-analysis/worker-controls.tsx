@@ -8,8 +8,7 @@ import { CheckCircle, RefreshCw, AlertCircle } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 
 interface WorkerAnalysisControlsProps {
-  // Add refreshAllData prop to be called after eligibility update
-  refreshAllData: () => void;
+  refreshAllData: () => void; // Function to refresh all data in parent component
 }
 
 export default function WorkerAnalysisControls({
@@ -38,7 +37,7 @@ export default function WorkerAnalysisControls({
           setMessageType("error");
         }
 
-        // Call refreshAllData to refresh the data
+        // Call refreshAllData to refresh the data in parent component
         refreshAllData();
 
         // Clear message after 5 seconds
@@ -67,6 +66,7 @@ export default function WorkerAnalysisControls({
   const handleTriggerUpdate = async () => {
     try {
       await triggerEligibilityUpdate();
+      // Note: We don't call refreshAllData here as it's already called in the onCompleted callback
     } catch (error) {
       setMessage(
         `Error: ${

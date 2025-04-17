@@ -1,4 +1,4 @@
-// src/components/molecules/worker-analysis/worker-performance.tsx
+// src/components/molecules/admin/worker-analysis/worker-performance.tsx
 import { useState } from "react";
 import {
   BarChart,
@@ -24,13 +24,16 @@ import { Button } from "@/components/ui/button";
 import { TesterAnalysisData } from "@/graphql/types/analysis";
 import { useQuery } from "@apollo/client";
 import { GET_THRESHOLD_SETTINGS } from "@/graphql/queries/utils";
+import { RefreshCw } from "lucide-react";
 
 interface WorkerPerformanceProps {
   testerAnalysisData: TesterAnalysisData[];
+  refreshData: () => void; // Add refreshData prop
 }
 
 export default function WorkerPerformanceTab({
   testerAnalysisData,
+  refreshData,
 }: WorkerPerformanceProps) {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -47,7 +50,9 @@ export default function WorkerPerformanceTab({
   );
 
   // Get threshold value
-  const { data: thresholdData } = useQuery(GET_THRESHOLD_SETTINGS);
+  const { data: thresholdData, refetch: refetchThresholdData } = useQuery(
+    GET_THRESHOLD_SETTINGS
+  );
   const thresholdValue =
     thresholdData?.getThresholdSettings?.thresholdValue || 0.7;
   const thresholdType =
@@ -61,8 +66,24 @@ export default function WorkerPerformanceTab({
     setCurrentPage(Math.max(1, Math.min(pageNumber, totalPages)));
   };
 
+  // Handler for refresh data - refreshes all parent data and threshold data
+  const handleRefreshData = () => {
+    refreshData();
+    refetchThresholdData();
+  };
+
   return (
     <div className="space-y-6">
+      {/* Add refresh button at the top */}
+      <div className="flex justify-end">
+        <Button
+          onClick={handleRefreshData}
+          className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+        >
+          <RefreshCw className="h-4 w-4" /> Refresh Worker Data
+        </Button>
+      </div>
+
       <Card className="bg-white/10 border-0">
         <CardHeader>
           <CardTitle className="text-white">
@@ -149,7 +170,6 @@ export default function WorkerPerformanceTab({
               </TableHeader>
               <TableBody>
                 {currentPageData.map((worker) => {
-
                   // Calculate the exact difference without rounding
                   const exactDiffFromThreshold =
                     worker.accuracy - exactThreshold;

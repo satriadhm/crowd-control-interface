@@ -5,7 +5,7 @@ import { useQuery } from "@apollo/client";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/authStore";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   GET_ALGORITHM_PERFORMANCE,
   GET_TEST_RESULTS,
@@ -70,12 +70,13 @@ export default function WorkerAnalysis() {
     fetchPolicy: "network-only",
   });
 
-  // Function to refresh all data
-  const refreshAllData = () => {
+  // Function to refresh all data - memoized with useCallback to prevent unnecessary re-renders
+  const refreshAllData = useCallback(() => {
+    console.log("Refreshing all worker analysis data...");
     refetchPerformance();
     refetchTesterData();
     refetchTestResults();
-  };
+  }, [refetchPerformance, refetchTesterData, refetchTestResults]);
 
   if (performanceLoading || testerLoading || testResultsLoading) {
     return (
@@ -116,7 +117,7 @@ export default function WorkerAnalysis() {
           </Button>
         </div>
 
-        {/* Manual Controls Section */}
+        {/* Manual Controls Section - Pass the memoized refreshAllData function */}
         <WorkerAnalysisControls refreshAllData={refreshAllData} />
 
         {/* Tab Navigation */}
@@ -178,7 +179,7 @@ export default function WorkerAnalysis() {
           </Button>
         </div>
 
-        {/* Content based on active tab */}
+        {/* Content based on active tab - Pass the memoized refreshAllData function to all components */}
         {activeTab === "overview" && (
           <WorkerAnalysisOverview
             testerAnalysisData={testerData?.getTesterAnalysis || []}

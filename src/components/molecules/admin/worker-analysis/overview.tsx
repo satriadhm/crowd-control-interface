@@ -27,12 +27,14 @@ interface OverviewProps {
   testerAnalysisData: TesterAnalysisData[];
   testResults: TestResult[];
   algorithmPerformanceData: AlgorithmPerformanceData[];
+  refreshData: () => void; // Function to refresh data in parent component
 }
 
 export default function WorkerAnalysisOverview({
   testerAnalysisData,
   testResults,
   algorithmPerformanceData,
+  refreshAllData,
 }: OverviewProps) {
   // Sort testers by accuracy in descending order
   const sortedTesters = [...testerAnalysisData].sort(

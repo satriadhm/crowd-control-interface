@@ -20,13 +20,21 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { RefreshCw } from "lucide-react";
 import { TestResult } from "@/graphql/types/analysis";
 
 interface TestResultsProps {
   testResults: TestResult[];
+  refreshData: () => void; // Add refreshData prop
 }
 
-export default function TestResultsTab({ testResults }: TestResultsProps) {
+export default function TestResultsTab({
+  testResults,
+  refreshData,
+}: TestResultsProps) {
+  // State to track if a refresh is in progress
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
@@ -44,6 +52,14 @@ export default function TestResultsTab({ testResults }: TestResultsProps) {
   // Handler for pagination
   const goToPage = (pageNumber: number) => {
     setCurrentPage(Math.max(1, Math.min(pageNumber, totalPages)));
+  };
+
+  // Handler for refreshing data
+  const handleRefreshData = () => {
+    setIsRefreshing(true);
+    refreshData();
+    // Reset refreshing state after a delay to give visual feedback
+    setTimeout(() => setIsRefreshing(false), 1000);
   };
 
   // Create data for score distribution chart
@@ -76,6 +92,20 @@ export default function TestResultsTab({ testResults }: TestResultsProps) {
 
   return (
     <div className="space-y-6">
+      {/* Add refresh button at the top */}
+      <div className="flex justify-end">
+        <Button
+          onClick={handleRefreshData}
+          disabled={isRefreshing}
+          className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+        >
+          <RefreshCw
+            className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
+          />
+          {isRefreshing ? "Refreshing..." : "Refresh Test Results"}
+        </Button>
+      </div>
+
       <Card className="bg-white/10 border-0 text-white">
         <CardHeader>
           <CardTitle className="text-white">Test Results</CardTitle>
