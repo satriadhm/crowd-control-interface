@@ -1,20 +1,17 @@
-// next.config.ts
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
+  // Adding options to fix prerendering errors
   output: "standalone",
 
-  // Disable automatic static optimization for certain paths
+  // Config for experimental features
   experimental: {
-    // Add other experimental options here if needed
+    // Add valid experimental options here if needed
   },
 
-  // Important: Set up route configuration to use dynamic rendering for protected routes
+  // Configure page generation
   reactStrictMode: true,
-
-  // Add this configuration to mark routes that use localStorage as dynamic
-  unstable_runtimeJS: true,
 };
 
 export default nextConfig;
