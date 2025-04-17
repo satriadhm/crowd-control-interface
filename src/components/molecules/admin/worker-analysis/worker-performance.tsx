@@ -1,4 +1,5 @@
 // src/components/molecules/worker-analysis/worker-performance.tsx
+import { useState } from "react";
 import {
   BarChart,
   Bar,
@@ -18,6 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import { TesterAnalysisData } from "@/graphql/types/analysis";
 
 interface WorkerPerformanceProps {
@@ -27,6 +29,25 @@ interface WorkerPerformanceProps {
 export default function WorkerPerformanceTab({
   testerAnalysisData,
 }: WorkerPerformanceProps) {
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  // Calculate total pages
+  const totalItems = testerAnalysisData.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
+
+  // Get current page data
+  const currentPageData = testerAnalysisData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Handler for pagination
+  const goToPage = (pageNumber: number) => {
+    setCurrentPage(Math.max(1, Math.min(pageNumber, totalPages)));
+  };
+
   return (
     <div className="space-y-6">
       <Card className="bg-white/10 border-0">
@@ -42,30 +63,15 @@ export default function WorkerPerformanceTab({
                 <CartesianGrid strokeDasharray="3 3" stroke="#4A5568" />
                 <XAxis dataKey="testerName" stroke="#CBD5E0" />
                 <YAxis
-                  yAxisId="left"
                   stroke="#CBD5E0"
                   domain={[0, 1]}
                   tickFormatter={(value) => `${(value * 100).toFixed(0)}%`}
-                />
-                <YAxis
-                  yAxisId="right"
-                  orientation="right"
-                  domain={[0, 1]}
-                  tickFormatter={(value) => `${(value * 100).toFixed(0)}%`}
-                  stroke="#CBD5E0"
                 />
                 <Tooltip
-                  formatter={(value, name) => {
-                    if (name === "accuracy")
-                      return [
-                        `${(Number(value) * 100).toFixed(1)}%`,
-                        "Accuracy",
-                      ];
-                    return [
-                      `${(Number(value) * 100).toFixed(1)}%`,
-                      "Average Score",
-                    ];
-                  }}
+                  formatter={(value) => [
+                    `${(Number(value) * 100).toFixed(1)}%`,
+                    "Accuracy",
+                  ]}
                   contentStyle={{
                     backgroundColor: "#2D3748",
                     border: "none",
@@ -74,17 +80,9 @@ export default function WorkerPerformanceTab({
                 />
                 <Legend />
                 <Bar
-                  yAxisId="left"
                   dataKey="accuracy"
                   fill="#48BB78"
                   name="Accuracy"
-                  radius={[4, 4, 0, 0]}
-                />
-                <Bar
-                  yAxisId="right"
-                  dataKey="averageScore"
-                  fill="#4299E1"
-                  name="Average Score"
                   radius={[4, 4, 0, 0]}
                 />
               </BarChart>
@@ -103,7 +101,6 @@ export default function WorkerPerformanceTab({
               <TableHeader>
                 <TableRow>
                   <TableHead className="text-white">Worker Name</TableHead>
-                  <TableHead className="text-white">Average Score</TableHead>
                   <TableHead className="text-white">Accuracy</TableHead>
                   <TableHead className="text-white">
                     Eligibility Status
@@ -114,13 +111,10 @@ export default function WorkerPerformanceTab({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {testerAnalysisData.map((worker) => (
+                {currentPageData.map((worker) => (
                   <TableRow key={worker.workerId}>
                     <TableCell className="font-medium text-white">
                       {worker.testerName}
-                    </TableCell>
-                    <TableCell className="text-white">
-                      {(worker.averageScore * 100).toFixed(1)}%
                     </TableCell>
                     <TableCell className="text-white">
                       {(worker.accuracy * 100).toFixed(1)}%
@@ -163,6 +157,33 @@ export default function WorkerPerformanceTab({
                 ))}
               </TableBody>
             </Table>
+
+            {/* Pagination Controls */}
+            <div className="flex justify-between items-center mt-4">
+              <Button
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="bg-white/10 hover:bg-white/20 text-white disabled:opacity-50"
+              >
+                Previous
+              </Button>
+              <div className="text-white">
+                Page {currentPage} of {totalPages}
+              </div>
+              <Button
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="bg-white/10 hover:bg-white/20 text-white disabled:opacity-50"
+              >
+                Next
+              </Button>
+            </div>
+
+            <div className="mt-2 text-xs text-gray-400 text-center">
+              Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
+              {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems}{" "}
+              workers
+            </div>
           </div>
         </CardContent>
       </Card>

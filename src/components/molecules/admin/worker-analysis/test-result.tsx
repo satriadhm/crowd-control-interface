@@ -1,4 +1,5 @@
 // src/components/molecules/admin/worker-analysis/test-result.tsx
+import { useState } from "react";
 import {
   BarChart,
   Bar,
@@ -18,6 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import { TestResult } from "@/graphql/types/analysis";
 
 interface TestResultsProps {
@@ -25,6 +27,25 @@ interface TestResultsProps {
 }
 
 export default function TestResultsTab({ testResults }: TestResultsProps) {
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
+
+  // Calculate total pages
+  const totalItems = testResults.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
+
+  // Get current page data
+  const currentPageData = testResults.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Handler for pagination
+  const goToPage = (pageNumber: number) => {
+    setCurrentPage(Math.max(1, Math.min(pageNumber, totalPages)));
+  };
+
   // Create data for score distribution chart
   const scoreDistributionData = [
     {
@@ -74,7 +95,7 @@ export default function TestResultsTab({ testResults }: TestResultsProps) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {testResults.map((result) => (
+                {currentPageData.map((result) => (
                   <TableRow key={result.id}>
                     <TableCell className="font-medium text-white">
                       {result.testId.substring(0, 8)}...
@@ -100,6 +121,33 @@ export default function TestResultsTab({ testResults }: TestResultsProps) {
                 ))}
               </TableBody>
             </Table>
+
+            {/* Pagination Controls */}
+            <div className="flex justify-between items-center mt-4">
+              <Button
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="bg-white/10 hover:bg-white/20 text-white disabled:opacity-50"
+              >
+                Previous
+              </Button>
+              <div className="text-white">
+                Page {currentPage} of {totalPages}
+              </div>
+              <Button
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="bg-white/10 hover:bg-white/20 text-white disabled:opacity-50"
+              >
+                Next
+              </Button>
+            </div>
+
+            <div className="mt-2 text-xs text-gray-400 text-center">
+              Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
+              {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems}{" "}
+              test results
+            </div>
           </div>
         </CardContent>
       </Card>

@@ -1,4 +1,3 @@
-// src/components/molecules/worker-result.tsx
 "use client";
 
 import { useQuery } from "@apollo/client";
@@ -17,6 +16,7 @@ import WorkerAnalysisOverview from "./worker-analysis/overview";
 import WorkerPerformanceTab from "./worker-analysis/worker-performance";
 import AlgorithmMetricsTab from "./worker-analysis/algorithm-metrics";
 import TestResultsTab from "./worker-analysis/test-result";
+import ThresholdConfiguration from "./threshold-settings";
 
 export default function WorkerAnalysis() {
   const router = useRouter();
@@ -105,14 +105,14 @@ export default function WorkerAnalysis() {
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex space-x-2 mb-6">
+        <div className="flex flex-wrap space-x-2 mb-6">
           <Button
             variant={activeTab === "overview" ? "default" : "outline"}
             onClick={() => setActiveTab("overview")}
             className={
               activeTab === "overview"
-                ? "bg-blue-600 text-white font-medium"
-                : "bg-white/5 backdrop-blur-sm border border-white/10 text-white hover:bg-white/15 transition-all duration-200"
+                ? "bg-blue-600 text-white font-medium mb-2"
+                : "bg-white/5 backdrop-blur-sm border border-white/10 text-white hover:bg-white/15 transition-all duration-200 mb-2"
             }
           >
             Overview
@@ -122,8 +122,8 @@ export default function WorkerAnalysis() {
             onClick={() => setActiveTab("workers")}
             className={
               activeTab === "workers"
-                ? "bg-blue-600 text-white font-medium"
-                : "bg-white/5 backdrop-blur-sm border border-white/10 text-white hover:bg-white/15 transition-all duration-200"
+                ? "bg-blue-600 text-white font-medium mb-2"
+                : "bg-white/5 backdrop-blur-sm border border-white/10 text-white hover:bg-white/15 transition-all duration-200 mb-2"
             }
           >
             Worker Performance
@@ -133,8 +133,8 @@ export default function WorkerAnalysis() {
             onClick={() => setActiveTab("algorithm")}
             className={
               activeTab === "algorithm"
-                ? "bg-blue-600 text-white font-medium"
-                : "bg-white/5 backdrop-blur-sm border border-white/10 text-white hover:bg-white/15 transition-all duration-200"
+                ? "bg-blue-600 text-white font-medium mb-2"
+                : "bg-white/5 backdrop-blur-sm border border-white/10 text-white hover:bg-white/15 transition-all duration-200 mb-2"
             }
           >
             Algorithm Metrics
@@ -144,11 +144,22 @@ export default function WorkerAnalysis() {
             onClick={() => setActiveTab("results")}
             className={
               activeTab === "results"
-                ? "bg-blue-600 text-white font-medium"
-                : "bg-white/5 backdrop-blur-sm border border-white/10 text-white hover:bg-white/15 transition-all duration-200"
+                ? "bg-blue-600 text-white font-medium mb-2"
+                : "bg-white/5 backdrop-blur-sm border border-white/10 text-white hover:bg-white/15 transition-all duration-200 mb-2"
             }
           >
             Test Results
+          </Button>
+          <Button
+            variant={activeTab === "threshold" ? "default" : "outline"}
+            onClick={() => setActiveTab("threshold")}
+            className={
+              activeTab === "threshold"
+                ? "bg-blue-600 text-white font-medium mb-2"
+                : "bg-white/5 backdrop-blur-sm border border-white/10 text-white hover:bg-white/15 transition-all duration-200 mb-2"
+            }
+          >
+            Threshold Settings
           </Button>
         </div>
 
@@ -180,6 +191,8 @@ export default function WorkerAnalysis() {
         {activeTab === "results" && (
           <TestResultsTab testResults={testResultsData?.getTestResults || []} />
         )}
+
+        {activeTab === "threshold" && <ThresholdConfiguration />}
       </div>
     </div>
   );
