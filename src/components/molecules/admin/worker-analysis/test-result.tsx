@@ -1,4 +1,4 @@
-// src/components/molecules/worker-analysis/test-results.tsx
+// src/components/molecules/admin/worker-analysis/test-result.tsx
 import {
   BarChart,
   Bar,
@@ -18,9 +18,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { TestResult } from "@/graphql/types/analysis";
 
 interface TestResultsProps {
-  testResults: any[];
+  testResults: TestResult[];
 }
 
 export default function TestResultsTab({ testResults }: TestResultsProps) {

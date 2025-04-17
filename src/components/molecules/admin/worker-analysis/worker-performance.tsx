@@ -18,9 +18,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { TesterAnalysisData } from "@/graphql/types/analysis";
 
 interface WorkerPerformanceProps {
-  testerAnalysisData: any[];
+  testerAnalysisData: TesterAnalysisData[];
 }
 
 export default function WorkerPerformanceTab({

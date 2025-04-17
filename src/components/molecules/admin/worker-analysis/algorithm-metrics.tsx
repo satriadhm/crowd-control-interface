@@ -1,4 +1,4 @@
-// src/components/molecules/worker-analysis/algorithm-metrics.tsx
+// src/components/molecules/admin/worker-analysis/algorithm-metrics.tsx
 import {
   LineChart,
   Line,
@@ -18,9 +18,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { AlgorithmPerformanceData } from "@/graphql/types/analysis";
 
 interface AlgorithmMetricsProps {
-  algorithmPerformanceData: any[];
+  algorithmPerformanceData: AlgorithmPerformanceData[];
 }
 
 export default function AlgorithmMetricsTab({

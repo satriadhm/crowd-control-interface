@@ -1,4 +1,4 @@
-// src/components/molecules/worker-analysis/overview.tsx
+// src/components/molecules/admin/worker-analysis/overview.tsx
 import {
   BarChart,
   Bar,
@@ -15,11 +15,16 @@ import {
   Cell,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  TesterAnalysisData,
+  TestResult,
+  AlgorithmPerformanceData,
+} from "@/graphql/types/analysis";
 
 interface OverviewProps {
-  testerAnalysisData: any[];
-  testResults: any[];
-  algorithmPerformanceData: any[];
+  testerAnalysisData: TesterAnalysisData[];
+  testResults: TestResult[];
+  algorithmPerformanceData: AlgorithmPerformanceData[];
 }
 
 export default function WorkerAnalysisOverview({
