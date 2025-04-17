@@ -1,6 +1,6 @@
 "use client";
 
-import { SUBMIT_ANSWER } from "@/graphql/mutations/m1";
+import { SUBMIT_ANSWER } from "@/graphql/mutations/mx";
 import { GET_TASK_BY_ID } from "@/graphql/queries/tasks";
 import { Task } from "@/graphql/types/tasks";
 import { useTaskDetail } from "@/utils/common";

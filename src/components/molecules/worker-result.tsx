@@ -34,7 +34,7 @@ import {
   GET_ALGORITHM_PERFORMANCE,
   GET_TEST_RESULTS,
   GET_TESTER_ANALYSIS,
-} from "@/graphql/queries/m1";
+} from "@/graphql/queries/mx";
 
 export default function WorkerAnalysis() {
   const router = useRouter();

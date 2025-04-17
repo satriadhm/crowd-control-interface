@@ -15,7 +15,7 @@ import {
   Legend,
 } from "recharts";
 import { useRouter } from "next/navigation";
-import { GET_ELIGIBILITY_HISTORY } from "@/graphql/queries/m1";
+import { GET_ELIGIBILITY_HISTORY } from "@/graphql/queries/mx";
 import { useAuthStore } from "@/store/authStore";
 
 export default function ProfilePage() {
