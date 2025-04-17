@@ -12,7 +12,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../ui/table";
+} from "../../ui/table";
 import {
   ClipboardList,
   ClipboardPlus,
@@ -21,10 +21,10 @@ import {
   XCircle,
   AlertCircle,
 } from "lucide-react";
-import { Button } from "../ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
+import { Button } from "../../ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../ui/dialog";
+import { Input } from "../../ui/input";
+import { Textarea } from "../../ui/textarea";
 import { CreateTask, Task } from "@/graphql/types/tasks";
 
 export default function TaskManagement() {

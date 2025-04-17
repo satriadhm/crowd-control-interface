@@ -12,18 +12,18 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../ui/table";
+} from "../../ui/table";
 import { Trash2, UserPlus, Eye } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../ui/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+} from "../../ui/select";
+import { Input } from "../../ui/input";
+import { Button } from "../../ui/button";
 
 export default function UserManagement() {
   const { data, loading, refetch } = useQuery(GET_ALL_USERS);

@@ -1,4 +1,4 @@
-import UserManagement from "@/components/molecules/user-management";
+import UserManagement from "@/components/molecules/admin/user-management";
 
 export default function UserManagementPage() {
   return (

@@ -1,6 +1,7 @@
 export interface User {
     id: string;
     firstName: string;
+    isEligible: boolean;
     lastName: string;
     email: string;
     role: string;

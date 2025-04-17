@@ -1,4 +1,4 @@
-import TaskManagement from "@/components/molecules/task-management";
+import TaskManagement from "@/components/molecules/admin/task-management";
 
 export default function TaskManagementPage() {
   return (

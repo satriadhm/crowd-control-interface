@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuthStore } from "@/store/authStore";
-import Sidebar from "@/components/molecules/admin-sidebar";
+import Sidebar from "@/components/molecules/admin/admin-sidebar";
 
 export default function AdminLayout({ children }) {
   const { userRole } = useAuthStore();

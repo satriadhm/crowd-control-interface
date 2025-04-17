@@ -5,9 +5,8 @@ import { useRouter } from "next/navigation";
 import { useQuery } from "@apollo/client";
 import WorkerSidebar from "@/components/molecules/worker-sidebar";
 import { GET_LOGGED_IN_USER } from "@/graphql/queries/auth";
-import { GET_TOTAL_TASKS } from "@/graphql/queries/tasks";
-import { GET_TOTAL_USERS } from "@/graphql/queries/users";
 import DashboardCharts from "@/components/organism/charts";
+import DashboardStats from "@/components/molecules/worker/dashboard-stat";
 
 export default function Dashboard() {
   const { accessToken } = useAuthStore();
@@ -20,56 +19,12 @@ export default function Dashboard() {
     fetchPolicy: "network-only",
   });
 
-  // Query untuk mendapatkan total tasks
-  const {
-    data: tasksData,
-    loading: tasksLoading,
-    error: tasksError,
-  } = useQuery(GET_TOTAL_TASKS, {
-    context: {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    },
-  });
-
-  // Query untuk mendapatkan total active user
-  const {
-    data: usersData,
-    loading: usersLoading,
-    error: usersError,
-  } = useQuery(GET_TOTAL_USERS, {
-    context: {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    },
-  });
-
   if (loading)
     return <p className="text-center text-gray-500">Loading user data...</p>;
   if (error)
     return <p className="text-center text-red-500">Error: {error.message}</p>;
 
-  // Pastikan data dashboard untuk tasks dan users sudah ada
-  if (tasksLoading || usersLoading)
-    return (
-      <p className="text-center text-gray-500">Loading dashboard data...</p>
-    );
-  if (tasksError)
-    return (
-      <p className="text-center text-red-500">Error: {tasksError.message}</p>
-    );
-  if (usersError)
-    return (
-      <p className="text-center text-red-500">Error: {usersError.message}</p>
-    );
-
   const user = data?.me;
-  console.log("User data:", user.isEligible);
-
-  const totalTasks = tasksData?.getTotalTasks || 0;
-  const totalActiveUsers = usersData?.getTotalUsers || 0;
 
   return (
     <div className="flex h-screen overflow-hidden bg-gradient-to-r from-[#0a1e5e] to-[#001333] text-white">
@@ -100,45 +55,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div className="bg-white/10 p-6 rounded-lg shadow-lg flex flex-col items-center">
-            <h2 className="text-lg font-semibold text-white">Total Tasks</h2>
-            <p className="text-4xl font-bold text-blue-400 mt-2">
-              {totalTasks}
-            </p>
-          </div>
-          <div className="bg-white/10 p-6 rounded-lg shadow-lg flex flex-col items-center">
-            <h2 className="text-lg font-semibold text-white">
-              Total Active User
-            </h2>
-            <p className="text-4xl font-bold text-orange-400 mt-2">
-              {totalActiveUsers}
-            </p>
-          </div>
-          <div className="bg-white/10 p-6 rounded-lg shadow-lg flex flex-col items-center">
-            <h2 className="text-lg font-semibold text-white">
-              Your Eligibility
-            </h2>
-            <div className="text-center">
-              <p className="text-4xl font-bold mt-2">
-                {user?.isEligible === true && (
-                  <span className="text-green-400">Eligible</span>
-                )}
-                {user?.isEligible === false && (
-                  <span className="text-red-400">Not Eligible</span>
-                )}
-                {user?.isEligible === null && (
-                  <span className="text-yellow-400">Pending</span>
-                )}
-              </p>
-              {user?.isEligible === null && (
-                <p className="text-xs text-gray-300 mt-1">
-                  Complete more tasks for evaluation
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
+        <DashboardStats user={user} accessToken={accessToken} />
 
         {/* Dashboard Charts */}
         <div className="pb-8">

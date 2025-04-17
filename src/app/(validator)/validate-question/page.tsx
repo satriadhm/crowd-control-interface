@@ -1,33 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { useQuery, useMutation } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { GET_TASKS, GET_TASK_BY_ID } from "@/graphql/queries/tasks";
-import { VALIDATE_TASK } from "@/graphql/mutations/tasks";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import ValidatorSidebar from "@/components/molecules/validator-sidebar";
+import ValidatorSidebar from "@/components/molecules/validator/validator-sidebar";
+import ValidationDialog from "@/components/molecules/validator/validation-dialog";
 import type { Task } from "@/graphql/types/tasks";
 
 export default function ValidateQuestionPage() {
   const { data, loading, error, refetch } = useQuery(GET_TASKS);
-  const [validateQuestionTask] = useMutation(VALIDATE_TASK);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [mutationResult, setMutationResult] = useState<Task | null>(null);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 6;
-  
+
   // Query detail task
-  const { data: taskDetail, loading: loadingTaskDetail } = useQuery(
+  const { data: taskDetailData, loading: loadingTaskDetail } = useQuery(
     GET_TASK_BY_ID,
     {
       variables: { id: selectedTaskId },
@@ -39,9 +31,7 @@ export default function ValidateQuestionPage() {
     return <p className="text-center text-gray-200">Loading tasks...</p>;
   }
   if (error) {
-    return (
-      <p className="text-center text-red-300">Error: {error.message}</p>
-    );
+    return <p className="text-center text-red-300">Error: {error.message}</p>;
   }
 
   // Filter tasks yang belum divalidasi
@@ -79,25 +69,6 @@ export default function ValidateQuestionPage() {
   const handleOpenModal = (taskId: string) => {
     setSelectedTaskId(taskId);
     setIsModalOpen(true);
-  };
-
-  // Lakukan validasi
-  const handleValidation = async (id: string) => {
-    try {
-      const { data } = await validateQuestionTask({
-        variables: { id },
-      });
-      if (data?.validateQuestionTask) {
-        setMutationResult(data.validateQuestionTask);
-      }
-      alert("Task updated successfully!");
-      refetch();
-    } catch (err: unknown) {
-      alert(
-        "Error updating task: " +
-          (err instanceof Error ? err.message : "Unknown error")
-      );
-    }
   };
 
   return (
@@ -146,117 +117,15 @@ export default function ValidateQuestionPage() {
           </div>
         </div>
 
-        {/* Modal untuk Update Validation */}
-        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent className="bg-white text-black max-w-2xl p-6">
-            <DialogHeader>
-              <DialogTitle className="text-xl font-bold">
-                Update Validation
-              </DialogTitle>
-            </DialogHeader>
-            {loadingTaskDetail ? (
-              <p>Loading task details...</p>
-            ) : taskDetail?.getTaskById ? (
-              <div className="space-y-4">
-                {/* Tampilan interaktif untuk scenario */}
-                <div className="p-4 border rounded bg-gray-100">
-                  <p className="mb-2 font-semibold">Scenario:</p>
-                  <p>{taskDetail.getTaskById.question.scenario}</p>
-                </div>
-                {taskDetail.getTaskById.description && (
-                  <div className="p-4 border rounded bg-gray-100">
-                    <p className="mb-2 font-semibold">Description:</p>
-                    <p>{taskDetail.getTaskById.description}</p>
-                  </div>
-                )}
-                <div className="p-4 border rounded bg-gray-100">
-                  <p className="mb-2 font-semibold">Answers:</p>
-                  <div className="space-y-2 ml-4">
-                    {taskDetail.getTaskById.answers.map(
-                      (answerObj, index) => (
-                        <p key={index}>
-                          {answerObj.answer}{" "}
-                          {answerObj.stats && `(${answerObj.stats})`}
-                        </p>
-                      )
-                    )}
-                  </div>
-                </div>
-                <div className="flex space-x-4">
-                  <Button
-                    onClick={() =>
-                      handleValidation(taskDetail.getTaskById.id)
-                    }
-                    className="bg-green-600 hover:bg-green-700"
-                  >
-                    Validate
-                  </Button>
-                  <Button
-                    onClick={() => setIsModalOpen(false)}
-                    className="bg-gray-600 hover:bg-gray-700"
-                  >
-                    Close
-                  </Button>
-                </div>
-              </div>
-            ) : mutationResult ? (
-              <div className="space-y-4">
-                <div className="p-4 border rounded bg-gray-100">
-                  <p className="mb-2 font-semibold">Scenario:</p>
-                  <p>{mutationResult.question.scenario}</p>
-                </div>
-                {mutationResult.description && (
-                  <div className="p-4 border rounded bg-gray-100">
-                    <p className="mb-2 font-semibold">Description:</p>
-                    <p>{mutationResult.description}</p>
-                  </div>
-                )}
-                <div className="p-4 border rounded bg-gray-100">
-                  <p className="mb-2 font-semibold">Answers:</p>
-                  <div className="space-y-2 ml-4">
-                    {mutationResult.answers.map((answerObj, index) => (
-                      <p key={index}>
-                        {answerObj.answer}{" "}
-                        {answerObj.stats && `(${answerObj.stats})`}
-                      </p>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <p className="font-semibold">
-                    Validation Status:{" "}
-                    {mutationResult.isValidQuestion ? "Valid" : "Invalid"}
-                  </p>
-                  <Button
-                    onClick={() => {
-                      setMutationResult(null);
-                      setIsModalOpen(false);
-                    }}
-                    className="mt-4 bg-gray-600 hover:bg-gray-700"
-                  >
-                    Close
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <>
-                <p className="mb-4">
-                  Press the button below to validate the question:
-                </p>
-                <div className="flex space-x-4">
-                  <Button
-                    onClick={() =>
-                      handleValidation(selectedTaskId || "")
-                    }
-                    className="bg-green-600 hover:bg-green-700"
-                  >
-                    Validate
-                  </Button>
-                </div>
-              </>
-            )}
-          </DialogContent>
-        </Dialog>
+        {/* Validation Dialog */}
+        <ValidationDialog
+          isOpen={isModalOpen}
+          onOpenChange={setIsModalOpen}
+          selectedTaskId={selectedTaskId}
+          taskDetail={taskDetailData?.getTaskById}
+          loadingTaskDetail={loadingTaskDetail}
+          onValidationComplete={refetch}
+        />
       </main>
     </div>
   );
