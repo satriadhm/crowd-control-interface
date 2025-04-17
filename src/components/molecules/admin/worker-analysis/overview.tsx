@@ -13,6 +13,7 @@ import {
   PieChart,
   Pie,
   Cell,
+  ReferenceLine,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -20,21 +21,24 @@ import {
   TestResult,
   AlgorithmPerformanceData,
 } from "@/graphql/types/analysis";
-import { useQuery } from "@apollo/client";
-import { GET_THRESHOLD_SETTINGS } from "@/graphql/queries/utils";
+import { Button } from "@/components/ui/button";
 
 interface OverviewProps {
   testerAnalysisData: TesterAnalysisData[];
   testResults: TestResult[];
   algorithmPerformanceData: AlgorithmPerformanceData[];
   refreshData: () => void; // Function to refresh data in parent component
+  thresholdValue?: number; // Current threshold value
+  thresholdType?: string; // Current threshold type
 }
 
 export default function WorkerAnalysisOverview({
   testerAnalysisData,
   testResults,
   algorithmPerformanceData,
-  refreshAllData,
+  refreshData,
+  thresholdValue = 0.7, // Default threshold to use if not provided
+  thresholdType = "median", // Default threshold type
 }: OverviewProps) {
   // Sort testers by accuracy in descending order
   const sortedTesters = [...testerAnalysisData].sort(
@@ -72,17 +76,6 @@ export default function WorkerAnalysisOverview({
       ? testerAnalysisData.reduce((sum, tester) => sum + tester.accuracy, 0) /
         testerAnalysisData.length
       : 0;
-
-  // Calculate eligible vs not eligible count
-  // Calculate eligibility counts based on actual accuracy vs threshold
-  // This replaces the use of the stored isEligible field which may have inconsistencies
-
-  // Fetch threshold settings
-  const { data: thresholdData } = useQuery(GET_THRESHOLD_SETTINGS);
-  const thresholdValue =
-    thresholdData?.getThresholdSettings?.thresholdValue || 0.7;
-  const thresholdType =
-    thresholdData?.getThresholdSettings?.thresholdType || "median";
 
   // Exact threshold value without rounding for accurate eligibility calculation
   const exactThresholdValue = thresholdValue;
@@ -374,9 +367,25 @@ export default function WorkerAnalysisOverview({
           </ResponsiveContainer>
         </CardContent>
       </Card>
+
+      {/* Empty state handling */}
+      {testerAnalysisData.length === 0 && (
+        <Card className="bg-white/10 border-0">
+          <CardContent className="p-12 text-center">
+            <p className="text-xl mb-4">No worker data available yet</p>
+            <p className="text-gray-400">
+              When workers are added and complete tests, their performance data
+              will appear here
+            </p>
+            <Button
+              onClick={refreshData}
+              className="mt-6 bg-blue-600 hover:bg-blue-700"
+            >
+              Refresh Data
+            </Button>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
-
-// Import ReferenceLine at the top of your file
-import { ReferenceLine } from "recharts";

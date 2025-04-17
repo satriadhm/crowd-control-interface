@@ -22,19 +22,24 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { TesterAnalysisData } from "@/graphql/types/analysis";
-import { useQuery } from "@apollo/client";
-import { GET_THRESHOLD_SETTINGS } from "@/graphql/queries/utils";
 import { RefreshCw } from "lucide-react";
 
 interface WorkerPerformanceProps {
   testerAnalysisData: TesterAnalysisData[];
   refreshData: () => void; // Add refreshData prop
+  thresholdValue?: number; // Current threshold value from parent
+  thresholdType?: string; // Current threshold type from parent
 }
 
 export default function WorkerPerformanceTab({
   testerAnalysisData,
   refreshData,
+  thresholdValue = 0.7, // Default if not provided
+  thresholdType = "median", // Default if not provided
 }: WorkerPerformanceProps) {
+  // State for refresh animation
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -49,15 +54,6 @@ export default function WorkerPerformanceTab({
     currentPage * itemsPerPage
   );
 
-  // Get threshold value
-  const { data: thresholdData, refetch: refetchThresholdData } = useQuery(
-    GET_THRESHOLD_SETTINGS
-  );
-  const thresholdValue =
-    thresholdData?.getThresholdSettings?.thresholdValue || 0.7;
-  const thresholdType =
-    thresholdData?.getThresholdSettings?.thresholdType || "median";
-
   // This is the raw threshold value without rounding - important for exact comparisons
   const exactThreshold = thresholdValue;
 
@@ -66,10 +62,11 @@ export default function WorkerPerformanceTab({
     setCurrentPage(Math.max(1, Math.min(pageNumber, totalPages)));
   };
 
-  // Handler for refresh data - refreshes all parent data and threshold data
+  // Handler for refresh data with visual feedback
   const handleRefreshData = () => {
+    setIsRefreshing(true);
     refreshData();
-    refetchThresholdData();
+    setTimeout(() => setIsRefreshing(false), 1000); // Set visual feedback for 1 second
   };
 
   return (
@@ -78,11 +75,48 @@ export default function WorkerPerformanceTab({
       <div className="flex justify-end">
         <Button
           onClick={handleRefreshData}
+          disabled={isRefreshing}
           className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
         >
-          <RefreshCw className="h-4 w-4" /> Refresh Worker Data
+          <RefreshCw
+            className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
+          />
+          {isRefreshing ? "Refreshing..." : "Refresh Worker Data"}
         </Button>
       </div>
+
+      {/* Threshold Info */}
+      <Card className="bg-white/10 border-0">
+        <CardHeader>
+          <CardTitle className="text-white">
+            Current Threshold Settings
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex justify-between items-center bg-blue-900/30 p-4 rounded-lg">
+            <div>
+              <p className="text-lg text-white">
+                <span className="font-medium">Threshold Value:</span>{" "}
+                <span className="font-bold text-blue-300">
+                  {(exactThreshold * 100).toFixed(1)}%
+                </span>
+              </p>
+              <p className="text-sm text-gray-300 mt-1">
+                <span>Type: </span>
+                <span className="font-medium">
+                  {thresholdType.charAt(0).toUpperCase() +
+                    thresholdType.slice(1)}
+                </span>
+              </p>
+            </div>
+            <div className="text-sm text-blue-200 max-w-md">
+              Workers with accuracy score strictly greater than{" "}
+              {(exactThreshold * 100).toFixed(1)}% are marked eligible. Workers
+              with accuracy equal to or below this threshold are not eligible.
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card className="bg-white/10 border-0">
         <CardHeader>
@@ -128,7 +162,7 @@ export default function WorkerPerformanceTab({
                   label={{
                     value: `Threshold (${thresholdType}): ${
                       exactThreshold.toString().includes(".")
-                        ? `${(exactThreshold * 100).toFixed(4)}%`
+                        ? `${(exactThreshold * 100).toFixed(1)}%`
                         : `${exactThreshold * 100}%`
                     }`,
                     position: "insideBottomRight",

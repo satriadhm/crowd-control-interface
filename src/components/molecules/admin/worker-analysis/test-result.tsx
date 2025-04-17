@@ -106,9 +106,48 @@ export default function TestResultsTab({
         </Button>
       </div>
 
+      {/* Summary Card */}
       <Card className="bg-white/10 border-0 text-white">
         <CardHeader>
-          <CardTitle className="text-white">Test Results</CardTitle>
+          <CardTitle>Test Results Summary</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-white/5 p-4 rounded-lg flex flex-col items-center">
+              <span className="text-sm text-gray-300">Total Results</span>
+              <span className="text-3xl font-bold">{testResults.length}</span>
+            </div>
+            <div className="bg-white/5 p-4 rounded-lg flex flex-col items-center">
+              <span className="text-sm text-gray-300">Average Score</span>
+              <span className="text-3xl font-bold">
+                {testResults.length > 0
+                  ? (
+                      (testResults.reduce(
+                        (sum, result) => sum + result.score,
+                        0
+                      ) /
+                        testResults.length) *
+                      100
+                    ).toFixed(1)
+                  : "0"}
+                %
+              </span>
+            </div>
+            <div className="bg-white/5 p-4 rounded-lg flex flex-col items-center">
+              <span className="text-sm text-gray-300">Last Result</span>
+              <span className="text-lg mt-1">
+                {testResults.length > 0
+                  ? testResults[0].formattedDate
+                  : "No results"}
+              </span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="bg-white/10 border-0 text-white">
+        <CardHeader>
+          <CardTitle>Test Results</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
@@ -206,6 +245,18 @@ export default function TestResultsTab({
           </ResponsiveContainer>
         </CardContent>
       </Card>
+
+      {/* No data state */}
+      {testResults.length === 0 && (
+        <Card className="bg-white/10 border-0 text-white">
+          <CardContent className="p-12 text-center">
+            <p className="text-xl mb-4">No test results available yet</p>
+            <p className="text-gray-400">
+              When workers complete tests, their results will appear here
+            </p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

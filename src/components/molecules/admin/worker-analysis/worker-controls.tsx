@@ -9,16 +9,21 @@ import { useAuthStore } from "@/store/authStore";
 
 interface WorkerAnalysisControlsProps {
   refreshAllData: () => void; // Function to refresh all data in parent component
+  thresholdValue?: number; // Current threshold value
+  thresholdType?: string; // Current threshold type
 }
 
 export default function WorkerAnalysisControls({
   refreshAllData,
+  thresholdValue = 0.7,
+  thresholdType = "median",
 }: WorkerAnalysisControlsProps) {
   const { accessToken } = useAuthStore();
   const [message, setMessage] = useState<string | null>(null);
   const [messageType, setMessageType] = useState<"success" | "error" | null>(
     null
   );
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const [triggerEligibilityUpdate, { loading }] = useMutation(
     TRIGGER_ELIGIBILITY_UPDATE,
@@ -29,6 +34,7 @@ export default function WorkerAnalysisControls({
         },
       },
       onCompleted: (data) => {
+        setIsUpdating(false);
         if (data.triggerEligibilityUpdate) {
           setMessage("Worker eligibility updates completed successfully");
           setMessageType("success");
@@ -47,6 +53,7 @@ export default function WorkerAnalysisControls({
         }, 5000);
       },
       onError: (error) => {
+        setIsUpdating(false);
         setMessage(
           `Error: ${
             error instanceof Error ? error.message : "An unknown error occurred"
@@ -64,16 +71,34 @@ export default function WorkerAnalysisControls({
   );
 
   const handleTriggerUpdate = async () => {
+    if (isUpdating) return; // Prevent multiple triggers
+
     try {
-      await triggerEligibilityUpdate();
-      // Note: We don't call refreshAllData here as it's already called in the onCompleted callback
+      setIsUpdating(true);
+
+      // First try to update eligibility
+      const result = await triggerEligibilityUpdate();
+
+      if (result?.data?.triggerEligibilityUpdate) {
+        // Show success message
+        setMessage("Worker eligibility updates completed successfully");
+        setMessageType("success");
+
+        // Now refresh all data to show updated values
+        await refreshAllData();
+      } else {
+        throw new Error("Update operation failed");
+      }
     } catch (error) {
+      console.error("Error triggering eligibility update:", error);
       setMessage(
         `Error: ${
           error instanceof Error ? error.message : "An unknown error occurred"
         }`
       );
       setMessageType("error");
+    } finally {
+      setIsUpdating(false);
 
       // Clear message after 5 seconds
       setTimeout(() => {
@@ -82,6 +107,9 @@ export default function WorkerAnalysisControls({
       }, 5000);
     }
   };
+
+  // Format the threshold value for display
+  const formattedThreshold = `${(thresholdValue * 100).toFixed(1)}%`;
 
   return (
     <div className="mb-6 p-4 bg-white/10 rounded-lg border border-white/20">
@@ -109,30 +137,37 @@ export default function WorkerAnalysisControls({
         </Alert>
       )}
 
-      <div className="flex space-x-4">
-        <Button
-          onClick={handleTriggerUpdate}
-          disabled={loading}
-          className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
-        >
-          <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-          {loading ? "Updating..." : "Update Worker Eligibility"}
-        </Button>
-
-        <div className="text-sm text-gray-300 flex items-center">
-          <p>
-            This will recalculate eligibility for all workers based on their
-            test results and the current threshold settings
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
+        <div className="bg-blue-900/30 p-3 rounded-lg text-sm">
+          <p className="text-blue-300 flex items-center mb-1">
+            <span className="mr-2">•</span>
+            <strong>Current threshold:</strong> {formattedThreshold} (
+            {thresholdType})
+          </p>
+          <p className="text-blue-200 text-xs ml-6">
+            Workers with accuracy above this threshold are marked as eligible
           </p>
         </div>
+
+        <Button
+          onClick={handleTriggerUpdate}
+          disabled={loading || isUpdating}
+          className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+        >
+          <RefreshCw
+            className={`h-4 w-4 ${loading || isUpdating ? "animate-spin" : ""}`}
+          />
+          {loading || isUpdating ? "Updating..." : "Update Worker Eligibility"}
+        </Button>
       </div>
 
       <div className="mt-4 p-3 bg-blue-900/20 rounded-lg text-xs text-blue-300">
         <p>
           <strong>How it works:</strong> The system compares each worker&apos;s
-          average accuracy against the threshold value. Workers with accuracy
-          above the threshold are marked eligible. This process ensures
-          consistency between test results and eligibility status.
+          average accuracy against the threshold value of {formattedThreshold}.
+          Workers with accuracy above the threshold are marked eligible. This
+          process ensures consistency between test results and eligibility
+          status.
         </p>
       </div>
     </div>
