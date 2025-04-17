@@ -1,3 +1,4 @@
+// src/components/molecules/admin/worker-result.tsx
 "use client";
 
 import { useQuery } from "@apollo/client";
@@ -17,6 +18,7 @@ import WorkerPerformanceTab from "./worker-analysis/worker-performance";
 import AlgorithmMetricsTab from "./worker-analysis/algorithm-metrics";
 import TestResultsTab from "./worker-analysis/test-result";
 import ThresholdConfiguration from "./threshold-settings";
+import WorkerAnalysisControls from "./worker-analysis/worker-controls";
 
 export default function WorkerAnalysis() {
   const router = useRouter();
@@ -28,6 +30,7 @@ export default function WorkerAnalysis() {
     data: performanceData,
     loading: performanceLoading,
     error: performanceError,
+    refetch: refetchPerformance,
   } = useQuery(GET_ALGORITHM_PERFORMANCE, {
     context: {
       headers: {
@@ -42,6 +45,7 @@ export default function WorkerAnalysis() {
     data: testerData,
     loading: testerLoading,
     error: testerError,
+    refetch: refetchTesterData,
   } = useQuery(GET_TESTER_ANALYSIS, {
     context: {
       headers: {
@@ -56,6 +60,7 @@ export default function WorkerAnalysis() {
     data: testResultsData,
     loading: testResultsLoading,
     error: testResultsError,
+    refetch: refetchTestResults,
   } = useQuery(GET_TEST_RESULTS, {
     context: {
       headers: {
@@ -64,6 +69,13 @@ export default function WorkerAnalysis() {
     },
     fetchPolicy: "network-only",
   });
+
+  // Function to refresh all data
+  const refreshAllData = () => {
+    refetchPerformance();
+    refetchTesterData();
+    refetchTestResults();
+  };
 
   if (performanceLoading || testerLoading || testResultsLoading) {
     return (
@@ -103,6 +115,9 @@ export default function WorkerAnalysis() {
             Back to Task Management
           </Button>
         </div>
+
+        {/* Manual Controls Section */}
+        <WorkerAnalysisControls refreshAllData={refreshAllData} />
 
         {/* Tab Navigation */}
         <div className="flex flex-wrap space-x-2 mb-6">

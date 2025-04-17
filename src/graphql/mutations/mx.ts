@@ -1,5 +1,5 @@
+// src/graphql/mutations/mx.ts
 import { gql } from "@apollo/client";
-
 
 export const SUBMIT_ANSWER = gql`
   mutation SubmitAnswer($input: CreateRecordedAnswerInput!) {
@@ -7,6 +7,11 @@ export const SUBMIT_ANSWER = gql`
   }
 `;
 
+export const TRIGGER_ELIGIBILITY_UPDATE = gql`
+  mutation TriggerEligibilityUpdate {
+    triggerEligibilityUpdate
+  }
+`;
 
 export const GET_DASHBOARD_SUMMARY = gql`
   query GetDashboardSummary {

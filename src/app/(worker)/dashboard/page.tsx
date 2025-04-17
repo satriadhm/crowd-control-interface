@@ -55,10 +55,11 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {/* Dashboard Stats with UAT Cards */}
         <DashboardStats user={user} accessToken={accessToken} />
 
         {/* Dashboard Charts */}
-        <div className="pb-8">
+        <div className="mt-6 pb-8">
           <DashboardCharts />
         </div>
       </main>
