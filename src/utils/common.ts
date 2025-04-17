@@ -1,3 +1,4 @@
+// src/utils/common.ts
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
@@ -14,7 +15,16 @@ export const useTaskDetail = create<TTaskDetail>()(
     }),
     {
       name: "task-id",
-      storage: createJSONStorage(() => sessionStorage),
+      storage: createJSONStorage(() => {
+        if (typeof window !== "undefined") {
+          return sessionStorage;
+        }
+        return {
+          getItem: () => null,
+          setItem: () => {},
+          removeItem: () => {},
+        };
+      }),
     }
   )
 );

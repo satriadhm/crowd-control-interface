@@ -1,14 +1,16 @@
+// src/lib/apollo-client.ts
 import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
-import { useAuthStore } from "@/store/authStore"; // Import Zustand store
+import { useAuthStore } from "@/store/authStore";
 
 const httpLink = createHttpLink({
   uri: process.env.NEXT_PUBLIC_GRAPHQL_URI || "http://localhost:5000/graphql",
-  // credentials: "include", 
 });
 
 const authLink = setContext((_, { headers }) => {
-  const { accessToken } = useAuthStore.getState(); // Ambil token dari Zustand
+  // Check if we're in a browser environment before accessing store
+  const accessToken =
+    typeof window !== "undefined" ? useAuthStore.getState().accessToken : null;
 
   return {
     headers: {

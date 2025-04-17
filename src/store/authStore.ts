@@ -1,3 +1,4 @@
+// src/store/authStore.ts
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
@@ -22,7 +23,18 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "auth-storage",
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => {
+        // Check if window is defined (browser environment)
+        if (typeof window !== "undefined") {
+          return localStorage;
+        }
+        // Provide a placeholder storage for SSR
+        return {
+          getItem: () => null,
+          setItem: () => {},
+          removeItem: () => {},
+        };
+      }),
     }
   )
 );
