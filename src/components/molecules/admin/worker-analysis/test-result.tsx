@@ -153,7 +153,7 @@ export default function TestResultsTab({ testResults }: TestResultsProps) {
       </Card>
 
       {/* Score distribution chart */}
-      <Card className="bg-white/10 border-0">
+      <Card className="bg-white/10 border-0 text-white">
         <CardHeader>
           <CardTitle>Score Distribution</CardTitle>
         </CardHeader>
