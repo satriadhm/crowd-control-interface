@@ -20,22 +20,25 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { AlgorithmPerformanceData } from "@/graphql/types/analysis";
-import { useQuery } from "@apollo/client";
-import { GET_THRESHOLD_SETTINGS } from "@/graphql/queries/utils";
+import { Button } from "@/components/ui/button";
+import { RefreshCw } from "lucide-react";
+import { useState } from "react";
 
 interface AlgorithmMetricsProps {
   algorithmPerformanceData: AlgorithmPerformanceData[];
+  refreshData: () => void; // Function to refresh data in parent component
+  thresholdValue?: number; // Current threshold value from parent
+  thresholdType?: string; // Current threshold type from parent
 }
 
 export default function AlgorithmMetricsTab({
   algorithmPerformanceData,
+  refreshData,
+  thresholdValue = 0.7, // Default if not provided
+  thresholdType = "median", // Default if not provided
 }: AlgorithmMetricsProps) {
-  // Get threshold value
-  const { data: thresholdData } = useQuery(GET_THRESHOLD_SETTINGS);
-  const thresholdValue =
-    thresholdData?.getThresholdSettings?.thresholdValue || 0.7;
-  const thresholdType =
-    thresholdData?.getThresholdSettings?.thresholdType || "median";
+  // State for refresh animation
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Store exact threshold value without rounding for accurate eligibility calculations
   const exactThresholdValue = thresholdValue;
@@ -48,8 +51,29 @@ export default function AlgorithmMetricsTab({
     date: item.month, // keep the original month data for reference
   }));
 
+  // Handler for refresh data with visual feedback
+  const handleRefreshData = () => {
+    setIsRefreshing(true);
+    refreshData();
+    setTimeout(() => setIsRefreshing(false), 1000); // Set visual feedback for 1 second
+  };
+
   return (
     <div className="space-y-6">
+      {/* Add refresh button at the top */}
+      <div className="flex justify-end">
+        <Button
+          onClick={handleRefreshData}
+          disabled={isRefreshing}
+          className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+        >
+          <RefreshCw
+            className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
+          />
+          {isRefreshing ? "Refreshing..." : "Refresh Algorithm Data"}
+        </Button>
+      </div>
+
       <Card className="bg-white/10 border-0">
         <CardHeader>
           <CardTitle className="text-white">
@@ -101,7 +125,7 @@ export default function AlgorithmMetricsTab({
                 label={{
                   value: `Threshold: ${
                     exactThresholdValue.toString().includes(".")
-                      ? `${(exactThresholdValue * 100).toFixed(4)}%`
+                      ? `${(exactThresholdValue * 100).toFixed(1)}%`
                       : `${exactThresholdValue * 100}%`
                   }`,
                   position: "right",
@@ -168,7 +192,7 @@ export default function AlgorithmMetricsTab({
                 Current Threshold:{" "}
                 <span className="font-semibold">
                   {exactThresholdValue.toString().includes(".")
-                    ? `${(exactThresholdValue * 100).toFixed(4)}%`
+                    ? `${(exactThresholdValue * 100).toFixed(1)}%`
                     : `${exactThresholdValue * 100}%`}
                 </span>{" "}
                 ({thresholdType})
