@@ -10,7 +10,7 @@ interface InvestmentSectionProps {
 const InvestmentSection = ({ sectionClasses }: InvestmentSectionProps) => {
   // Investment details
   const investmentDetails = {
-    amount: 1500000,
+    amount: 150000000,
     equity: 15,
     valuation: 10000000,
     timeline: 18,
@@ -44,9 +44,9 @@ const InvestmentSection = ({ sectionClasses }: InvestmentSectionProps) => {
 
   // Format currency
   const formatCurrency = (amount: number): string => {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("id-ID", {
       style: "currency",
-      currency: "USD",
+      currency: "IDR",
       maximumFractionDigits: 0,
     }).format(amount);
   };
