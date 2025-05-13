@@ -11,7 +11,7 @@ const TeamSection = ({ sectionClasses }: TeamSectionProps) => {
   const teamMembers = [
     {
       name: "Glorious Satria Dhamang Aji",
-      role: "1st Founder & CEO",
+      role: "Founder",
       background:
         "Research and Development Software Engineer at Formulatrix©",
     },
@@ -30,7 +30,7 @@ const TeamSection = ({ sectionClasses }: TeamSectionProps) => {
       name: "Looking For 4th Founder",
       role: "Head of Operations",
       background:
-        "",
+        "Active and Hard Working, Marketing Wizard",
     },
   ];
 
@@ -78,21 +78,22 @@ const TeamSection = ({ sectionClasses }: TeamSectionProps) => {
         </h3>
         <div className="grid md:grid-cols-3 gap-6">
           <div className="text-center p-4">
-            <h4 className="font-semibold mb-2">Dr. Leslie Thompson</h4>
+            <h4 className="font-semibold mb-2">Dana Sulistiyo Kusumo, PhD</h4>
             <p className="text-gray-300">
-              Former QA Director at Adobe, PhD in Computer Science
+              PhD in Software Engineering, Former Head of Software Engineering
+              Department at Telkom University
             </p>
           </div>
           <div className="text-center p-4">
-            <h4 className="font-semibold mb-2">Marcus Johnson</h4>
+            <h4 className="font-semibold mb-2">Looking for 2nd Advisor</h4>
             <p className="text-gray-300">
-              Angel Investor, Founder of TestPro (acquired by IBM)
+              Angel Investor
             </p>
           </div>
           <div className="text-center p-4">
-            <h4 className="font-semibold mb-2">Priya Sharma</h4>
+            <h4 className="font-semibold mb-2">Looking for 3rd Advisor</h4>
             <p className="text-gray-300">
-              Crowdsourcing Innovation Expert, Former VP at Upwork
+              Crowdsourcing Innovation Expert
             </p>
           </div>
         </div>
