@@ -21,8 +21,13 @@ import ContactSection from "@/components/sections/ContactSection";
 export default function PitchDeckPage() {
   const [activeSection, setActiveSection] = useState("hero");
 
-  // Common section styling
-  const sectionClasses = "min-h-screen py-16 px-4 flex items-center";
+  // Standardized section styling with consistent heights and spacing
+  // Using flex-col to ensure content is properly vertically centered
+  const sectionClasses =
+    "min-h-screen w-full py-16 px-4 flex flex-col justify-center";
+
+  // Inner container with consistent max-width for all sections
+  const containerClasses = "max-w-6xl mx-auto w-full";
 
   // Navigation handler
   const scrollToSection = (sectionId: string) => {
@@ -75,8 +80,8 @@ export default function PitchDeckPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-[#0a1e5e] to-[#001333] text-white">
-      {/* Navigation Sidebar */}
+    <div className="min-h-screen bg-gradient-to-r from-[#0a1e5e] to-[#001333] text-white relative">
+      {/* Fixed Navigation Sidebar */}
       <div className="fixed left-0 top-0 h-full w-16 md:w-20 bg-[#001333] shadow-lg z-10 flex flex-col items-center py-6">
         <Link href="/" className="mb-8">
           <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
@@ -84,7 +89,7 @@ export default function PitchDeckPage() {
           </div>
         </Link>
 
-        <div className="flex flex-col items-center space-y-6 mt-8">
+        <div className="flex flex-col items-center space-y-5 mt-8 no-scrollbar h-[75vh] justify-between">
           <NavButton
             section="hero"
             active={activeSection === "hero"}
@@ -172,71 +177,97 @@ export default function PitchDeckPage() {
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* Main Content with fixed left margin to accommodate sidebar */}
       <div className="ml-16 md:ml-20">
         {/* Hero Section */}
         <section id="hero" className={sectionClasses}>
-          <HeroSection sectionClasses={sectionClasses} />
+          <div className={containerClasses}>
+            <HeroSection />
+          </div>
         </section>
 
         {/* Executive Summary Section */}
         <section id="about" className={`${sectionClasses} bg-white/5`}>
-          <ExecutiveSummary sectionClasses={sectionClasses} />
+          <div className={containerClasses}>
+            <ExecutiveSummary />
+          </div>
         </section>
 
         {/* Problem Section */}
         <section id="problem" className={sectionClasses}>
-          <ProblemSection sectionClasses={sectionClasses} />
+          <div className={containerClasses}>
+            <ProblemSection sectionClasses="" />
+          </div>
         </section>
 
         {/* Solution Section */}
         <section id="solution" className={`${sectionClasses} bg-white/5`}>
-          <SolutionSection sectionClasses={sectionClasses} />
+          <div className={containerClasses}>
+            <SolutionSection sectionClasses="" />
+          </div>
         </section>
 
         {/* How It Works Section */}
         <section id="how-it-works" className={sectionClasses}>
-          <HowItWorksSection sectionClasses={sectionClasses} />
+          <div className={containerClasses}>
+            <HowItWorksSection sectionClasses="" />
+          </div>
         </section>
 
         {/* Market Analysis Section */}
         <section id="market" className={`${sectionClasses} bg-white/5`}>
-          <MarketAnalysisSection sectionClasses={sectionClasses} />
+          <div className={containerClasses}>
+            <MarketAnalysisSection sectionClasses="" />
+          </div>
         </section>
 
         {/* Competitive Advantage Section */}
         <section id="competitive" className={`${sectionClasses} bg-white/5`}>
-          <CompetitiveAdvantageSection sectionClasses={sectionClasses} />
+          <div className={containerClasses}>
+            <CompetitiveAdvantageSection sectionClasses="" />
+          </div>
         </section>
 
         {/* Business Model Section */}
         <section id="business-model" className={sectionClasses}>
-          <BusinessModelSection sectionClasses={sectionClasses} />
+          <div className={containerClasses}>
+            <BusinessModelSection sectionClasses="" />
+          </div>
         </section>
 
         {/* Go To Market Section */}
         <section id="go-to-market" className={sectionClasses}>
-          <GoToMarketSection sectionClasses={sectionClasses} />
+          <div className={containerClasses}>
+            <GoToMarketSection sectionClasses="" />
+          </div>
         </section>
 
         {/* Traction & Roadmap Section */}
         <section id="traction" className={`${sectionClasses} bg-white/5`}>
-          <TractionRoadmapSection sectionClasses={sectionClasses} />
+          <div className={containerClasses}>
+            <TractionRoadmapSection sectionClasses="" />
+          </div>
         </section>
 
         {/* Team Section */}
         <section id="team" className={sectionClasses}>
-          <TeamSection sectionClasses={sectionClasses} />
+          <div className={containerClasses}>
+            <TeamSection sectionClasses="" />
+          </div>
         </section>
 
         {/* Financial Section */}
         <section id="financial" className={`${sectionClasses} bg-white/5`}>
-          <FinancialSection sectionClasses={sectionClasses} />
+          <div className={containerClasses}>
+            <FinancialSection sectionClasses="" />
+          </div>
         </section>
 
         {/* Investment Section */}
         <section id="investment" className={sectionClasses}>
-          <InvestmentSection sectionClasses={sectionClasses} />
+          <div className={containerClasses}>
+            <InvestmentSection sectionClasses="" />
+          </div>
         </section>
 
         {/* Contact Section */}
@@ -244,7 +275,9 @@ export default function PitchDeckPage() {
           id="contact"
           className={`${sectionClasses} bg-gradient-to-r from-[#0a1e5e] to-[#001333]`}
         >
-          <ContactSection sectionClasses={sectionClasses} />
+          <div className={containerClasses}>
+            <ContactSection sectionClasses="" />
+          </div>
         </section>
       </div>
     </div>

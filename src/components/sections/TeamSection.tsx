@@ -1,35 +1,36 @@
+// src/components/sections/TeamSection.tsx
 import React from "react";
 import { motion } from "framer-motion";
 
+interface TeamSectionProps {
+  sectionClasses: string;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const TeamSection = ({ sectionClasses }) => {
+const TeamSection = ({ sectionClasses }: TeamSectionProps) => {
   const teamMembers = [
     {
-      name: "Alex Chen",
+      name: "Glorious Satria Dhamang Aji",
       role: "CEO & Co-Founder",
       background:
-        "Former Product Manager at Google, 8+ years experience in software testing",
-      image: "/icons/team-member-1.svg", // Placeholder image path
+        "Research and Development Software Engineer at Formulatrix©",
     },
     {
-      name: "Sarah Johnson",
+      name: "Looking For Co-Founder",
       role: "CTO & Co-Founder",
       background:
-        "Former Tech Lead at Microsoft, expert in building scalable testing infrastructure",
-      image: "/icons/team-member-2.svg",
+        ""
     },
     {
       name: "Rahul Patel",
       role: "Head of Business Development",
       background: "10+ years in SaaS sales, previously at Salesforce",
-      image: "/icons/team-member-3.svg",
     },
     {
       name: "Maria Garcia",
       role: "Head of Operations",
       background:
         "Former Operations Director at TopTal, managed 200+ remote testers",
-      image: "/icons/team-member-4.svg",
     },
   ];
 
