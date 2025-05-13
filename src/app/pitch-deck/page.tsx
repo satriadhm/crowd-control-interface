@@ -1,10 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
-// Import Section Components
 import HeroSection from "@/components/sections/HeroSection";
 import ExecutiveSummary from "@/components/sections/ExecutiveSummary";
 import ProblemSection from "@/components/sections/ProblemSection";
@@ -59,7 +57,6 @@ export default function PitchDeckPage() {
       for (const section of sections) {
         const element = document.getElementById(section);
         if (element) {
-          const { top, bottom } = element.getBoundingClientRect();
           const offset = element.offsetTop;
 
           if (
@@ -254,7 +251,15 @@ export default function PitchDeckPage() {
   );
 }
 
-const NavButton = ({ section, active, onClick, label }) => {
+interface NavButtonProps {
+  section: string;
+  active: boolean;
+  onClick: () => void;
+  label: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const NavButton = ({ section, active, onClick, label }: NavButtonProps) => {
   return (
     <button
       onClick={onClick}
