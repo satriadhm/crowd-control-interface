@@ -11,26 +11,26 @@ const TeamSection = ({ sectionClasses }: TeamSectionProps) => {
   const teamMembers = [
     {
       name: "Glorious Satria Dhamang Aji",
-      role: "CEO & Co-Founder",
+      role: "1st Founder & CEO",
       background:
         "Research and Development Software Engineer at Formulatrix©",
     },
     {
-      name: "Looking For Co-Founder",
+      name: "Looking For 2nd Founder",
       role: "CTO & Co-Founder",
       background:
-        ""
+        "Software Engineer Enthusiast with a knack of Design Thinking",
     },
     {
-      name: "Rahul Patel",
+      name: "Looking For 3rd Founder",
       role: "Head of Business Development",
-      background: "10+ years in SaaS sales, previously at Salesforce",
+      background: "Business Mastermind and Interest in Startup Ecosystem",
     },
     {
-      name: "Maria Garcia",
+      name: "Looking For 4th Founder",
       role: "Head of Operations",
       background:
-        "Former Operations Director at TopTal, managed 200+ remote testers",
+        "",
     },
   ];
 
