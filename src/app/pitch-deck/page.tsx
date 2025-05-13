@@ -210,7 +210,7 @@ export default function PitchDeckPage() {
         {/* How It Works Section */}
         <section id="how-it-works" className={sectionClasses}>
           <div className={containerClasses}>
-            <HowItWorksSection sectionClasses="" />
+            <HowItWorksSection />
           </div>
         </section>
 
