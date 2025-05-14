@@ -38,7 +38,7 @@ const ContactSection = ({ sectionClasses }) => {
               </div>
               <div>
                 <h4 className="font-medium text-lg">Phone</h4>
-                <p className="text-gray-300">+1 (555) 123-4567</p>
+                <p className="text-gray-300">+6282241389340</p>
               </div>
             </div>
 
@@ -62,7 +62,7 @@ const ContactSection = ({ sectionClasses }) => {
               </div>
               <div>
                 <h4 className="font-medium text-lg">Email</h4>
-                <p className="text-gray-300">info@trustcrowd.com</p>
+                <p className="text-gray-300">glorioussatria@gmail.com</p>
               </div>
             </div>
 
@@ -87,9 +87,9 @@ const ContactSection = ({ sectionClasses }) => {
               <div>
                 <h4 className="font-medium text-lg">Location</h4>
                 <p className="text-gray-300">
-                  123 Tech Hub Avenue
+                  Telkom University
                   <br />
-                  San Francisco, CA 94107
+                  Bandung, Indonesia
                 </p>
               </div>
             </div>
