@@ -24,30 +24,34 @@ const AnalysisSlide = () => {
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
         >
-          <h3 className="text-2xl font-semibold mb-4 text-tertiary-light">Performance Analysis</h3>
-          <p className="text-gray-200 mb-4">
-            The M-X algorithm demonstrated strong classification performance with an accuracy of 79%, indicating its effectiveness in identifying appropriate testers for UAT crowdsourcing environments.
-          </p>
+          <h3 className="text-2xl font-semibold mb-4 text-tertiary-light">Metrics Interpretation</h3>
           
-          <div className="space-y-4 mt-6">
+          <div className="space-y-5">
             <div className="bg-white/5 p-4 rounded-lg">
-              <h4 className="font-medium text-tertiary-light mb-2">Precision Analysis (82%)</h4>
+              <h4 className="font-medium text-tertiary-light mb-2">Accuracy (79%)</h4>
               <p className="text-sm text-gray-300">
-                The high precision rate indicates the algorithm&apos;s reliability in identifying eligible testers, with only a small proportion of false positives. This is crucial for ensuring quality control in UAT processes.
+                The algorithm correctly classified 4 out of 5 testers, demonstrating strong overall performance across both eligible and non-eligible categories.
               </p>
             </div>
             
             <div className="bg-white/5 p-4 rounded-lg">
-              <h4 className="font-medium text-tertiary-light mb-2">Recall Analysis (75%)</h4>
+              <h4 className="font-medium text-tertiary-light mb-2">Precision (82%)</h4>
               <p className="text-sm text-gray-300">
-                The recall rate shows that the algorithm successfully identified three-quarters of all eligible testers. While this leaves room for improvement, it represents a strong foundation for a consistency-based approach.
+                High precision indicates that when the algorithm identifies a tester as eligible, it is rarely wrong, minimizing the risk of involving unqualified testers.
               </p>
             </div>
             
             <div className="bg-white/5 p-4 rounded-lg">
-              <h4 className="font-medium text-tertiary-light mb-2">F1 Score Implications (78%)</h4>
+              <h4 className="font-medium text-tertiary-light mb-2">Recall (75%)</h4>
               <p className="text-sm text-gray-300">
-                The balanced F1 score demonstrates that the algorithm maintains good equilibrium between precision and recall, providing a reliable overall classification performance.
+                The algorithm successfully identified three-quarters of all eligible testers, demonstrating good sensitivity in detecting quality testers.
+              </p>
+            </div>
+            
+            <div className="bg-white/5 p-4 rounded-lg">
+              <h4 className="font-medium text-tertiary-light mb-2">TNR (83%)</h4>
+              <p className="text-sm text-gray-300">
+                The algorithm excels at identifying non-eligible testers, effectively filtering out those who would introduce variability into testing results.
               </p>
             </div>
           </div>
@@ -60,14 +64,7 @@ const AnalysisSlide = () => {
           transition={{ duration: 0.5, delay: 0.2 }}
           viewport={{ once: true }}
         >
-          <h3 className="text-2xl font-semibold mb-4 text-tertiary-light">Quality Control Efficacy</h3>
-          
-          <div className="bg-white/5 p-4 rounded-lg mb-6">
-            <h4 className="font-medium text-tertiary-light mb-2">True Negative Rate (83%)</h4>
-            <p className="text-sm text-gray-300">
-              The algorithm&apos;s high True Negative Rate demonstrates its effectiveness in identifying and filtering out non-eligible testers, which is crucial for reducing variability in testing outcomes and ensuring consistent quality.
-            </p>
-          </div>
+          <h3 className="text-2xl font-semibold mb-4 text-tertiary-light">M-X Algorithm Strengths</h3>
           
           <div className="space-y-4">
             <div className="flex items-start gap-3">
@@ -77,8 +74,32 @@ const AnalysisSlide = () => {
                 </svg>
               </div>
               <div>
+                <span className="font-medium">Ground Truth Independence</span>
+                <p className="text-sm text-gray-300 mt-1">Functions effectively without predefined correct answers, making it ideal for subjective and exploratory UAT scenarios.</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-3">
+              <div className="bg-tertiary/20 p-1 rounded-full mt-1 flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-tertiary-light">
+                  <path d="M20 6 9 17l-5-5" />
+                </svg>
+              </div>
+              <div>
+                <span className="font-medium">Balanced Performance</span>
+                <p className="text-sm text-gray-300 mt-1">Demonstrates strong capabilities in both identifying eligible testers and filtering out non-eligible ones, as reflected in the F1 Score of 78%.</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-3">
+              <div className="bg-tertiary/20 p-1 rounded-full mt-1 flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-tertiary-light">
+                  <path d="M20 6 9 17l-5-5" />
+                </svg>
+              </div>
+              <div>
                 <span className="font-medium">Variability Reduction</span>
-                <p className="text-sm text-gray-300 mt-1">Successfully reduced tester variability by filtering out 10 of 12 non-eligible testers, maintaining a more homogeneous testing group</p>
+                <p className="text-sm text-gray-300 mt-1">Highly effective at reducing tester variability with its strong TNR (83%), creating more homogeneous tester pools.</p>
               </div>
             </div>
             
@@ -89,20 +110,8 @@ const AnalysisSlide = () => {
                 </svg>
               </div>
               <div>
-                <span className="font-medium">Consistency Preservation</span>
-                <p className="text-sm text-gray-300 mt-1">Maintained 9 of 12 eligible testers, ensuring that the majority of quality testers were retained in the selection process</p>
-              </div>
-            </div>
-            
-            <div className="flex items-start gap-3">
-              <div className="bg-tertiary/20 p-1 rounded-full mt-1 flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-tertiary-light">
-                  <path d="M20 6 9 17l-5-5" />
-                </svg>
-              </div>
-              <div>
-                <span className="font-medium">Rule-Based Adaptability</span>
-                <p className="text-sm text-gray-300 mt-1">The threshold-based approach allows for fine-tuning of eligibility criteria to suit specific project requirements</p>
+                <span className="font-medium">Flexible Threshold Setting</span>
+                <p className="text-sm text-gray-300 mt-1">Adaptable to different project requirements through rule-based validation for threshold determination.</p>
               </div>
             </div>
           </div>
@@ -116,38 +125,35 @@ const AnalysisSlide = () => {
         transition={{ duration: 0.5, delay: 0.4 }}
         viewport={{ once: true }}
       >
-        <h3 className="text-xl font-semibold mb-4 text-center">Error Analysis & Improvement Opportunities</h3>
+        <h3 className="text-xl font-semibold mb-4 text-center">Classification Analysis</h3>
         
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-3 gap-6">
           <div className="bg-white/5 p-4 rounded-lg">
-            <h4 className="font-medium text-tertiary-light mb-2">False Positives (2 cases)</h4>
-            <p className="text-gray-200 mb-3">
-              Two non-eligible testers were incorrectly classified as eligible, representing 16.7% of the non-eligible group.
-            </p>
+            <h4 className="font-medium text-tertiary-light mb-2">False Positives (2)</h4>
             <p className="text-sm text-gray-300">
-              Potential causes include:
-              <ul className="list-disc pl-5 mt-2 space-y-1">
-                <li>Coincidental response pattern alignment with eligible testers</li>
-                <li>Limited task diversity in the simulation environment</li>
-                <li>Threshold sensitivity requiring further calibration</li>
-              </ul>
+              Two non-eligible testers were incorrectly classified as eligible. This represents a relatively small proportion (17%) of all identified eligible testers, minimizing potential impact on testing quality.
             </p>
           </div>
           
           <div className="bg-white/5 p-4 rounded-lg">
-            <h4 className="font-medium text-tertiary-light mb-2">False Negatives (3 cases)</h4>
-            <p className="text-gray-200 mb-3">
-              Three eligible testers were incorrectly classified as non-eligible, representing 25% of the eligible group.
-            </p>
+            <h4 className="font-medium text-tertiary-light mb-2">False Negatives (3)</h4>
             <p className="text-sm text-gray-300">
-              Improvement opportunities include:
-              <ul className="list-disc pl-5 mt-2 space-y-1">
-                <li>Increasing task complexity and diversity to better differentiate tester capabilities</li>
-                <li>Implementing adaptive thresholding based on task characteristics</li>
-                <li>Incorporating iterative evaluation to reduce single-session classification errors</li>
-              </ul>
+              Three eligible testers were not identified by the algorithm, suggesting room for improvement in sensitivity. This could potentially lead to overlooking some quality testers.
             </p>
           </div>
+          
+          <div className="bg-white/5 p-4 rounded-lg">
+            <h4 className="font-medium text-tertiary-light mb-2">Overall Effectiveness</h4>
+            <p className="text-sm text-gray-300">
+              With 79% accuracy and strong performance across all metrics, the M-X algorithm demonstrates significant potential as a quality control mechanism for crowdsourced UAT environments.
+            </p>
+          </div>
+        </div>
+        
+        <div className="mt-6 bg-tertiary/10 p-4 rounded-lg">
+          <p className="text-center text-sm text-gray-200">
+            The performance metrics and analysis strongly support the effectiveness of the M-X algorithm in addressing both research questions, confirming its capability to accurately classify testers and reduce variability in crowdsourced UAT environments.
+          </p>
         </div>
       </motion.div>
     </div>

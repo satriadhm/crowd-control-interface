@@ -16,158 +16,104 @@ const ConclusionSlide = () => {
         Conclusion
       </motion.h2>
 
-      <motion.div
-        className="bg-white/10 p-8 rounded-xl backdrop-blur-sm"
-        initial={{ opacity: 0, scale: 0.95 }}
-        whileInView={{ opacity: 1, scale: 1 }}
+      <motion.div 
+        className="bg-white/10 p-6 rounded-xl backdrop-blur-sm mb-8"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         viewport={{ once: true }}
       >
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="md:col-span-2">
-            <h3 className="text-2xl font-semibold mb-4 text-tertiary-light">Key Findings</h3>
-            <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <div className="bg-tertiary/20 p-1 rounded-full mt-1 flex-shrink-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-tertiary-light">
-                    <path d="M20 6 9 17l-5-5" />
-                  </svg>
-                </div>
-                <div>
-                  <span className="font-medium">Effectiveness of M-X Algorithm</span>
-                  <p className="text-sm text-gray-300 mt-1">The M-X algorithm demonstrated strong classification performance with 79% accuracy in identifying eligible testers without relying on predefined correct answers.</p>
-                </div>
-              </li>
-              
-              <li className="flex items-start gap-3">
-                <div className="bg-tertiary/20 p-1 rounded-full mt-1 flex-shrink-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-tertiary-light">
-                    <path d="M20 6 9 17l-5-5" />
-                  </svg>
-                </div>
-                <div>
-                  <span className="font-medium">Variability Reduction</span>
-                  <p className="text-sm text-gray-300 mt-1">With a True Negative Rate of 83%, the algorithm effectively filtered out non-eligible testers, reducing potential variability in testing outcomes.</p>
-                </div>
-              </li>
-              
-              <li className="flex items-start gap-3">
-                <div className="bg-tertiary/20 p-1 rounded-full mt-1 flex-shrink-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-tertiary-light">
-                    <path d="M20 6 9 17l-5-5" />
-                  </svg>
-                </div>
-                <div>
-                  <span className="font-medium">Balanced Performance</span>
-                  <p className="text-sm text-gray-300 mt-1">The algorithm achieved a well-balanced performance with 82% precision and 75% recall, resulting in an F1 score of 78%, demonstrating its ability to simultaneously maintain high accuracy in identifying eligible testers while minimizing false positives.</p>
-                </div>
-              </li>
-            </ul>
-          </div>
-          
-          <div>
-            <h3 className="text-2xl font-semibold mb-4 text-tertiary-light">Performance Metrics</h3>
-            <div className="bg-white/5 p-5 rounded-lg">
-              <div className="space-y-4">
-                <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm">Accuracy</span>
-                    <span className="text-sm font-bold">79%</span>
-                  </div>
-                  <div className="w-full bg-white/10 h-2 rounded-full">
-                    <div className="bg-tertiary h-2 rounded-full" style={{width: "79%"}}></div>
-                  </div>
-                </div>
-                
-                <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm">Precision</span>
-                    <span className="text-sm font-bold">82%</span>
-                  </div>
-                  <div className="w-full bg-white/10 h-2 rounded-full">
-                    <div className="bg-tertiary-light h-2 rounded-full" style={{width: "82%"}}></div>
-                  </div>
-                </div>
-                
-                <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm">Recall</span>
-                    <span className="text-sm font-bold">75%</span>
-                  </div>
-                  <div className="w-full bg-white/10 h-2 rounded-full">
-                    <div className="bg-blue-500 h-2 rounded-full" style={{width: "75%"}}></div>
-                  </div>
-                </div>
-                
-                <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm">F1 Score</span>
-                    <span className="text-sm font-bold">78%</span>
-                  </div>
-                  <div className="w-full bg-white/10 h-2 rounded-full">
-                    <div className="bg-purple-500 h-2 rounded-full" style={{width: "78%"}}></div>
-                  </div>
-                </div>
-                
-                <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm">TNR</span>
-                    <span className="text-sm font-bold">83%</span>
-                  </div>
-                  <div className="w-full bg-white/10 h-2 rounded-full">
-                    <div className="bg-green-500 h-2 rounded-full" style={{width: "83%"}}></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <h3 className="text-2xl font-semibold mb-4 text-tertiary-light">Research Summary</h3>
+        
+        <p className="text-gray-300 mb-4">
+          This research has successfully demonstrated the effectiveness of the M-X algorithm as a quality control mechanism for testers in crowdsourcing-based User Acceptance Testing. Through a simulation involving 24 volunteers, the algorithm exhibited strong classification capabilities with an accuracy of 79%, precision of 82%, recall of 75%, and an F1 score of 78%.
+        </p>
+        
+        <p className="text-gray-300">
+          These metrics confirm that the M-X algorithm can effectively distinguish between eligible and non-eligible testers based on their response consistency patterns, without relying on predefined answers. This capability is particularly valuable in UAT contexts where subjective and exploratory testing is required.
+        </p>
       </motion.div>
 
+      <div className="grid md:grid-cols-2 gap-8">
+        <motion.div 
+          className="bg-white/10 p-6 rounded-xl backdrop-blur-sm"
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          viewport={{ once: true }}
+        >
+          <h3 className="text-2xl font-semibold mb-4 text-tertiary-light">Key Strengths</h3>
+          
+          <div className="space-y-4">
+            <div className="bg-white/5 p-4 rounded-lg">
+              <h4 className="font-medium text-tertiary-light mb-2">Variability Reduction</h4>
+              <p className="text-sm text-gray-300">
+                With a True Negative Rate of 83%, the algorithm demonstrates significant capability in reducing tester variability, ensuring more homogeneous and consistent testing pools.
+              </p>
+            </div>
+            
+            <div className="bg-white/5 p-4 rounded-lg">
+              <h4 className="font-medium text-tertiary-light mb-2">Flexibility</h4>
+              <p className="text-sm text-gray-300">
+                The M-X algorithm&apos;s independence from predefined correct answers makes it exceptionally versatile for various testing scenarios and adaptable to different project requirements through rule-based validation.
+              </p>
+            </div>
+            
+            <div className="bg-white/5 p-4 rounded-lg">
+              <h4 className="font-medium text-tertiary-light mb-2">Balanced Performance</h4>
+              <p className="text-sm text-gray-300">
+                The algorithm shows consistently strong performance across all evaluation metrics, indicating reliable classification capabilities for both eligible and non-eligible testers.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div 
+          className="bg-white/10 p-6 rounded-xl backdrop-blur-sm"
+          initial={{ opacity: 0, x: 20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          viewport={{ once: true }}
+        >
+          <h3 className="text-2xl font-semibold mb-4 text-tertiary-light">Limitations & Future Work</h3>
+          
+          <div className="space-y-4">
+            <div className="bg-white/5 p-4 rounded-lg">
+              <h4 className="font-medium text-tertiary-light mb-2">Sample Limitations</h4>
+              <p className="text-sm text-gray-300">
+                The simulation was limited to 24 volunteers primarily from Telkom University with similar age ranges, which may not fully represent the demographic diversity in real-world crowdsourcing.
+              </p>
+            </div>
+            
+            <div className="bg-white/5 p-4 rounded-lg">
+              <h4 className="font-medium text-tertiary-light mb-2">Testing Environment</h4>
+              <p className="text-sm text-gray-300">
+                Testing was conducted in a controlled simulation rather than a production environment, potentially limiting insights into real-world performance factors such as tester fatigue or external motivations.
+              </p>
+            </div>
+            
+            <div className="bg-white/5 p-4 rounded-lg">
+              <h4 className="font-medium text-tertiary-light mb-2">Future Research Directions</h4>
+              <p className="text-sm text-gray-300">
+                Future work should explore algorithm variants for different test types, optimize threshold determination, evaluate performance in production environments, and investigate integration with other quality control methods.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
       <motion.div 
-        className="mt-8 bg-white/10 p-6 rounded-xl backdrop-blur-sm"
+        className="mt-8 bg-gradient-to-r from-tertiary/20 to-tertiary-light/20 p-6 rounded-xl text-center"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
         viewport={{ once: true }}
       >
-        <h3 className="text-xl font-semibold mb-4 text-center">Research Implications</h3>
+        <h3 className="text-xl font-semibold mb-4">Final Assessment</h3>
         
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-white/5 p-4 rounded-lg">
-            <h4 className="font-medium text-tertiary-light mb-2">Practical Applications</h4>
-            <p className="text-sm text-gray-300">
-              The M-X algorithm provides a robust mechanism for quality control in UAT crowdsourcing environments, offering several practical benefits:
-            </p>
-            <ul className="list-disc pl-5 mt-3 space-y-1 text-sm text-gray-300">
-              <li>Effective filtering of testers without predetermined correct answers</li>
-              <li>Reduced variability in testing outcomes through consistency-based evaluation</li>
-              <li>Adaptable threshold setting mechanism to accommodate different project requirements</li>
-              <li>Potential integration with existing crowdsourcing platforms to enhance tester selection</li>
-            </ul>
-          </div>
-          
-          <div className="bg-white/5 p-4 rounded-lg">
-            <h4 className="font-medium text-tertiary-light mb-2">Limitations & Future Research</h4>
-            <p className="text-sm text-gray-300">
-              While the results are promising, several areas warrant further investigation:
-            </p>
-            <ul className="list-disc pl-5 mt-3 space-y-1 text-sm text-gray-300">
-              <li>Testing with larger and more diverse tester populations</li>
-              <li>Evaluation in real-world UAT scenarios beyond controlled simulations</li>
-              <li>Development of adaptive thresholding mechanisms based on task characteristics</li>
-              <li>Integration with other quality control approaches for enhanced performance</li>
-              <li>Longitudinal studies to assess algorithm performance over time</li>
-              <li>Exploration of different task types beyond multiple-choice formats</li>
-            </ul>
-          </div>
-        </div>
-        
-        <div className="mt-6 bg-gradient-to-r from-tertiary/20 to-tertiary-light/20 p-4 rounded-lg text-center">
-          <p className="text-lg">
-            The M-X algorithm represents a promising approach for ensuring consistent and reliable testing quality in crowdsourced UAT environments.
-          </p>
-        </div>
+        <p className="text-gray-200">
+          The M-X algorithm provides a promising solution for enhancing the quality of crowdsourced User Acceptance Testing by effectively identifying consistent testers and reducing variability in testing outcomes. Its implementation can significantly improve the efficiency and reliability of the testing process through high-quality tester selection.
+        </p>
       </motion.div>
     </div>
   );

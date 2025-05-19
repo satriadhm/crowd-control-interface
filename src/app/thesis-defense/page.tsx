@@ -3,13 +3,6 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 
-
-import ResultsSlide from "@/components/thesis-slides/ResultsSlide";
-import AnalysisSlide from "@/components/thesis-slides/AnalysisSlide";
-import ConclusionSlide from "@/components/thesis-slides/ConclusionSlide";
-import FutureWorkSlide from "@/components/thesis-slides/FutureWorkSlide";
-import QuestionAnswerSlide from "@/components/thesis-slides/QuestionAnswerSlide";
-import ThankYouSlide from "@/components/thesis-slides/ThankYouSlide";
 import IntroductionSlide from "@/components/thesis-slides/IntroductionSlide";
 import ResearchProblemsSlide from "@/components/thesis-slides/ResearchProblemsSlide";
 import TheoreticalBackgroundSlide from "@/components/thesis-slides/TheoreticalBackgroundSlide";
@@ -18,6 +11,9 @@ import MethodologySlide from "@/components/thesis-slides/MethodologySlide";
 import MXAlgorithmSlide from "@/components/thesis-slides/MXAlgorithmSlide";
 import SimulationDesignSlide from "@/components/thesis-slides/SimulationDesignSlide";
 import SystemArchitectureSlide from "@/components/thesis-slides/SystemArchitectureSlide";
+import AnalysisSlide from "@/components/thesis-slides/AnalysisSlide";
+import ConclusionSlide from "@/components/thesis-slides/ConclusionSlide";
+import ResultsSlide from "@/components/thesis-slides/ResultsSlide";
 
 export default function ThesisDefensePage() {
   const [activeSection, setActiveSection] = useState("title");
@@ -253,6 +249,7 @@ interface NavButtonProps {
   label: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const NavButton = ({ section, active, onClick, label }: NavButtonProps) => {
   return (
     <button
