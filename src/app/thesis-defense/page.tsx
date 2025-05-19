@@ -14,6 +14,9 @@ import SystemArchitectureSlide from "@/components/thesis-slides/SystemArchitectu
 import AnalysisSlide from "@/components/thesis-slides/AnalysisSlide";
 import ConclusionSlide from "@/components/thesis-slides/ConclusionSlide";
 import ResultsSlide from "@/components/thesis-slides/ResultsSlide";
+import FutureWorkSlide from "@/components/thesis-slides/FutureWorkSlide";
+import QuestionAnswerSlide from "@/components/thesis-slides/QuestionAnswerSlide";
+import ThankYouSlide from "@/components/thesis-slides/ThankyouSlide";
 
 export default function ThesisDefensePage() {
   const [activeSection, setActiveSection] = useState("title");
