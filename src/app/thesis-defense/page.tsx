@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 
-// Import all slide components
 
 import ResultsSlide from "@/components/thesis-slides/ResultsSlide";
 import AnalysisSlide from "@/components/thesis-slides/AnalysisSlide";
