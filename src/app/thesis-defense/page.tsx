@@ -5,10 +5,6 @@ import Link from "next/link";
 
 // Import all slide components
 
-import MethodologySlide from "@/components/thesis-slides/MethodologySlide";
-import MXAlgorithmSlide from "@/components/thesis-slides/MXAlgorithmSlide";
-import SystemArchitectureSlide from "@/components/thesis-slides/SystemArchitectureSlide";
-import SimulationDesignSlide from "@/components/thesis-slides/SimulationDesignSlide";
 import ResultsSlide from "@/components/thesis-slides/ResultsSlide";
 import AnalysisSlide from "@/components/thesis-slides/AnalysisSlide";
 import ConclusionSlide from "@/components/thesis-slides/ConclusionSlide";
@@ -19,6 +15,10 @@ import IntroductionSlide from "@/components/thesis-slides/IntroductionSlide";
 import ResearchProblemsSlide from "@/components/thesis-slides/ResearchProblemsSlide";
 import TheoreticalBackgroundSlide from "@/components/thesis-slides/TheoreticalBackgroundSlide";
 import TitleSlide from "@/components/thesis-slides/TitleSlide";
+import MethodologySlide from "@/components/thesis-slides/MethodologySlide";
+import MXAlgorithmSlide from "@/components/thesis-slides/MXAlgorithmSlide";
+import SimulationDesignSlide from "@/components/thesis-slides/SimulationDesignSlide";
+import SystemArchitectureSlide from "@/components/thesis-slides/SystemArchitectureSlide";
 
 export default function ThesisDefensePage() {
   const [activeSection, setActiveSection] = useState("title");
