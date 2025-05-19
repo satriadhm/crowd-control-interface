@@ -81,7 +81,7 @@ export default function ThesisDefensePage() {
           </div>
         </Link>
 
-        <div className="flex flex-col items-center space-y-5 mt-8 overflow-y-auto h-[75vh] justify-between">
+        <div className="flex flex-col items-center space-y-5 mt-8 no-scrollbar h-[75vh] justify-between">
           <NavButton
             section="title"
             active={activeSection === "title"}
