@@ -187,7 +187,7 @@ const QuestionAnswerSlide = () => {
                 <circle cx="4" cy="4" r="2" />
               </svg>
             </div>
-            <p className="text-sm text-gray-300">linkedin.com/in/satriadhm</p>
+            <p className="text-sm text-gray-300">linkedin.com/in/gloriousatria</p>
           </div>
           
           <div className="text-center">

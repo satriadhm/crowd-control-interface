@@ -122,7 +122,7 @@ const ThankYouSlide = () => {
                 </svg>
               </div>
               <div>
-                <p className="text-gray-300">linkedin.com/in/satriadhm</p>
+                <p className="text-gray-300">linkedin.com/in/gloriousatria</p>
               </div>
             </div>
           </div>
