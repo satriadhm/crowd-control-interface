@@ -31,7 +31,7 @@ const TractionRoadmapSection = ({ sectionClasses }) => {
                 </div>
                 <div>
                   <span className="font-medium block">Beta Testing</span>
-                  <p className="text-sm text-gray-300">200+ test users on the platform providing feedback</p>
+                  <p className="text-sm text-gray-300">50+ test users on the platform providing feedback</p>
                 </div>
               </li>
               
@@ -43,7 +43,7 @@ const TractionRoadmapSection = ({ sectionClasses }) => {
                 </div>
                 <div>
                   <span className="font-medium block">Pilot Partnerships</span>
-                  <p className="text-sm text-gray-300">3 software companies committed to pilot program</p>
+                  <p className="text-sm text-gray-300">2 software companies committed to pilot program</p>
                 </div>
               </li>
               
