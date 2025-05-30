@@ -53,10 +53,6 @@ const TractionRoadmapSection = ({ sectionClasses }) => {
                     <path d="M20 6 9 17l-5-5" />
                   </svg>
                 </div>
-                <div>
-                  <span className="font-medium block">Initial Funding</span>
-                  <p className="text-sm text-gray-300">$150K pre-seed funding secured</p>
-                </div>
               </li>
             </ul>
           </div>
@@ -68,7 +64,7 @@ const TractionRoadmapSection = ({ sectionClasses }) => {
               <div>
                 <div className="flex justify-between mb-2">
                   <span className="font-medium">User Acquisition Cost</span>
-                  <span className="text-tertiary-light">$15 / Tester</span>
+                  <span className="text-tertiary-light">Rp30.000,00 / Tester</span>
                 </div>
                 <div className="w-full bg-white/10 h-3 rounded-full">
                   <div className="bg-gradient-to-r from-tertiary to-tertiary-light h-3 rounded-full w-1/3"></div>
