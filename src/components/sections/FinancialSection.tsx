@@ -5,20 +5,25 @@ import { motion } from "framer-motion";
 const FinancialSection = ({ sectionClasses }) => {
   // Financial projections data
   const financialData = {
+    // Asumsi:
+    // Tahun 1: 500 tester aktif * Rp 500.000/bulan * 12 bulan = Rp 3 Miliar
+    // Tahun 2: 2.000 tester aktif * Rp 500.000/bulan * 12 bulan = Rp 12 Miliar
+    // Tahun 3: 5.000 tester aktif * Rp 500.000/bulan * 12 bulan = Rp 30 Miliar
     year1: {
-      revenue: 450000,
-      costs: 650000,
-      profit: -200000,
+      revenue: 300000000, // Rp 3 Miliar
+      costs: 200000000, // Rp 2 Miliar (disesuaikan agar profit negatif tapi biaya awal tinggi)
+      profit: 100000000, // Rp 1 Miliar (disesuaikan agar profit positif, atau negatif jika mau menunjukkan butuh funding lebih)
     },
     year2: {
-      revenue: 1800000,
-      costs: 1200000,
-      profit: 600000,
+      revenue: 1200000000, // Rp 12 Miliar
+      costs: 800000000, // Rp 8 Miliar
+      profit: 400000000, // Rp 4 Miliar
     },
     year3: {
-      revenue: 5400000,
-      costs: 2800000,
-      profit: 2600000,
+      revenue: 3000000000, // Rp 30 Miliar
+
+      costs: 1500000000, // Rp 15 Miliar
+      profit: 1500000000, // Rp 15 Miliar
     },
   };
 
@@ -250,7 +255,7 @@ const FinancialSection = ({ sectionClasses }) => {
             <div className="text-sm text-gray-300">Gross Margin (Year 3)</div>
           </div>
           <div className="text-center">
-            <div className="text-tertiary text-3xl font-bold mb-2">$125</div>
+            <div className="text-tertiary text-3xl font-bold mb-2">Rp 1.000.000</div>
             <div className="text-sm text-gray-300">
               Customer Acquisition Cost
             </div>
