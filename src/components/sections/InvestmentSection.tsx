@@ -9,12 +9,12 @@ interface InvestmentSectionProps {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const InvestmentSection = ({ sectionClasses }: InvestmentSectionProps) => {
   // Investment details
-  const investmentDetails = {
-    amount: 150000000,
+   const investmentDetails = {
+    amount: 1500000000,
     equity: 15,
-    valuation: 10000000,
+    valuation: 10000000000,
     timeline: 18,
-  };
+  }
 
   // Use of funds breakdown
   const fundAllocation = [

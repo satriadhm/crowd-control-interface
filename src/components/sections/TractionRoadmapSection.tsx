@@ -62,8 +62,8 @@ const TractionRoadmapSection = ({ sectionClasses }) => {
                   <div className="bg-gradient-to-r from-tertiary to-tertiary-light h-3 rounded-full w-1/3"></div>
                 </div>
                 <div className="flex justify-between text-xs mt-1">
-                  <span className="text-gray-400">Target: $10</span>
-                  <span className="text-gray-400">Industry Avg: $45</span>
+                  <span className="text-gray-400">Target: Rp 100.000</span>
+                  <span className="text-gray-400">Industry Avg: Rp 500.000</span>
                 </div>
               </div>
               
