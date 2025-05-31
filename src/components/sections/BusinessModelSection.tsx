@@ -63,7 +63,7 @@ const BusinessModelSection = ({ sectionClasses }) => {
           
           <div className="mt-10 bg-gradient-to-r from-tertiary/20 to-tertiary-light/20 p-6 rounded-lg text-center">
             <p className="text-xl">
-              <span className="font-semibold">Unit Economics:</span> At scale, each active tester generates <span className="text-tertiary-light font-bold">$200-$400</span> in annual platform revenue
+              <span className="font-semibold">Unit Economics:</span> At scale, each active tester generates <span className="text-tertiary-light font-bold">Rp5.000.000</span> in monthly platform revenue
             </p>
           </div>
         </div>
