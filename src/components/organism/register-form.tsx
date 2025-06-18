@@ -19,6 +19,7 @@ import {
 } from "../ui/select";
 import Cookies from "js-cookie";
 import { useAuthStore } from "@/store/authStore";
+import { useState, useEffect } from "react";
 
 interface RegisterFormInputs {
   email: string;
@@ -49,15 +50,37 @@ const schema = yup.object({
 export default function RegisterForm() {
   const router = useRouter();
   const { setAuth } = useAuthStore();
+  const [isFormValid, setIsFormValid] = useState(false);
+  
   const {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<RegisterFormInputs>({
     resolver: yupResolver(schema),
+    mode: "onChange", // Enable real-time validation
   });
+  
   const [registerMutation, { loading, error }] = useMutation(REGISTER);
+
+  const password = watch("password");
+  const passwordConfirmation = watch("passwordConfirmation");
+  const email = watch("email");
+  const firstName = watch("firstName");
+  const lastName = watch("lastName");
+  const userName = watch("userName");
+  const role = watch("role");
+
+  useEffect(() => {
+    const passwordsMatch = !!(password && passwordConfirmation && password === passwordConfirmation);
+    const allFieldsFilled = !!(email && firstName && lastName && userName && password && passwordConfirmation && role);
+    const passwordValid = !!(password && password.length >= 8);
+    const noErrors = Object.keys(errors).length === 0;
+    
+    setIsFormValid(passwordsMatch && allFieldsFilled && passwordValid && noErrors);
+  }, [password, passwordConfirmation, email, firstName, lastName, userName, role, errors]);
 
   const onSubmit = async (data: RegisterFormInputs) => {
     try {
@@ -78,6 +101,15 @@ export default function RegisterForm() {
       console.error("Registration error:", err);
     }
   };
+
+  // Function to get password confirmation status
+  const getPasswordConfirmationStatus = () => {
+    if (!password || !passwordConfirmation) return null;
+    if (password === passwordConfirmation) return "match";
+    return "mismatch";
+  };
+
+  const passwordStatus = getPasswordConfirmationStatus();
 
   return (
     <section className="rounded-3xl p-px border border-[#5b0ba1] bg-gradient-to-r from-[#5b0ba1] to-transparent">
@@ -130,21 +162,57 @@ export default function RegisterForm() {
                 {...register("password")}
                 type="password"
                 placeholder="Password"
+                className={`${
+                  password && password.length >= 8
+                    ? "border-green-500 focus:border-green-500"
+                    : password && password.length > 0 && password.length < 8
+                    ? "border-red-500 focus:border-red-500"
+                    : ""
+                }`}
               />
-              <p className="text-red-400 text-xs">{errors.password?.message}</p>
+              <div className="mt-1">
+                {password && password.length > 0 && (
+                  <div className="text-xs">
+                    {password.length >= 8 ? (
+                      <p className="text-green-400">✓ Password meets minimum requirements</p>
+                    ) : (
+                      <p className="text-red-400">✗ Password must be at least 8 characters</p>
+                    )}
+                  </div>
+                )}
+                <p className="text-red-400 text-xs">{errors.password?.message}</p>
+              </div>
             </div>
             <div className="mb-3">
               <Input
                 {...register("passwordConfirmation")}
                 type="password"
                 placeholder="Confirm Password"
+                className={`${
+                  passwordStatus === "match"
+                    ? "border-green-500 focus:border-green-500"
+                    : passwordStatus === "mismatch"
+                    ? "border-red-500 focus:border-red-500"
+                    : ""
+                }`}
               />
-              <p className="text-red-400 text-xs">
-                {errors.passwordConfirmation?.message}
-              </p>
+              <div className="mt-1">
+                {passwordConfirmation && password && (
+                  <div className="text-xs">
+                    {passwordStatus === "match" ? (
+                      <p className="text-green-400">✓ Passwords match</p>
+                    ) : (
+                      <p className="text-red-400">✗ Passwords do not match</p>
+                    )}
+                  </div>
+                )}
+                <p className="text-red-400 text-xs">
+                  {errors.passwordConfirmation?.message}
+                </p>
+              </div>
             </div>
             <div className="mb-6">
-              <Select onValueChange={(value) => setValue("role", value)}>
+              <Select onValueChange={(value) => setValue("role", value, { shouldValidate: true })}>
                 <SelectTrigger className="bg-[#4c0e8f] border border-[#001333] text-white">
                   <SelectValue placeholder="Select Role" />
                 </SelectTrigger>
@@ -155,39 +223,49 @@ export default function RegisterForm() {
               </Select>
               <p className="text-red-400 text-xs">{errors.role?.message}</p>
             </div>
-            <Button
-              type="submit"
-              className="w-full bg-[#4c0e8f] border border-[#001333]"
-              disabled={loading}
-            >
-              {loading ? (
-                <span className="flex items-center gap-2">
-                  <svg
-                    className="animate-spin h-5 w-5 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8v8H4z"
-                    ></path>
-                  </svg>
-                  Registering...
-                </span>
-              ) : (
-                "Register"
-              )}
-            </Button>
+
+            {isFormValid ? (
+              <Button
+                type="submit"
+                className="w-full bg-[#4c0e8f] border border-[#001333] transition-all duration-300 hover:bg-[#5c1a9f] hover:shadow-lg"
+                disabled={loading}
+              >
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <svg
+                      className="animate-spin h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v8H4z"
+                      ></path>
+                    </svg>
+                    Registering...
+                  </span>
+                ) : (
+                  <span className="flex items-center justify-center gap-2">
+                    ✓ Register
+                  </span>
+                )}
+              </Button>
+            ) : (
+              <div className="w-full bg-gray-600 text-gray-400 py-2 px-4 rounded-md text-center cursor-not-allowed">
+                Complete all fields to register
+              </div>
+            )}
+
             {error && <p className="text-red-400 mt-4">{error.message}</p>}
           </form>
           <span className="text-center w-full my-4 text-sm text-white">

@@ -58,7 +58,7 @@ export default function Dashboard() {
         <div className="flex justify-between items-center bg-white/10 p-4 rounded-lg shadow-md mb-6">
           <div>
             <h1 className="text-2xl font-bold text-white">
-              Welcome to Your Dashboard
+              Welcome to Worker Selection Dashboard
             </h1>
             <p className="text-sm text-gray-300">
               Hello,{" "}
