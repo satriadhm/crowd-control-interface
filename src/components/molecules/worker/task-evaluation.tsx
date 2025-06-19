@@ -1,4 +1,3 @@
-// src/components/organism/task-evaluation.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -16,6 +15,7 @@ export default function TaskEvaluation({ taskId }: TaskEvaluationProps) {
   const [myAnswer, setMyAnswer] = useState<string>("");
   const [selectedAnswerId, setSelectedAnswerId] = useState<number | null>(null);
   const [timeLeft, setTimeLeft] = useState<number>(60); // 60 seconds
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const router = useRouter();
 
   const [submitAnswer] = useMutation(SUBMIT_ANSWER);
@@ -31,7 +31,7 @@ export default function TaskEvaluation({ taskId }: TaskEvaluationProps) {
 
   useEffect(() => {
     if (timeLeft === 0) {
-      alert("Time's up!");
+      alert("Time's up! Redirecting to task list.");
       router.push("/eval");
       return;
     }
@@ -49,6 +49,12 @@ export default function TaskEvaluation({ taskId }: TaskEvaluationProps) {
       return;
     }
 
+    if (isSubmitting) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
     try {
       await submitAnswer({
         variables: {
@@ -59,78 +65,202 @@ export default function TaskEvaluation({ taskId }: TaskEvaluationProps) {
           },
         },
       });
+      
       alert("Answer submitted successfully!");
-      router.push(`/eval`);
+      
+      router.push("/eval");
     } catch (err) {
       console.error("Error submitting answer:", err);
+      alert("Error submitting answer. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  const handleBackToTasks = () => {
+    if (window.confirm("Are you sure you want to go back? Your progress will be lost.")) {
+      router.push("/eval");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="max-w-3xl w-full p-6">
+        <div className="bg-gray-900 p-6 rounded-lg shadow-lg text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white mx-auto mb-4"></div>
+          <p>Loading task...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-3xl w-full p-6">
+        <div className="bg-red-900 p-6 rounded-lg shadow-lg text-center">
+          <p className="text-red-300 mb-4">Error: {error.message}</p>
+          <button
+            onClick={handleBackToTasks}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+          >
+            Back to Tasks
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl w-full p-6">
       {taskDetailData ? (
         <div className="bg-gray-900 p-6 rounded-lg shadow-lg">
-          {/* Timer Progress Bar */}
+          {/* Back button */}
+          <div className="mb-4">
+            <button
+              onClick={handleBackToTasks}
+              className="text-gray-400 hover:text-white transition-colors flex items-center"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Tasks
+            </button>
+          </div>
+
           <div className="w-full bg-gray-800 rounded-full h-2.5 mb-6">
             <div
-              className="bg-green-500 h-2.5 rounded-full"
+              className={`h-2.5 rounded-full transition-all duration-1000 ${
+                timeLeft > 30 ? 'bg-green-500' : 
+                timeLeft > 10 ? 'bg-yellow-500' : 'bg-red-500'
+              }`}
               style={{ width: `${(timeLeft / 60) * 100}%` }}
             ></div>
           </div>
 
-          {/* Gherkin Layout */}
-          <div className="mb-6 space-y-4">
+          <div className="text-center mb-4">
+            <span className={`text-lg font-bold ${
+              timeLeft > 30 ? 'text-green-400' : 
+              timeLeft > 10 ? 'text-yellow-400' : 'text-red-400'
+            }`}>
+              Time remaining: {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+            </span>
+          </div>
+
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-white mb-2">
+              {taskDetailData.getTaskById.title}
+            </h2>
+            {taskDetailData.getTaskById.description && (
+              <p className="text-gray-300">
+                {taskDetailData.getTaskById.description}
+              </p>
+            )}
+          </div>
+
+          <div className="mb-6 space-y-4 bg-gray-800 p-4 rounded-lg">
             <div>
-              <span className="font-bold">Scenario:</span>{" "}
-              <span>{taskDetailData.getTaskById.question?.scenario}</span>
+              <span className="font-bold text-blue-400">Scenario:</span>{" "}
+              <span className="text-gray-300">{taskDetailData.getTaskById.question?.scenario}</span>
             </div>
             <div>
-              <span className="font-bold">Given:</span>{" "}
-              <span>{taskDetailData.getTaskById.question?.given}</span>
+              <span className="font-bold text-green-400">Given:</span>{" "}
+              <span className="text-gray-300">{taskDetailData.getTaskById.question?.given}</span>
             </div>
             <div>
-              <span className="font-bold">When:</span>{" "}
-              <span>{taskDetailData.getTaskById.question?.when}</span>
+              <span className="font-bold text-yellow-400">When:</span>{" "}
+              <span className="text-gray-300">{taskDetailData.getTaskById.question?.when}</span>
             </div>
             <div>
-              <span className="font-bold">Then:</span>{" "}
-              <span>{taskDetailData.getTaskById.question?.then}</span>
+              <span className="font-bold text-purple-400">Then:</span>{" "}
+              <span className="text-gray-300">{taskDetailData.getTaskById.question?.then}</span>
             </div>
           </div>
 
           {/* Answers Section */}
-          <div className="flex flex-wrap gap-4 items-center justify-center mb-6">
-            {taskDetailData.getTaskById.answers?.map((item, index) => (
-              <button
-                key={index}
-                onClick={() => {
-                  setMyAnswer(item.answer);
-                  setSelectedAnswerId(item.answerId || index);
-                }}
-                className={`border border-cyan-500 px-8 py-2 rounded-lg hover:bg-cyan-500/25 ${
-                  myAnswer === item.answer ? "bg-cyan-500/25" : ""
-                }`}
-              >
-                {item.answer}
-              </button>
-            ))}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold mb-4 text-white">Select your answer:</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {taskDetailData.getTaskById.answers?.map((item, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    setMyAnswer(item.answer);
+                    setSelectedAnswerId(item.answerId || index);
+                  }}
+                  className={`border-2 px-6 py-4 rounded-lg transition-all duration-200 text-left ${
+                    myAnswer === item.answer 
+                      ? "border-cyan-500 bg-cyan-500/25 text-white" 
+                      : "border-gray-600 hover:border-cyan-500/50 hover:bg-cyan-500/10 text-gray-300 hover:text-white"
+                  }`}
+                  disabled={isSubmitting}
+                >
+                  <div className="font-medium">{item.answer}</div>
+                  {item.stats && (
+                    <div className="text-sm text-gray-400 mt-1">
+                      {item.stats}
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
 
+          {/* Selected answer display */}
+          {myAnswer && (
+            <div className="mb-6 p-4 bg-blue-900/30 rounded-lg border border-blue-500/30">
+              <p className="text-blue-300">
+                <span className="font-semibold">Selected answer:</span> {myAnswer}
+              </p>
+            </div>
+          )}
+
+          {/* Submit button */}
           <div className="flex justify-center">
             <button
               onClick={onSubmitAnswer}
-              disabled={!myAnswer}
-              className="mt-4 bg-green-500 disabled:bg-gray-300 text-white rounded-lg px-8 py-2"
+              disabled={!myAnswer || isSubmitting}
+              className={`px-8 py-3 rounded-lg font-semibold transition-all duration-200 ${
+                !myAnswer || isSubmitting
+                  ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+                  : "bg-green-600 hover:bg-green-700 text-white hover:shadow-lg"
+              }`}
             >
-              Submit Answer
+              {isSubmitting ? (
+                <span className="flex items-center">
+                  <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+                    <circle 
+                      cx="12" 
+                      cy="12" 
+                      r="10" 
+                      stroke="currentColor" 
+                      strokeWidth="4" 
+                      fill="none"
+                      className="opacity-25"
+                    />
+                    <path 
+                      fill="currentColor" 
+                      d="M4 12a8 8 0 018-8v8H4z"
+                      className="opacity-75"
+                    />
+                  </svg>
+                  Submitting...
+                </span>
+              ) : (
+                "Submit Answer"
+              )}
             </button>
           </div>
         </div>
       ) : (
-        <p>No task found</p>
+        <div className="bg-gray-900 p-6 rounded-lg shadow-lg text-center">
+          <p className="text-gray-300 mb-4">No task found</p>
+          <button
+            onClick={handleBackToTasks}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+          >
+            Back to Tasks
+          </button>
+        </div>
       )}
     </div>
   );
