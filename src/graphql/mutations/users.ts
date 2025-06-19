@@ -34,3 +34,20 @@ export const UPDATE_USER = gql`
     }
   }
 `;
+
+export const RESET_DONE_TASK = gql`
+  mutation ResetHasDoneTask($id: String!) {
+    resetHasDoneTask(id: $id) {
+      id
+      firstName
+      lastName
+      email
+      role
+      isEligible
+      completedTasks {
+        taskId
+        answer
+      }
+    }
+  }
+`;

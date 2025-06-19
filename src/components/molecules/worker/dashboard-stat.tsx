@@ -1,11 +1,12 @@
-// src/components/molecules/worker/dashboard-stat.tsx
 "use client";
 
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { GET_TOTAL_TASKS } from "@/graphql/queries/tasks";
 import { GET_TOTAL_USERS } from "@/graphql/queries/users";
+import { RESET_DONE_TASK } from "@/graphql/mutations/users";
 import { User } from "@/graphql/types/users";
 import Link from "next/link";
+import { useState } from "react";
 import {
   CheckCircle,
   XCircle,
@@ -15,6 +16,8 @@ import {
   BookOpen,
   BarChart4,
   BellRing,
+  RefreshCw,
+  AlertTriangle,
 } from "lucide-react";
 
 interface DashboardStatsProps {
@@ -26,7 +29,8 @@ export default function DashboardStats({
   user,
   accessToken,
 }: DashboardStatsProps) {
-  // Query to get total tasks
+  const [isResetting, setIsResetting] = useState(false);
+
   const {
     data: tasksData,
     loading: tasksLoading,
@@ -39,7 +43,6 @@ export default function DashboardStats({
     },
   });
 
-  // Query to get total active users
   const {
     data: usersData,
     loading: usersLoading,
@@ -51,6 +54,40 @@ export default function DashboardStats({
       },
     },
   });
+
+  const [resetDoneTask] = useMutation(RESET_DONE_TASK, {
+    context: {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    },
+    onCompleted: () => {
+      setIsResetting(false);
+      window.location.reload();
+    },
+    onError: (error) => {
+      setIsResetting(false);
+      alert(`Error resetting tasks: ${error.message}`);
+    },
+  });
+
+  const handleResetTasks = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to reset all your completed tasks? This action cannot be undone and will allow you to retake all tests."
+    );
+    
+    if (confirmed) {
+      setIsResetting(true);
+      try {
+        await resetDoneTask({
+          variables: { id: user.id },
+        });
+      } catch (error) {
+        setIsResetting(false);
+        console.error("Error resetting tasks:", error);
+      }
+    }
+  };
 
   if (tasksLoading || usersLoading)
     return (
@@ -106,7 +143,7 @@ export default function DashboardStats({
               <HelpCircle className="h-8 w-8 text-yellow-400" />
             )}
           </div>
-          <div className="ml-4">
+          <div className="ml-4 flex-1">
             <p className="text-2xl font-bold">
               {user?.isEligible === true && (
                 <span className="text-green-400">Eligible</span>
@@ -128,6 +165,48 @@ export default function DashboardStats({
           </div>
         </div>
 
+        {user?.isEligible === false && completedTasksCount > 0 && (
+          <div className="mt-6 bg-red-800/30 p-4 rounded-lg border border-red-600/30">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center mb-2">
+                  <AlertTriangle className="w-5 h-5 text-red-400 mr-2" />
+                  <h3 className="text-red-300 font-semibold">Not Eligible for UAT Access</h3>
+                </div>
+                <p className="text-red-200 text-sm mb-3">
+                  Your current performance doesn&apos;t meet the eligibility threshold. 
+                  You can reset your completed tasks and retake all tests to improve your accuracy score.
+                </p>
+                <p className="text-red-100 text-xs">
+                  Completed Tasks: {completedTasksCount} | 
+                  This will reset all your progress and allow you to start fresh.
+                </p>
+              </div>
+              <button
+                onClick={handleResetTasks}
+                disabled={isResetting}
+                className={`ml-4 flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                  isResetting
+                    ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+                    : "bg-red-600 hover:bg-red-700 text-white hover:shadow-lg"
+                }`}
+              >
+                {isResetting ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    Resetting...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="w-4 h-4" />
+                    Reset Tasks
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        )}
+
         {user?.isEligible === null && (
           <div className="mt-6 bg-yellow-800/30 p-3 rounded-lg text-sm">
             <p className="text-yellow-300 flex items-center">
@@ -137,22 +216,20 @@ export default function DashboardStats({
           </div>
         )}
 
-        {user?.isEligible === false && (
+        {user?.isEligible === false && completedTasksCount === 0 && (
           <div className="mt-6 bg-blue-900/30 p-3 rounded-lg text-sm">
             <p className="text-blue-300 flex items-center">
               <ArrowRight className="w-4 h-4 mr-2" />
               <Link href="/eval" className="underline">
-                Go to tasks
-              </Link>{" "}
-               and complete more to improve your eligibility!
+                Go to tasks{" "}
+              </Link>
+              {" "}and complete tests to improve your eligibility!
             </p>
           </div>
         )}
       </div>
 
-      {/* UAT Resources Cards - Enhanced Design */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* UAT Reporting Dashboard Card */}
         <div
           className={`rounded-lg overflow-hidden relative shadow-lg transition-all duration-300 transform hover:scale-105 ${
             user?.isEligible
@@ -297,7 +374,6 @@ export default function DashboardStats({
         </div>
       </div>
 
-      {/* Your Progress Section */}
       <div className="bg-white/10 p-6 rounded-lg shadow-lg">
         <h2 className="text-xl font-semibold text-white mb-4">Your Progress</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -380,7 +456,6 @@ export default function DashboardStats({
         </div>
       </div>
 
-      {/* What to Do Next section */}
       <div className="bg-gradient-to-r from-blue-900/50 to-purple-900/50 p-6 rounded-lg shadow-lg">
         <h2 className="text-xl font-semibold text-white mb-4">
           What to Do Next
