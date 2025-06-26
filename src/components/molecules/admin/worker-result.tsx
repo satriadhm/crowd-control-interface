@@ -16,10 +16,10 @@ import {
 import { GET_THRESHOLD_SETTINGS } from "@/graphql/queries/utils";
 import { GET_ALL_USERS } from "@/graphql/queries/users";
 import { GET_TOTAL_TASKS } from "@/graphql/queries/tasks";
-import { 
-  AlgorithmPerformanceData, 
-  TestResult, 
-  TesterAnalysisData 
+import {
+  AlgorithmPerformanceData,
+  TestResult,
+  TesterAnalysisData,
 } from "@/graphql/types/analysis";
 import { User } from "@/graphql/types/users";
 import { ThresholdSettings } from "@/graphql/types/utils";
@@ -86,37 +86,43 @@ export default function WorkerAnalysis() {
   const [activeTab, setActiveTab] = useState("overview");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const [debugInfo, setDebugInfo] = useState<DebugData | null>(null);
+  const [, setDebugInfo] = useState<DebugData | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const { isRefreshing, handleRefresh } = useRefreshSync(1500);
 
   // Debug query for development
-  const { data: debugData, refetch: refetchDebug } = useQuery<DebugData>(DEBUG_QUERY, {
-    context: {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
+  const { data: debugData, refetch: refetchDebug } = useQuery<DebugData>(
+    DEBUG_QUERY,
+    {
+      context: {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       },
-    },
-    fetchPolicy: "network-only",
-    onCompleted: (data) => {
-      setDebugInfo(data);
-      console.log('Debug worker data:', data);
-      
-      // Log worker completion status
-      const workers = data.getAllUsers.filter(u => u.role === 'worker');
-      const totalTasks = data.getTotalTasks;
-      
-      console.log(`=== Worker Completion Analysis ===`);
-      console.log(`Total Tasks: ${totalTasks}`);
-      console.log(`Total Workers: ${workers.length}`);
-      
-      workers.forEach(worker => {
-        const completed = worker.completedTasks?.length || 0;
-        const status = completed >= totalTasks ? 'COMPLETED ALL' : 'IN PROGRESS';
-        console.log(`${worker.firstName} ${worker.lastName}: ${completed}/${totalTasks} tasks (${status}) - Eligible: ${worker.isEligible}`);
-      });
+      fetchPolicy: "network-only",
+      onCompleted: (data) => {
+        setDebugInfo(data);
+        console.log("Debug worker data:", data);
+
+        // Log worker completion status
+        const workers = data.getAllUsers.filter((u) => u.role === "worker");
+        const totalTasks = data.getTotalTasks;
+
+        console.log(`=== Worker Completion Analysis ===`);
+        console.log(`Total Tasks: ${totalTasks}`);
+        console.log(`Total Workers: ${workers.length}`);
+
+        workers.forEach((worker) => {
+          const completed = worker.completedTasks?.length || 0;
+          const status =
+            completed >= totalTasks ? "COMPLETED ALL" : "IN PROGRESS";
+          console.log(
+            `${worker.firstName} ${worker.lastName}: ${completed}/${totalTasks} tasks (${status}) - Eligible: ${worker.isEligible}`
+          );
+        });
+      },
     }
-  });
+  );
 
   // Fetch threshold settings first since other components depend on it
   const {
@@ -226,9 +232,9 @@ export default function WorkerAnalysis() {
     );
 
     const firstError =
-      thresholdError || 
-      performanceError || 
-      testerError || 
+      thresholdError ||
+      performanceError ||
+      testerError ||
       testResultsError ||
       allUsersError ||
       totalTasksError;
@@ -256,7 +262,7 @@ export default function WorkerAnalysis() {
   useEffect(() => {
     const interval = setInterval(() => {
       if (!isRefreshing && !isLoading) {
-        console.log('Auto-refreshing worker analysis data...');
+        console.log("Auto-refreshing worker analysis data...");
         refreshAllData();
       }
     }, 30000); // 30 seconds
@@ -272,13 +278,13 @@ export default function WorkerAnalysis() {
       try {
         // Refresh all data in parallel with no-cache
         await Promise.all([
-          refetchThreshold({ fetchPolicy: 'no-cache' }),
-          refetchPerformance({ fetchPolicy: 'no-cache' }),
-          refetchTesterData({ fetchPolicy: 'no-cache' }),
-          refetchTestResults({ fetchPolicy: 'no-cache' }),
-          refetchAllUsers({ fetchPolicy: 'no-cache' }),
-          refetchTotalTasks({ fetchPolicy: 'no-cache' }),
-          refetchDebug({ fetchPolicy: 'no-cache' }),
+          refetchThreshold({ fetchPolicy: "no-cache" }),
+          refetchPerformance({ fetchPolicy: "no-cache" }),
+          refetchTesterData({ fetchPolicy: "no-cache" }),
+          refetchTestResults({ fetchPolicy: "no-cache" }),
+          refetchAllUsers({ fetchPolicy: "no-cache" }),
+          refetchTotalTasks({ fetchPolicy: "no-cache" }),
+          refetchDebug({ fetchPolicy: "no-cache" }),
         ]);
 
         setLastRefresh(new Date());
@@ -350,17 +356,22 @@ export default function WorkerAnalysis() {
 
   // Development debug panel
   const DebugPanel = () => {
-    if (process.env.NODE_ENV !== 'development') return null;
+    if (process.env.NODE_ENV !== "development") return null;
 
     // Use actual query data instead of debug query only
     const allUsers = allUsersData?.getAllUsers || debugData?.getAllUsers || [];
-    const totalTasks = totalTasksData?.getTotalTasks || debugData?.getTotalTasks || 0;
-    const workers = allUsers.filter(u => u.role === 'worker');
-    const workersCompletedAll = workers.filter(w => (w.completedTasks?.length || 0) >= totalTasks);
-    
+    const totalTasks =
+      totalTasksData?.getTotalTasks || debugData?.getTotalTasks || 0;
+    const workers = allUsers.filter((u) => u.role === "worker");
+    const workersCompletedAll = workers.filter(
+      (w) => (w.completedTasks?.length || 0) >= totalTasks
+    );
+
     return (
       <div className="mb-6 bg-gray-800 p-4 rounded-lg border border-yellow-600">
-        <h3 className="text-yellow-400 font-bold mb-2">🔧 Debug Panel (Development)</h3>
+        <h3 className="text-yellow-400 font-bold mb-2">
+          🔧 Debug Panel (Development)
+        </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
           <div className="bg-gray-700 p-3 rounded">
             <p className="text-gray-300">Total Workers:</p>
@@ -376,27 +387,34 @@ export default function WorkerAnalysis() {
           </div>
           <div className="bg-gray-700 p-3 rounded">
             <p className="text-gray-300">Tester Analysis Count:</p>
-            <p className="text-white font-bold">{testerData?.getTesterAnalysis?.length || 0}</p>
+            <p className="text-white font-bold">
+              {testerData?.getTesterAnalysis?.length || 0}
+            </p>
           </div>
         </div>
         <div className="mt-3 text-xs text-gray-400">
           <p>Last Refresh: {lastRefresh.toLocaleTimeString()}</p>
-          <p>Threshold: {(thresholdValue * 100).toFixed(1)}% ({thresholdType})</p>
-          <p>Total Users: {allUsers.length} | Test Results: {testResultsData?.getTestResults?.length || 0}</p>
+          <p>
+            Threshold: {(thresholdValue * 100).toFixed(1)}% ({thresholdType})
+          </p>
+          <p>
+            Total Users: {allUsers.length} | Test Results:{" "}
+            {testResultsData?.getTestResults?.length || 0}
+          </p>
         </div>
         <div className="mt-2 flex gap-2">
-          <button 
+          <button
             onClick={refreshAllData}
             className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
             disabled={isRefreshing}
           >
-            {isRefreshing ? 'Refreshing...' : 'Force Refresh'}
+            {isRefreshing ? "Refreshing..." : "Force Refresh"}
           </button>
-          <button 
+          <button
             onClick={() => {
-              console.log('All Users Data:', allUsersData);
-              console.log('Total Tasks Data:', totalTasksData);
-              console.log('Debug Data:', debugData);
+              console.log("All Users Data:", allUsersData);
+              console.log("Total Tasks Data:", totalTasksData);
+              console.log("Debug Data:", debugData);
             }}
             className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700"
           >
@@ -435,36 +453,53 @@ export default function WorkerAnalysis() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div className="bg-blue-600/20 p-3 rounded border border-blue-500/30">
               <p className="text-blue-300">Total Users:</p>
-              <p className="text-white font-bold text-lg">{allUsersData?.getAllUsers?.length || 0}</p>
+              <p className="text-white font-bold text-lg">
+                {allUsersData?.getAllUsers?.length || 0}
+              </p>
             </div>
             <div className="bg-green-600/20 p-3 rounded border border-green-500/30">
               <p className="text-green-300">Workers:</p>
               <p className="text-white font-bold text-lg">
-                {allUsersData?.getAllUsers?.filter(u => u.role === 'worker').length || 0}
+                {allUsersData?.getAllUsers?.filter((u) => u.role === "worker")
+                  .length || 0}
               </p>
             </div>
             <div className="bg-purple-600/20 p-3 rounded border border-purple-500/30">
               <p className="text-purple-300">Total Tasks:</p>
-              <p className="text-white font-bold text-lg">{totalTasksData?.getTotalTasks || 0}</p>
+              <p className="text-white font-bold text-lg">
+                {totalTasksData?.getTotalTasks || 0}
+              </p>
             </div>
             <div className="bg-orange-600/20 p-3 rounded border border-orange-500/30">
               <p className="text-orange-300">Completed Workers:</p>
               <p className="text-white font-bold text-lg">
-                {allUsersData?.getAllUsers?.filter(u => 
-                  u.role === 'worker' && 
-                  (u.completedTasks?.length || 0) >= (totalTasksData?.getTotalTasks || 0)
+                {allUsersData?.getAllUsers?.filter(
+                  (u) =>
+                    u.role === "worker" &&
+                    (u.completedTasks?.length || 0) >=
+                      (totalTasksData?.getTotalTasks || 0)
                 ).length || 0}
               </p>
             </div>
           </div>
           <div className="mt-3 text-xs text-gray-400">
             <p>
-              Progress: {totalTasksData?.getTotalTasks ? 
-                ((allUsersData?.getAllUsers?.filter(u => 
-                  u.role === 'worker' && 
-                  (u.completedTasks?.length || 0) >= (totalTasksData?.getTotalTasks || 0)
-                ).length || 0) / (allUsersData?.getAllUsers?.filter(u => u.role === 'worker').length || 1) * 100).toFixed(1) 
-                : 0}% workers have completed all tasks
+              Progress:{" "}
+              {totalTasksData?.getTotalTasks
+                ? (
+                    ((allUsersData?.getAllUsers?.filter(
+                      (u) =>
+                        u.role === "worker" &&
+                        (u.completedTasks?.length || 0) >=
+                          (totalTasksData?.getTotalTasks || 0)
+                    ).length || 0) /
+                      (allUsersData?.getAllUsers?.filter(
+                        (u) => u.role === "worker"
+                      ).length || 1)) *
+                    100
+                  ).toFixed(1)
+                : 0}
+              % workers have completed all tasks
             </p>
           </div>
         </div>
