@@ -27,18 +27,6 @@ export const GET_TASK_RESULTS = gql`
   }
 `;
 
-export const GET_WORKER_ANALYSIS = gql`
-  query GetTesterAnalysis {
-    getTesterAnalysis {
-      workerId
-      testerName
-      averageScore
-      accuracy
-      isEligible
-    }
-  }
-`;
-
 export const GET_ELIGIBLE_WORKERS = gql`
   query GetEligibleWorkers($taskId: String!, $workerIds: [String!]!) {
     getEligibleWorkers(taskId: $taskId, workerIds: $workerIds)
@@ -113,5 +101,23 @@ export const GET_DASHBOARD_SUMMARY = gql`
         value
       }
     }
+  }
+`;
+
+export const GET_BATCH_STATUS = gql`
+  query GetBatchStatus($taskId: String!) {
+    getBatchStatus(taskId: $taskId)
+  }
+`;
+
+export const RESET_BATCH_TRACKER = gql`
+  mutation ResetBatchTracker($taskId: String!) {
+    resetBatchTracker(taskId: $taskId)
+  }
+`;
+
+export const TRIGGER_BATCH_PROCESSING = gql`
+  mutation TriggerBatchProcessing($taskId: String!, $workerId: String!) {
+    triggerBatchProcessing(taskId: $taskId, workerId: $workerId)
   }
 `;

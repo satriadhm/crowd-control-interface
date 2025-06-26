@@ -1,7 +1,8 @@
 // src/components/molecules/admin/worker-result.tsx
+
 "use client";
 
-import { useQuery } from "@apollo/client";
+import { useQuery, gql } from "@apollo/client";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/authStore";
@@ -13,6 +14,8 @@ import {
   GET_TESTER_ANALYSIS,
 } from "@/graphql/queries/mx";
 import { GET_THRESHOLD_SETTINGS } from "@/graphql/queries/utils";
+import { GET_ALL_USERS } from "@/graphql/queries/users";
+import { GET_TOTAL_TASKS } from "@/graphql/queries/tasks";
 
 // Import sub-components
 import WorkerAnalysisOverview from "./worker-analysis/overview";
@@ -22,13 +25,64 @@ import TestResultsTab from "./worker-analysis/test-result";
 import ThresholdConfiguration from "./threshold-settings";
 import WorkerAnalysisControls from "./worker-analysis/worker-controls";
 
+// Debug query for troubleshooting
+const DEBUG_QUERY = gql`
+  query DebugWorkerData {
+    getAllUsers(skip: 0, take: 100) {
+      id
+      firstName
+      lastName
+      role
+      isEligible
+      completedTasks {
+        taskId
+        answer
+      }
+    }
+    getTotalTasks
+  }
+`;
+
 export default function WorkerAnalysis() {
   const router = useRouter();
   const { accessToken } = useAuthStore();
   const [activeTab, setActiveTab] = useState("overview");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const { isRefreshing, handleRefresh } = useRefreshSync(1500); // 1.5 second refresh animation
+  const [debugInfo, setDebugInfo] = useState<any>(null);
+  const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
+  const { isRefreshing, handleRefresh } = useRefreshSync(1500);
+
+  // Debug query for development
+  const { data: debugData, refetch: refetchDebug } = useQuery(DEBUG_QUERY, {
+    context: {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    },
+    fetchPolicy: "network-only",
+    onCompleted: (data) => {
+      setDebugInfo(data);
+      console.log("Debug worker data:", data);
+
+      // Log worker completion status
+      const workers = data.getAllUsers.filter((u) => u.role === "worker");
+      const totalTasks = data.getTotalTasks;
+
+      console.log(`=== Worker Completion Analysis ===`);
+      console.log(`Total Tasks: ${totalTasks}`);
+      console.log(`Total Workers: ${workers.length}`);
+
+      workers.forEach((worker) => {
+        const completed = worker.completedTasks?.length || 0;
+        const status =
+          completed >= totalTasks ? "COMPLETED ALL" : "IN PROGRESS";
+        console.log(
+          `${worker.firstName} ${worker.lastName}: ${completed}/${totalTasks} tasks (${status}) - Eligible: ${worker.isEligible}`
+        );
+      });
+    },
+  });
 
   // Fetch threshold settings first since other components depend on it
   const {
@@ -120,29 +174,45 @@ export default function WorkerAnalysis() {
     testResultsError,
   ]);
 
-  // Function to refresh all data - memoized with useCallback to prevent unnecessary re-renders
+  // Auto-refresh data every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!isRefreshing && !isLoading) {
+        console.log("Auto-refreshing worker analysis data...");
+        refreshAllData();
+      }
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(interval);
+  }, [isRefreshing, isLoading]);
+
+  // Function to refresh all data
   const refreshAllData = useCallback(async () => {
     console.log("Refreshing all worker analysis data...");
 
-    // Use handleRefresh to manage the loading state visualization
     await handleRefresh(async () => {
-      // First refresh threshold settings
-      await refetchThreshold();
+      try {
+        // Refresh all data in parallel with no-cache
+        await Promise.all([
+          refetchThreshold({ fetchPolicy: "no-cache" }),
+          refetchPerformance({ fetchPolicy: "no-cache" }),
+          refetchTesterData({ fetchPolicy: "no-cache" }),
+          refetchTestResults({ fetchPolicy: "no-cache" }),
+          refetchDebug({ fetchPolicy: "no-cache" }),
+        ]);
 
-      // Then refresh all other data in parallel
-      await Promise.all([
-        refetchPerformance(),
-        refetchTesterData(),
-        refetchTestResults(),
-      ]);
-
-      console.log("All data refreshed successfully");
+        setLastRefresh(new Date());
+        console.log("All data refreshed successfully");
+      } catch (error) {
+        console.error("Error refreshing data:", error);
+      }
     });
   }, [
     refetchThreshold,
     refetchPerformance,
     refetchTesterData,
     refetchTestResults,
+    refetchDebug,
     handleRefresh,
   ]);
 
@@ -196,21 +266,90 @@ export default function WorkerAnalysis() {
   const thresholdType =
     thresholdData?.getThresholdSettings?.thresholdType || "median";
 
+  // Development debug panel
+  const DebugPanel = () => {
+    if (process.env.NODE_ENV !== "development") return null;
+
+    const workers =
+      debugData?.getAllUsers?.filter((u) => u.role === "worker") || [];
+    const totalTasks = debugData?.getTotalTasks || 0;
+    const workersCompletedAll = workers.filter(
+      (w) => (w.completedTasks?.length || 0) >= totalTasks
+    );
+
+    return (
+      <div className="mb-6 bg-gray-800 p-4 rounded-lg border border-yellow-600">
+        <h3 className="text-yellow-400 font-bold mb-2">
+          🔧 Debug Panel (Development)
+        </h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+          <div className="bg-gray-700 p-3 rounded">
+            <p className="text-gray-300">Total Workers:</p>
+            <p className="text-white font-bold">{workers.length}</p>
+          </div>
+          <div className="bg-gray-700 p-3 rounded">
+            <p className="text-gray-300">Completed All Tasks:</p>
+            <p className="text-white font-bold">{workersCompletedAll.length}</p>
+          </div>
+          <div className="bg-gray-700 p-3 rounded">
+            <p className="text-gray-300">Total Tasks:</p>
+            <p className="text-white font-bold">{totalTasks}</p>
+          </div>
+          <div className="bg-gray-700 p-3 rounded">
+            <p className="text-gray-300">Tester Analysis Count:</p>
+            <p className="text-white font-bold">
+              {testerData?.getTesterAnalysis?.length || 0}
+            </p>
+          </div>
+        </div>
+        <div className="mt-3 text-xs text-gray-400">
+          <p>Last Refresh: {lastRefresh.toLocaleTimeString()}</p>
+          <p>
+            Threshold: {(thresholdValue * 100).toFixed(1)}% ({thresholdType})
+          </p>
+        </div>
+        <div className="mt-2 flex gap-2">
+          <button
+            onClick={refreshAllData}
+            className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
+            disabled={isRefreshing}
+          >
+            {isRefreshing ? "Refreshing..." : "Force Refresh"}
+          </button>
+          <button
+            onClick={() => console.log("Debug Data:", debugData)}
+            className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700"
+          >
+            Log Debug Data
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="w-full h-screen overflow-hidden bg-gradient-to-r from-[#0a1e5e] to-[#001333] text-white relative">
       {refreshingOverlay}
       <div className="h-full overflow-y-auto p-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Worker Analysis Dashboard</h1>
-          <Button
-            className="bg-[#001333] hover:bg-[#0a2e7e]"
-            onClick={() => router.push("/task-management")}
-          >
-            Back to Task Management
-          </Button>
+          <div className="flex gap-4">
+            <div className="text-sm text-gray-300">
+              Last updated: {lastRefresh.toLocaleTimeString()}
+            </div>
+            <Button
+              className="bg-[#001333] hover:bg-[#0a2e7e]"
+              onClick={() => router.push("/task-management")}
+            >
+              Back to Task Management
+            </Button>
+          </div>
         </div>
 
-        {/* Manual Controls Section - Pass the memoized refreshAllData function */}
+        {/* Debug Panel for Development */}
+        <DebugPanel />
+
+        {/* Manual Controls Section */}
         <WorkerAnalysisControls
           refreshAllData={refreshAllData}
           thresholdValue={thresholdValue}
@@ -276,7 +415,7 @@ export default function WorkerAnalysis() {
           </Button>
         </div>
 
-        {/* Content based on active tab - Pass the memoized refreshAllData function to all components */}
+        {/* Content based on active tab */}
         {activeTab === "overview" && (
           <WorkerAnalysisOverview
             testerAnalysisData={testerData?.getTesterAnalysis || []}
