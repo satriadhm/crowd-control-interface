@@ -7,6 +7,7 @@ export const GET_ALL_USERS = gql`
       id
       firstName
       lastName
+      completedTasks{answer,taskId}
       email
       role
     }
