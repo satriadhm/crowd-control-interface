@@ -477,7 +477,7 @@ export default function WorkerAnalysis() {
                   (u) =>
                     u.role === "worker" &&
                     (u.completedTasks?.length || 0) >=
-                      (totalTasksData?.getTotalTasks || 0)
+                      ((totalTasksData?.getTotalTasks || 0)-1)
                 ).length || 0}
               </p>
             </div>
